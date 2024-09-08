@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">BrainTappers</string>
+
+    <!--  Auth Composable  -->
+    <string name="continue_with_email">Continue With Email</string>
+    <string name="continue_with_google">Continue With Google</string>
+    <!--  Auth Composable  -->
+
+    <!--  Sign Up Screen  -->
+    <string name="sign_up_title">Sign Up to Brain Tappers!</string>
+    <string name="sign_up_label">Already have an account?</string>
+    <string name="sign_up_action_text">Sign In</string>
+    <!--  Sign Up Screen  -->
+
+    <!--  Sign In Screen  -->
+    <string name="sign_in_title">Sign in to Brain Tappers!</string>
+    <string name="sign_in_label">Don’t have an account?</string>
+    <string name="sign_in_action_text">Sign Up</string>
+    <!--  Sign In Screen  -->
+
 </resources>
