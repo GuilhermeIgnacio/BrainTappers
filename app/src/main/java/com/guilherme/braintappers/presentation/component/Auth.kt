@@ -20,21 +20,29 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.credentials.Credential
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.ui.theme.primaryColor
+import kotlinx.coroutines.launch
 
 @Composable
 fun Auth(
     title: String,
     onContinueWithEmailClick: () -> Unit,
-    onContinueWithGoogleClick: () -> Unit,
+    onContinueWithGoogleClick: (Credential) -> Unit,
     labelText: String,
     actionText: String,
     onTextClick: () -> Unit,
@@ -42,10 +50,15 @@ fun Auth(
 
 //    <a target="_blank" href="https://icons8.com/icon/17949/google-logo">Google Logo</a> ícone por <a target="_blank" href="https://icons8.com">Icons8</a>
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .statusBarsPadding()
-        .navigationBarsPadding()) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+    ) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -77,7 +90,33 @@ fun Auth(
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp)
                 .height(40.dp),
-            onClick = onContinueWithGoogleClick,
+            onClick = {
+
+                val credentialManager = CredentialManager.create(context)
+
+                val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
+                    .setFilterByAuthorizedAccounts(false)
+                    .setServerClientId(context.getString(R.string.web_client_id))
+                    .setAutoSelectEnabled(true)
+                    .build()
+
+                val request = GetCredentialRequest.Builder()
+                    .addCredentialOption(googleIdOption)
+                    .build()
+
+                coroutineScope.launch {
+                    try {
+                        val result = credentialManager.getCredential(
+                            request = request,
+                            context = context,
+                        )
+                        onContinueWithGoogleClick(result.credential)
+                    } catch (e: GetCredentialException) {
+                        e.stackTrace
+                    }
+                }
+
+            },
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Color.Black,
             ),

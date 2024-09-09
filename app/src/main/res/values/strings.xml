@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">BrainTappers</string>
 
+    <!--  Web Client Id  -->
+    <string name="web_client_id">896174658935-u7sfi2jduj826v2fojjm9hv7ffjve0qk.apps.googleusercontent.com</string>
+    <!--  Web Client Id  -->
+
     <!--  Auth Composable  -->
     <string name="continue_with_email">Continue With Email</string>
     <string name="continue_with_google">Continue With Google</string>

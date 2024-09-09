@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "896174658935",
+    "project_id": "brain-tappers-98591",
+    "storage_bucket": "brain-tappers-98591.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896174658935:android:37e4d29e9afe48e40e3d72",
+        "android_client_info": {
+          "package_name": "com.guilherme.braintappers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "896174658935-u7sfi2jduj826v2fojjm9hv7ffjve0qk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBj9WVjZW7hnwQL_cfbW1WT_iQF_K50no"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "896174658935-b4gblivtoobchlei51fl85gfc9li0kgc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

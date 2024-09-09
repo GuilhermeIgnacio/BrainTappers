@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     kotlin("plugin.serialization") version "2.0.20"
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -67,6 +68,22 @@ dependencies {
 
     //Compose Navigation
     implementation("androidx.navigation:navigation-compose:2.8.0")
+
+    //Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
+
+    //Credential Manager
+    implementation ("androidx.credentials:credentials:1.2.2")
+    implementation ("androidx.credentials:credentials-play-services-auth:1.2.2")
+    implementation ("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
+    //Koin
+    implementation(platform("io.insert-koin:koin-bom:4.0.0-RC2"))
+    implementation("io.insert-koin:koin-core")
+    implementation("io.insert-koin:koin-android")
+    implementation("io.insert-koin:koin-androidx-compose")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
