@@ -22,4 +22,9 @@
     <string name="sign_in_action_text">Sign Up</string>
     <!--  Sign In Screen  -->
 
+    <!--  Authenticate With Email Screen  -->
+    <string name="sign_up_with_email_screen_title">Sign Up</string>
+    <string name="sign_in_with_email_screen_title">Sign In</string>
+    <!--  Authenticate With Email Screen  -->
+
 </resources>
