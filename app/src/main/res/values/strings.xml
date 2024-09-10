@@ -25,6 +25,10 @@
     <!--  Authenticate With Email Screen  -->
     <string name="sign_up_with_email_screen_title">Sign Up</string>
     <string name="sign_in_with_email_screen_title">Sign In</string>
+    <string name="authenticate_with_email_placeholder">Email</string>
+    <string name="authenticate_with_email_confirm_email_placeholder">Confirm Email</string>
+    <string name="authenticate_with_email_password_placeholder">Password</string>
+    <string name="authenticate_with_email_confirm_password_placeholder">Confirm Password</string>
     <!--  Authenticate With Email Screen  -->
 
 </resources>
