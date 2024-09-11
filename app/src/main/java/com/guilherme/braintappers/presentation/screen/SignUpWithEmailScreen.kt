@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -20,7 +21,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -38,6 +38,7 @@ import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.isValidEmail
+import com.guilherme.braintappers.util.isValidPassword
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -71,78 +72,51 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
                 fontWeight = FontWeight.Bold
             )
 
-
         }
 
         //Email
-        OutlinedTextField(
-            modifier = modifier.fillMaxWidth(),
+
+        EmailOutlinedTextField(
+            modifier = modifier,
             value = state.emailTextField,
-            onValueChange = {
-                onEvent(SignUpWithEmailEvents.OnEmailTextFieldChanged(it))
-            },
+            onValueChange = { onEvent(SignUpWithEmailEvents.OnEmailTextFieldChanged(it)) },
             placeholder = { Text(text = stringResource(id = R.string.authenticate_with_email_placeholder)) },
-            maxLines = 1,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = primaryColor,
-            )
+            isError = state.emailTextField.isNotEmpty() && !state.emailTextField.isValidEmail(),
+            errorSupportingText = stringResource(id = R.string.sign_up_with_email_error_supporting_text)
         )
 
-        OutlinedTextField(
-            modifier = modifier.fillMaxWidth(),
+
+        EmailOutlinedTextField(
+            modifier = modifier,
             value = state.confirmEmailTextField,
             onValueChange = { onEvent(SignUpWithEmailEvents.OnConfirmEmailTextFieldChanged(it)) },
             placeholder = { Text(text = stringResource(id = R.string.authenticate_with_email_confirm_email_placeholder)) },
-            maxLines = 1,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = primaryColor,
-            )
+            isError = state.confirmEmailTextField.isNotEmpty() && state.emailTextField != state.confirmEmailTextField,
+            errorSupportingText = stringResource(id = R.string.sign_up_with_email_confirm_error_supporting_text)
         )
+
         //Email
 
         //Password
-        var passWordVisible by rememberSaveable { mutableStateOf(false) }
-        OutlinedTextField(
-            modifier = modifier.fillMaxWidth(),
+
+        PasswordOutlinedTextField(
+            modifier = modifier,
             value = state.passwordTextField,
             onValueChange = { onEvent(SignUpWithEmailEvents.OnPasswordTextFieldChanged(it)) },
             placeholder = { Text(text = stringResource(id = R.string.authenticate_with_email_password_placeholder)) },
-            visualTransformation = if (passWordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = primaryColor,
-            ),
-            maxLines = 1,
-            trailingIcon = {
-
-                val description = if (passWordVisible) "Hide Password" else "Show Password"
-
-                AnimatedVisibility(visible = state.passwordTextField.isNotEmpty()) {
-
-                    IconButton(onClick = { passWordVisible = !passWordVisible }) {
-                        Crossfade(targetState = passWordVisible, label = "") { isVisible ->
-
-                            val icon =
-                                if (isVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                            Icon(imageVector = icon, contentDescription = description)
-
-                        }
-                    }
-
-                }
-
-            }
+            isError = state.passwordTextField.isNotEmpty() && !state.passwordTextField.isValidPassword(),
+            errorSupportingText = stringResource(id = R.string.sign_up_with_password_error_suporting_text)
         )
 
-        OutlinedTextField(
-            modifier = modifier.fillMaxWidth(),
+        PasswordOutlinedTextField(
+            modifier = modifier,
             value = state.confirmPasswordTextField,
             onValueChange = { onEvent(SignUpWithEmailEvents.OnConfirmPasswordTextFieldChanged(it)) },
-            placeholder = { Text(text = "Confirm Password") },
-            maxLines = 1,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = primaryColor,
-            )
+            placeholder = { Text(text = stringResource(id = R.string.authenticate_with_email_confirm_password_placeholder)) },
+            isError = state.confirmPasswordTextField.isNotEmpty() && state.confirmPasswordTextField != state.passwordTextField,
+            errorSupportingText = stringResource(id = R.string.sign_up_with_password_confirm_error_suporting_text)
         )
+
         //Password
 
         Button(
@@ -152,7 +126,11 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = primaryColor,
                 contentColor = Color.Black
-            )
+            ),
+            enabled = state.emailTextField.isValidEmail() &&
+                    state.emailTextField == state.confirmEmailTextField &&
+                    state.passwordTextField.isValidPassword() &&
+                    state.passwordTextField == state.confirmPasswordTextField
         ) {
             Text(
                 text = "Next"
@@ -160,4 +138,84 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
         }
 
     }
+}
+
+@Composable
+private fun PasswordOutlinedTextField(
+    modifier: Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: @Composable () -> Unit,
+    isError: Boolean,
+    errorSupportingText: String
+) {
+    var passWordVisible by rememberSaveable { mutableStateOf(false) }
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth(),
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = placeholder,
+        visualTransformation = if (passWordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = primaryColor,
+        ),
+        maxLines = 1,
+        isError = isError,
+        supportingText = {
+            Crossfade(targetState = isError) { isError ->
+                if (isError) {
+                    Text(text = errorSupportingText)
+                }
+            }
+        },
+        trailingIcon = {
+
+            val description = if (passWordVisible) "Hide Password" else "Show Password"
+
+            AnimatedVisibility(visible = value.isNotEmpty()) {
+
+                IconButton(onClick = { passWordVisible = !passWordVisible }) {
+                    Crossfade(targetState = passWordVisible, label = "") { isVisible ->
+
+                        val icon =
+                            if (isVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                        Icon(imageVector = icon, contentDescription = description)
+
+                    }
+                }
+
+            }
+
+        }
+    )
+}
+
+@Composable
+fun EmailOutlinedTextField(
+    modifier: Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: @Composable (() -> Unit)?,
+    isError: Boolean,
+    errorSupportingText: String
+) {
+    OutlinedTextField(
+        modifier = modifier.fillMaxWidth(),
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = placeholder,
+        maxLines = 1,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = primaryColor,
+        ),
+        supportingText = {
+            //Todo: Add Crossfade Animation Label
+            Crossfade(targetState = isError, label = "") { isError ->
+                if (isError) {
+                    Text(text = errorSupportingText)
+                }
+            }
+        },
+        isError = isError
+    )
 }

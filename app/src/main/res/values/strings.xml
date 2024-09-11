@@ -29,6 +29,10 @@
     <string name="authenticate_with_email_confirm_email_placeholder">Confirm Email</string>
     <string name="authenticate_with_email_password_placeholder">Password</string>
     <string name="authenticate_with_email_confirm_password_placeholder">Confirm Password</string>
+    <string name="sign_up_with_email_error_supporting_text">Invalid email address. Please enter a valid email in the format: example@domain.com</string>
+    <string name="sign_up_with_email_confirm_error_supporting_text">Email addresses does not match.</string>
+    <string name="sign_up_with_password_error_suporting_text">Invalid password.</string>
+    <string name="sign_up_with_password_confirm_error_suporting_text">Passwords does not match.</string>
     <!--  Authenticate With Email Screen  -->
 
 </resources>

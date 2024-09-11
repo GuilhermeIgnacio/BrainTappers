@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 data class SignUpWithEmailState(
     val emailTextField: String = "",
@@ -32,7 +33,7 @@ class SignUpWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
                 viewModelScope.launch {
                     _state.update {
                         it.copy(
-                            emailTextField = event.value
+                            emailTextField = event.value.lowercase(Locale.ROOT)
                         )
                     }
                 }
@@ -41,7 +42,7 @@ class SignUpWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
             is SignUpWithEmailEvents.OnConfirmEmailTextFieldChanged -> {
                 viewModelScope.launch {
                     _state.update { it.copy(
-                        confirmEmailTextField = event.value
+                        confirmEmailTextField = event.value.lowercase(Locale.ROOT)
                     ) }
                 }
             }
