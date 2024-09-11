@@ -15,11 +15,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.presentation.component.CustomTopAppBar
 import com.guilherme.braintappers.presentation.component.EmailOutlinedTextField
 import com.guilherme.braintappers.presentation.component.PasswordOutlinedTextField
 import com.guilherme.braintappers.ui.theme.primaryColor
-import com.guilherme.braintappers.util.isValidEmail
-import com.guilherme.braintappers.util.isValidPassword
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -34,7 +33,6 @@ fun SignInWithEmailScreen(navController: NavHostController) {
     ) {
 
         CustomTopAppBar(
-            navController = navController,
             title = "Sign In",
             onReturnClick = { navController.navigateUp() }
         )

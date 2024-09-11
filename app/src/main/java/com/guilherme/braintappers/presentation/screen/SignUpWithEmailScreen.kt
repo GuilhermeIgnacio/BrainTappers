@@ -1,29 +1,23 @@
 package com.guilherme.braintappers.presentation.screen
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.presentation.component.CustomTopAppBar
 import com.guilherme.braintappers.presentation.component.EmailOutlinedTextField
 import com.guilherme.braintappers.presentation.component.PasswordOutlinedTextField
 import com.guilherme.braintappers.ui.theme.primaryColor
@@ -46,7 +40,6 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
             .statusBarsPadding()
     ) {
         CustomTopAppBar(
-            navController = navController,
             title = stringResource(id = R.string.sign_up_with_email_screen_title),
             onReturnClick = { navController.navigateUp() }
         )
@@ -113,32 +106,6 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
                 text = "Next"
             )
         }
-
-    }
-}
-
-@Composable
-fun CustomTopAppBar(
-    navController: NavHostController,
-    title: String?,
-    onReturnClick: () -> Unit,
-) {
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        IconButton(
-            modifier = Modifier.align(Alignment.CenterStart),
-            onClick = onReturnClick
-        ) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
-        }
-
-        Text(
-            modifier = Modifier.align(Alignment.Center),
-            text = title ?: "",
-            fontWeight = FontWeight.Bold
-        )
 
     }
 }
