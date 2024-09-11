@@ -1,41 +1,31 @@
 package com.guilherme.braintappers.presentation.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.presentation.component.EmailOutlinedTextField
+import com.guilherme.braintappers.presentation.component.PasswordOutlinedTextField
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.isValidEmail
 import com.guilherme.braintappers.util.isValidPassword
@@ -55,24 +45,11 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
             .fillMaxWidth()
             .statusBarsPadding()
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            IconButton(
-                modifier = Modifier.align(Alignment.CenterStart),
-                onClick = { navController.navigateUp() }
-            ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
-            }
-
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = stringResource(id = R.string.sign_up_with_email_screen_title),
-                fontWeight = FontWeight.Bold
-            )
-
-        }
+        CustomTopAppBar(
+            navController = navController,
+            title = stringResource(id = R.string.sign_up_with_email_screen_title),
+            onReturnClick = { navController.navigateUp() }
+        )
 
         //Email
 
@@ -141,81 +118,27 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
 }
 
 @Composable
-private fun PasswordOutlinedTextField(
-    modifier: Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: @Composable () -> Unit,
-    isError: Boolean,
-    errorSupportingText: String
+fun CustomTopAppBar(
+    navController: NavHostController,
+    title: String?,
+    onReturnClick: () -> Unit,
 ) {
-    var passWordVisible by rememberSaveable { mutableStateOf(false) }
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = placeholder,
-        visualTransformation = if (passWordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = primaryColor,
-        ),
-        maxLines = 1,
-        isError = isError,
-        supportingText = {
-            Crossfade(targetState = isError) { isError ->
-                if (isError) {
-                    Text(text = errorSupportingText)
-                }
-            }
-        },
-        trailingIcon = {
-
-            val description = if (passWordVisible) "Hide Password" else "Show Password"
-
-            AnimatedVisibility(visible = value.isNotEmpty()) {
-
-                IconButton(onClick = { passWordVisible = !passWordVisible }) {
-                    Crossfade(targetState = passWordVisible, label = "") { isVisible ->
-
-                        val icon =
-                            if (isVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                        Icon(imageVector = icon, contentDescription = description)
-
-                    }
-                }
-
-            }
-
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        IconButton(
+            modifier = Modifier.align(Alignment.CenterStart),
+            onClick = onReturnClick
+        ) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
         }
-    )
-}
 
-@Composable
-fun EmailOutlinedTextField(
-    modifier: Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: @Composable (() -> Unit)?,
-    isError: Boolean,
-    errorSupportingText: String
-) {
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = placeholder,
-        maxLines = 1,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = primaryColor,
-        ),
-        supportingText = {
-            //Todo: Add Crossfade Animation Label
-            Crossfade(targetState = isError, label = "") { isError ->
-                if (isError) {
-                    Text(text = errorSupportingText)
-                }
-            }
-        },
-        isError = isError
-    )
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = title ?: "",
+            fontWeight = FontWeight.Bold
+        )
+
+    }
 }
