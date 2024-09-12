@@ -91,7 +91,9 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
 
         Button(
             modifier = modifier.fillMaxWidth(),
-            onClick = {},
+            onClick = {
+                onEvent(SignUpWithEmailEvents.OnNextButtonClick)
+            },
             shape = RoundedCornerShape(20),
             colors = ButtonDefaults.buttonColors(
                 containerColor = primaryColor,

@@ -21,6 +21,7 @@ sealed interface SignUpWithEmailEvents {
     data class OnConfirmEmailTextFieldChanged(val value: String) : SignUpWithEmailEvents
     data class OnPasswordTextFieldChanged(val value: String) : SignUpWithEmailEvents
     data class OnConfirmPasswordTextFieldChanged(val value: String) : SignUpWithEmailEvents
+    data object OnNextButtonClick : SignUpWithEmailEvents
 }
 
 class SignUpWithEmailViewModel(private val firebase: FirebaseRepository) : ViewModel() {
@@ -41,26 +42,47 @@ class SignUpWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
 
             is SignUpWithEmailEvents.OnConfirmEmailTextFieldChanged -> {
                 viewModelScope.launch {
-                    _state.update { it.copy(
-                        confirmEmailTextField = event.value.lowercase(Locale.ROOT)
-                    ) }
+                    _state.update {
+                        it.copy(
+                            confirmEmailTextField = event.value.lowercase(Locale.ROOT)
+                        )
+                    }
                 }
             }
 
 
             is SignUpWithEmailEvents.OnPasswordTextFieldChanged -> {
                 viewModelScope.launch {
-                    _state.update { it.copy(
-                        passwordTextField = event.value
-                    ) }
+                    _state.update {
+                        it.copy(
+                            passwordTextField = event.value
+                        )
+                    }
                 }
             }
 
             is SignUpWithEmailEvents.OnConfirmPasswordTextFieldChanged -> {
                 viewModelScope.launch {
-                    _state.update { it.copy(
-                        confirmPasswordTextField = event.value
-                    ) }
+                    _state.update {
+                        it.copy(
+                            confirmPasswordTextField = event.value
+                        )
+                    }
+                }
+            }
+
+            SignUpWithEmailEvents.OnNextButtonClick -> {
+                viewModelScope.launch {
+                    try {
+
+                        firebase.signUpWithEmail(
+                            email = _state.value.emailTextField,
+                            password = _state.value.passwordTextField
+                        )
+
+                    } catch (e: Exception) {
+                        e.stackTrace
+                    }
                 }
             }
         }
