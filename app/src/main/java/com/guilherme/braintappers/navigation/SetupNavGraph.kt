@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.guilherme.braintappers.presentation.screen.home.HomeScreen
 import com.guilherme.braintappers.presentation.screen.signin.SignInScreen
 import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.SignInWithEmailScreen
 import com.guilherme.braintappers.presentation.screen.signup.SignUpScreen
@@ -17,7 +18,7 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = WelcomeScreen
+        startDestination = HomeScren //Todo: Change to Welcome Screen
     ) {
 
         composable<WelcomeScreen> {
@@ -40,6 +41,10 @@ fun SetupNavGraph(
             SignInWithEmailScreen(navController = navController)
         }
 
+        composable<HomeScren> {
+            HomeScreen()
+        }
+
     }
 }
 
@@ -57,3 +62,6 @@ object SignUpWithEmailScreen
 
 @Serializable
 object SignInWithEmailScreen
+
+@Serializable
+object HomeScren

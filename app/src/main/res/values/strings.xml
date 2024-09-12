@@ -35,4 +35,9 @@
     <string name="sign_up_with_password_confirm_error_suporting_text">Passwords does not match.</string>
     <!--  Authenticate With Email Screen  -->
 
+    <!--  HomeScreen  -->
+
+    <string name="home_categories_display">Categories</string>
+
+    <!--  HomeScreen  -->
 </resources>
