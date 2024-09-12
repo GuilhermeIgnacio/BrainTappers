@@ -1,7 +1,6 @@
-package com.guilherme.braintappers.presentation.screen
+package com.guilherme.braintappers.presentation.screen.signup
 
 import androidx.credentials.Credential
-import androidx.credentials.CustomCredential
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential

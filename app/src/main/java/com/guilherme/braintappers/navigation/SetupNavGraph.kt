@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.guilherme.braintappers.presentation.screen.SignInScreen
-import com.guilherme.braintappers.presentation.screen.SignInWithEmailScreen
-import com.guilherme.braintappers.presentation.screen.SignUpScreen
-import com.guilherme.braintappers.presentation.screen.SignUpWithEmailScreen
-import com.guilherme.braintappers.presentation.screen.WelcomeScreen
+import com.guilherme.braintappers.presentation.screen.signin.SignInScreen
+import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.SignInWithEmailScreen
+import com.guilherme.braintappers.presentation.screen.signup.SignUpScreen
+import com.guilherme.braintappers.presentation.screen.signup.signupwithemail.SignUpWithEmailScreen
+import com.guilherme.braintappers.presentation.screen.welcome.WelcomeScreen
 import kotlinx.serialization.Serializable
 
 @Composable

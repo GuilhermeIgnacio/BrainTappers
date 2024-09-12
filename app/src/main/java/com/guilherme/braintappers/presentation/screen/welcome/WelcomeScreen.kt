@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen
+package com.guilherme.braintappers.presentation.screen.welcome
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

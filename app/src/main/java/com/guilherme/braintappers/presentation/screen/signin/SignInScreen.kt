@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen
+package com.guilherme.braintappers.presentation.screen.signin
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource

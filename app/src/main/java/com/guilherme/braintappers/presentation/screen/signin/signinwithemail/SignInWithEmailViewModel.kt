@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen
+package com.guilherme.braintappers.presentation.screen.signin.signinwithemail
 
 import androidx.lifecycle.ViewModel
 import com.guilherme.braintappers.domain.FirebaseRepository

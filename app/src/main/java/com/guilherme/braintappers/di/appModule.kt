@@ -2,9 +2,9 @@ package com.guilherme.braintappers.di
 
 import com.guilherme.braintappers.data.FirebaseImpl
 import com.guilherme.braintappers.domain.FirebaseRepository
-import com.guilherme.braintappers.presentation.screen.SignInWithEmailViewModel
-import com.guilherme.braintappers.presentation.screen.SignUpViewModel
-import com.guilherme.braintappers.presentation.screen.SignUpWithEmailViewModel
+import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.SignInWithEmailViewModel
+import com.guilherme.braintappers.presentation.screen.signup.SignUpViewModel
+import com.guilherme.braintappers.presentation.screen.signup.signupwithemail.SignUpWithEmailViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module

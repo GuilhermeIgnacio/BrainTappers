@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen
+package com.guilherme.braintappers.presentation.screen.signup.signupwithemail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
