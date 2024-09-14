@@ -31,12 +31,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.domain.TriviaApiService
 import com.guilherme.braintappers.util.poppinsFamily
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
+
+    val viewModel = koinViewModel<HomeViewModel>()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -94,7 +102,9 @@ fun HomeScreen() {
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Image(
-                        modifier = Modifier.fillMaxSize().maskClip(MaterialTheme.shapes.extraLarge),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .maskClip(MaterialTheme.shapes.extraLarge),
                         painter = painterResource(id = item.imageResId),
                         contentDescription = "",
                         contentScale = ContentScale.Crop
@@ -126,3 +136,15 @@ data class CarouselItem(
     @DrawableRes val imageResId: Int,
     val contentDescription: String
 )
+
+class HomeViewModel(
+    private val triviaApiService: TriviaApiService
+): ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            triviaApiService.fetchTriviaByCategory("")
+        }
+    }
+
+}
