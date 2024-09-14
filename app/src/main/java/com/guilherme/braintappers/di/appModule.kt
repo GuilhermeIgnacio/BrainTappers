@@ -19,7 +19,7 @@ val appModule = module {
     viewModel { SignUpViewModel(get()) }
     viewModel { SignUpWithEmailViewModel(get()) }
     viewModel { SignInWithEmailViewModel(get()) }
-    viewModel { HomeViewModel(get()) }
+    viewModel { HomeViewModel() }
 
 }
 

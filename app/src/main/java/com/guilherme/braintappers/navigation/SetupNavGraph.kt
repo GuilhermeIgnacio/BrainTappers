@@ -42,7 +42,7 @@ fun SetupNavGraph(
         }
 
         composable<HomeScren> {
-            HomeScreen()
+            HomeScreen(navController = navController)
         }
 
     }
