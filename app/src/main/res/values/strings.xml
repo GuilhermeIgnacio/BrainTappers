@@ -41,6 +41,26 @@
 
     <!--  HomeScreen  -->
 
+    <!--  Trivia Settings Screen  -->
+    <string name="open_menu">Open Menu</string>
+    <string name="close_menu">Close Menu</string>
+    <string name="content_description">Return to Previous Screen</string>
+    <string name="number_of_questions">Number of Questions</string>
+    <string name="question_value">Questions: %s</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="difficulty_value">Difficulty: %s</string>
+    <!--  Trivia Settings Screen  -->
+
+    <!--  Trivia Settings ViewModel -->
+
+    <string name="question">%s Question</string>
+    <string name="questions">%s Questions</string>
+
+    <string name="any_difficulty">Any Difficulty</string>
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="hard">Hard</string>
+
     <!--  Number Of Questions List  -->
 
 </resources>

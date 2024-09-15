@@ -24,9 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.guilherme.braintappers.R
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
 import kotlin.reflect.KFunction1
@@ -47,22 +49,29 @@ fun TriviaSettingsScreen(navController: NavController) {
         IconButton(onClick = { navController.navigateUp() }) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Return to Previous Screen"
+                contentDescription = stringResource(id = R.string.content_description) // Return to Previous Screen
             )
         }
 
         Extracted(
-            text = if (!state.numberOfQuestionsValue.isNullOrEmpty()) "Questions: ${state.numberOfQuestionsValue}" else "Number of Questions",
+            text = if (!state.numberOfQuestionsValue.isNullOrEmpty())
+                stringResource(id = R.string.question_value, state.numberOfQuestionsValue ?: "")
+            else stringResource(id = R.string.number_of_questions),
+
             onClick = { onEvent(TriviaSettingsEvents.OpenNumberOfQuestionsDropdownMenu) },
             isDropdownMenuOpen = state.isNumberOfQuestionsMenuOpen,
-            dropdownItems = viewModel.numberOfQuestions
+            dropdownItems = viewModel.numberOfQuestions,
+            dismissDropdownMenu = { onEvent(TriviaSettingsEvents.DismissDropdownMenu) }
         )
 
         Extracted(
-            text = if (!state.difficultyValue.isNullOrEmpty()) "Difficulty: ${state.difficultyValue}" else "Difficulty",
+            text = if (!state.difficultyValue.isNullOrEmpty())
+                stringResource(id = R.string.difficulty_value, state.difficultyValue ?: "")
+            else stringResource(id = R.string.difficulty),
             onClick = { onEvent(TriviaSettingsEvents.OpenDifficultyMenu) },
             isDropdownMenuOpen = state.isDifficultyMenuOpen,
-            dropdownItems = viewModel.difficulty
+            dropdownItems = viewModel.difficulty,
+            dismissDropdownMenu = { onEvent(TriviaSettingsEvents.DismissDropdownMenu) }
         )
 
     }
@@ -74,7 +83,8 @@ private fun Extracted(
     text: String,
     onClick: () -> Unit,
     isDropdownMenuOpen: Boolean,
-    dropdownItems: List<DropdownItem>
+    dropdownItems: List<DropdownItem>,
+    dismissDropdownMenu: () -> Unit
 ) {
 
     Row(
@@ -92,7 +102,9 @@ private fun Extracted(
             Icon(
                 modifier = Modifier.graphicsLayer(rotationZ = icon),
                 imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = if (isDropdownMenuOpen) "Close" else "Open"
+                contentDescription = if (isDropdownMenuOpen) stringResource(id = R.string.close_menu) else stringResource(
+                    id = R.string.open_menu
+                )
             )
 
         }
@@ -101,10 +113,10 @@ private fun Extracted(
     DropdownMenu(
         modifier = Modifier.fillMaxWidth(),
         expanded = isDropdownMenuOpen,
-        onDismissRequest = { /*TODO*/ }
+        onDismissRequest = dismissDropdownMenu
     ) {
         dropdownItems.forEach {
-            DropdownMenuItem(text = { Text(text = it.text) }, onClick = it.onClick)
+            DropdownMenuItem(text = { Text(text = it.text.asString()) }, onClick = it.onClick)
         }
     }
 
