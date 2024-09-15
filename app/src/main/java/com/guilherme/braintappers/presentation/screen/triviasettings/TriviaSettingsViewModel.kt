@@ -13,12 +13,18 @@ data class DropdownItem(
 
 data class TriviaSettingsState(
     val isNumberOfQuestionsMenuOpen: Boolean = false,
-    val numberOfQuestionsValue: String? = null
+    val numberOfQuestionsValue: String? = null,
+
+    val isDifficultyMenuOpen: Boolean = false,
+    val difficultyValue: String? = null
 )
 
 sealed interface TriviaSettingsEvents {
     data object OpenNumberOfQuestionsDropdownMenu : TriviaSettingsEvents
     data class OnNumberOfQuestionsSelected(val value: String) : TriviaSettingsEvents
+
+    data object OpenDifficultyMenu : TriviaSettingsEvents
+    data class OnDifficultySelected(val value: String) : TriviaSettingsEvents
 }
 
 
@@ -30,7 +36,15 @@ class TriviaSettingsViewModel : ViewModel() {
     val numberOfQuestions = listOf(
         DropdownItem(
             text = "1",
-            onClick = { onEvent(TriviaSettingsEvents.OnNumberOfQuestionsSelected("1")) })
+            onClick = { onEvent(TriviaSettingsEvents.OnNumberOfQuestionsSelected("1")) }
+        )
+    )
+
+    val difficulty = listOf(
+        DropdownItem(
+            text = "Easy",
+            onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected("Easy")) }
+        )
     )
 
     fun onEvent(event: TriviaSettingsEvents) {
@@ -48,6 +62,23 @@ class TriviaSettingsViewModel : ViewModel() {
                     it.copy(
                         numberOfQuestionsValue = event.value,
                         isNumberOfQuestionsMenuOpen = false
+                    )
+                }
+            }
+
+            TriviaSettingsEvents.OpenDifficultyMenu -> {
+                _state.update {
+                    it.copy(
+                        isDifficultyMenuOpen = true
+                    )
+                }
+            }
+
+            is TriviaSettingsEvents.OnDifficultySelected -> {
+                _state.update {
+                    it.copy(
+                        difficultyValue = event.value,
+                        isDifficultyMenuOpen = false
                     )
                 }
             }

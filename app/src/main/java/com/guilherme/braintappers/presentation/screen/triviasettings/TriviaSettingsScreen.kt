@@ -1,5 +1,7 @@
 package com.guilherme.braintappers.presentation.screen.triviasettings
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -19,10 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
+import kotlin.reflect.KFunction1
 
 @Composable
 fun TriviaSettingsScreen(navController: NavController) {
@@ -44,30 +51,62 @@ fun TriviaSettingsScreen(navController: NavController) {
             )
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = state.numberOfQuestionsValue ?: "Number of Questions")
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { onEvent(TriviaSettingsEvents.OpenNumberOfQuestionsDropdownMenu) }) {
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "")
-            }
-        }
+        Extracted(
+            text = if (!state.numberOfQuestionsValue.isNullOrEmpty()) "Questions: ${state.numberOfQuestionsValue}" else "Number of Questions",
+            onClick = { onEvent(TriviaSettingsEvents.OpenNumberOfQuestionsDropdownMenu) },
+            isDropdownMenuOpen = state.isNumberOfQuestionsMenuOpen,
+            dropdownItems = viewModel.numberOfQuestions
+        )
 
-        DropdownMenu(
-            modifier = Modifier.fillMaxWidth(),
-            expanded = state.isNumberOfQuestionsMenuOpen,
-            onDismissRequest = { /*TODO*/ }
-        ) {
-            viewModel.numberOfQuestions.forEach {
-                DropdownMenuItem(text = { Text(text =it.text) }, onClick = it.onClick)
-            }
-        }
+        Extracted(
+            text = if (!state.difficultyValue.isNullOrEmpty()) "Difficulty: ${state.difficultyValue}" else "Difficulty",
+            onClick = { onEvent(TriviaSettingsEvents.OpenDifficultyMenu) },
+            isDropdownMenuOpen = state.isDifficultyMenuOpen,
+            dropdownItems = viewModel.difficulty
+        )
 
-        HorizontalDivider(modifier = Modifier.fillMaxWidth())
     }
 
+}
+
+@Composable
+private fun Extracted(
+    text: String,
+    onClick: () -> Unit,
+    isDropdownMenuOpen: Boolean,
+    dropdownItems: List<DropdownItem>
+) {
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = text, fontFamily = poppinsFamily)
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(onClick = onClick) {
+
+            val icon by animateFloatAsState(targetValue = if (isDropdownMenuOpen) 180f else 0f)
+
+            Icon(
+                modifier = Modifier.graphicsLayer(rotationZ = icon),
+                imageVector = Icons.Default.KeyboardArrowDown,
+                contentDescription = if (isDropdownMenuOpen) "Close" else "Open"
+            )
+
+        }
+    }
+
+    DropdownMenu(
+        modifier = Modifier.fillMaxWidth(),
+        expanded = isDropdownMenuOpen,
+        onDismissRequest = { /*TODO*/ }
+    ) {
+        dropdownItems.forEach {
+            DropdownMenuItem(text = { Text(text = it.text) }, onClick = it.onClick)
+        }
+    }
+
+    HorizontalDivider(modifier = Modifier.fillMaxWidth())
 }
