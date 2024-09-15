@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.navigation.TriviaScreen
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
 
@@ -70,7 +71,7 @@ fun HomeScreen(navController: NavController) {
 
             Card(
                 modifier = Modifier.fillMaxSize(),
-                onClick = { /*TODO*/ }
+                onClick = { navController.navigate(TriviaScreen) }
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Image(
