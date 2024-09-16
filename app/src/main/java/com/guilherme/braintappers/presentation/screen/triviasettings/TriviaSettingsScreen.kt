@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -84,36 +85,43 @@ private fun Extracted(
     dismissDropdownMenu: () -> Unit
 ) {
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = text, fontFamily = poppinsFamily)
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = onClick) {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = text, fontFamily = poppinsFamily)
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = onClick) {
 
-            val icon by animateFloatAsState(targetValue = if (isDropdownMenuOpen) 180f else 0f)
+                val icon by animateFloatAsState(targetValue = if (isDropdownMenuOpen) 180f else 0f)
 
-            Icon(
-                modifier = Modifier.graphicsLayer(rotationZ = icon),
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = if (isDropdownMenuOpen) stringResource(id = R.string.close_menu) else stringResource(
-                    id = R.string.open_menu
+                Icon(
+                    modifier = Modifier.graphicsLayer(rotationZ = icon),
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = if (isDropdownMenuOpen) stringResource(id = R.string.close_menu) else stringResource(
+                        id = R.string.open_menu
+                    )
                 )
-            )
 
+            }
         }
-    }
 
-    DropdownMenu(
-        modifier = Modifier.fillMaxWidth(),
-        expanded = isDropdownMenuOpen,
-        onDismissRequest = dismissDropdownMenu
-    ) {
-        dropdownItems.forEach {
-            DropdownMenuItem(text = { Text(text = it.text.asString()) }, onClick = it.onClick)
+        DropdownMenu(
+            modifier = Modifier.fillMaxWidth(),
+            expanded = isDropdownMenuOpen,
+            onDismissRequest = dismissDropdownMenu
+        ) {
+            dropdownItems.forEach {
+                DropdownMenuItem(text = {
+                    Text(
+                        text = it.text.asString(),
+                        fontFamily = poppinsFamily
+                    )
+                }, onClick = it.onClick)
+            }
         }
     }
 
