@@ -66,9 +66,7 @@ fun TriviaSettingsScreen(navController: NavController) {
         )
 
         Extracted(
-            text = if (!state.difficultyValue.isNullOrEmpty())
-                stringResource(id = R.string.difficulty_value, state.difficultyValue ?: "")
-            else stringResource(id = R.string.difficulty),
+            text = state.difficultyValue?.asString() ?: stringResource(id = R.string.difficulty),
             onClick = { onEvent(TriviaSettingsEvents.OpenDifficultyMenu) },
             isDropdownMenuOpen = state.isDifficultyMenuOpen,
             dropdownItems = viewModel.difficulty,
@@ -76,7 +74,7 @@ fun TriviaSettingsScreen(navController: NavController) {
         )
 
         Extracted(
-            text = state.typeValue ?: "Select Type",
+            text = state.typeValue?.asString() ?: "Select Type",
             onClick = { onEvent(TriviaSettingsEvents.OpenTypeMenu) },
             isDropdownMenuOpen = state.isTypeMenuOpen,
             dropdownItems = viewModel.type,

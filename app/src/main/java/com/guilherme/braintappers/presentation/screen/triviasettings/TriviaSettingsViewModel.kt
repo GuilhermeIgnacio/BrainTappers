@@ -13,10 +13,10 @@ data class TriviaSettingsState(
     val numberOfQuestionsValue: String? = null,
 
     val isDifficultyMenuOpen: Boolean = false,
-    val difficultyValue: String? = null,
+    val difficultyValue: UiText.StringResource? = null,
 
     val isTypeMenuOpen: Boolean = false,
-    val typeValue: String? = null
+    val typeValue: UiText.StringResource? = null
 )
 
 sealed interface TriviaSettingsEvents {
@@ -24,10 +24,10 @@ sealed interface TriviaSettingsEvents {
     data class OnNumberOfQuestionsSelected(val value: String) : TriviaSettingsEvents
 
     data object OpenDifficultyMenu : TriviaSettingsEvents
-    data class OnDifficultySelected(val value: String) : TriviaSettingsEvents
+    data class OnDifficultySelected(val value: UiText.StringResource) : TriviaSettingsEvents
 
     data object OpenTypeMenu : TriviaSettingsEvents
-    data class OnTypeSelected(val value: String) : TriviaSettingsEvents
+    data class OnTypeSelected(val value: UiText.StringResource) : TriviaSettingsEvents
 
     data object DismissDropdownMenu : TriviaSettingsEvents
 }
@@ -53,22 +53,22 @@ class TriviaSettingsViewModel : ViewModel() {
         DropdownItem(
             apiParameter = "", //Empty
             text = UiText.StringResource(resId = R.string.any_difficulty),
-            onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected("Any Difficulty")) }
+            onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected(UiText.StringResource(R.string.any_difficulty))) }
         ),
         DropdownItem(
             apiParameter = "easy",
             text = UiText.StringResource(resId = R.string.easy),
-            onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected("Easy")) }
+            onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected(UiText.StringResource(R.string.easy))) }
         ),
         DropdownItem(
             apiParameter = "medium",
             text = UiText.StringResource(resId = R.string.medium),
-            onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected("Medium")) }
+            onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected(UiText.StringResource(R.string.medium))) }
         ),
         DropdownItem(
             apiParameter = "hard",
             text = UiText.StringResource(resId = R.string.hard),
-            onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected("Hard")) }
+            onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected(UiText.StringResource(R.string.hard))) }
         ),
     )
 
@@ -76,17 +76,17 @@ class TriviaSettingsViewModel : ViewModel() {
         DropdownItem(
             apiParameter = "",
             text = UiText.StringResource(resId = R.string.any_type),
-            onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected("Any Type")) }
+            onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected(UiText.StringResource(R.string.any_type))) }
         ),
         DropdownItem(
             apiParameter = "multiple",
             text = UiText.StringResource(resId = R.string.multiple_choice),
-            onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected("Multiple Choice")) }
+            onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected(UiText.StringResource(R.string.multiple_choice))) }
         ),
         DropdownItem(
             apiParameter = "boolean",
             text = UiText.StringResource(resId = R.string.true_false),
-            onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected("True/False")) }
+            onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected(UiText.StringResource(R.string.true_false))) }
         ),
     )
 
@@ -126,14 +126,6 @@ class TriviaSettingsViewModel : ViewModel() {
                 }
             }
 
-            TriviaSettingsEvents.DismissDropdownMenu -> {
-                _state.update {
-                    it.copy(
-                        isNumberOfQuestionsMenuOpen = false,
-                        isDifficultyMenuOpen = false
-                    )
-                }
-            }
 
             TriviaSettingsEvents.OpenTypeMenu -> {
                 _state.update {
@@ -148,6 +140,16 @@ class TriviaSettingsViewModel : ViewModel() {
                     it.copy(
                         isTypeMenuOpen = false,
                         typeValue = event.value
+                    )
+                }
+            }
+
+            TriviaSettingsEvents.DismissDropdownMenu -> {
+                _state.update {
+                    it.copy(
+                        isNumberOfQuestionsMenuOpen = false,
+                        isDifficultyMenuOpen = false,
+                        isTypeMenuOpen = false
                     )
                 }
             }
