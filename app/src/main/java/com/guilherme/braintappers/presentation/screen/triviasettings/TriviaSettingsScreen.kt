@@ -4,9 +4,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -72,6 +75,14 @@ fun TriviaSettingsScreen(navController: NavController) {
             dismissDropdownMenu = { onEvent(TriviaSettingsEvents.DismissDropdownMenu) }
         )
 
+        Extracted(
+            text = state.typeValue ?: "Select Type",
+            onClick = { onEvent(TriviaSettingsEvents.OpenTypeMenu) },
+            isDropdownMenuOpen = state.isTypeMenuOpen,
+            dropdownItems = viewModel.type,
+            dismissDropdownMenu = { onEvent(TriviaSettingsEvents.DismissDropdownMenu) }
+        )
+
     }
 
 }
@@ -115,12 +126,15 @@ private fun Extracted(
             onDismissRequest = dismissDropdownMenu
         ) {
             dropdownItems.forEach {
-                DropdownMenuItem(text = {
-                    Text(
-                        text = it.text.asString(),
-                        fontFamily = poppinsFamily
-                    )
-                }, onClick = it.onClick)
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = it.text.asString(),
+                            fontFamily = poppinsFamily
+                        )
+                    },
+                    onClick = it.onClick
+                )
             }
         }
     }

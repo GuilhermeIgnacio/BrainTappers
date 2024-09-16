@@ -60,6 +60,10 @@
     <string name="easy">Easy</string>
     <string name="medium">Medium</string>
     <string name="hard">Hard</string>
+    
+    <string name="any_type">Any Type</string>
+    <string name="multiple_choice">Multiple Choice</string>
+    <string name="true_false">True/False</string>
 
     <!--  Number Of Questions List  -->
 
