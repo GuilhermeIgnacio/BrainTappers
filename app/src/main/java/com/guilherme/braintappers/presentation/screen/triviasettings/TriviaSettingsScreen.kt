@@ -1,37 +1,20 @@
 package com.guilherme.braintappers.presentation.screen.triviasettings
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.guilherme.braintappers.R
-import com.guilherme.braintappers.domain.model.DropdownItem
-import com.guilherme.braintappers.util.poppinsFamily
+import com.guilherme.braintappers.presentation.component.TriviaSettingsDropdownMenu
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -54,7 +37,7 @@ fun TriviaSettingsScreen(navController: NavController) {
             )
         }
 
-        Extracted(
+        TriviaSettingsDropdownMenu(
             text = if (!state.numberOfQuestionsValue.isNullOrEmpty())
                 stringResource(id = R.string.question_value, state.numberOfQuestionsValue ?: "")
             else stringResource(id = R.string.number_of_questions),
@@ -65,7 +48,7 @@ fun TriviaSettingsScreen(navController: NavController) {
             dismissDropdownMenu = { onEvent(TriviaSettingsEvents.DismissDropdownMenu) }
         )
 
-        Extracted(
+        TriviaSettingsDropdownMenu(
             text = state.difficultyValue?.asString() ?: stringResource(id = R.string.difficulty),
             onClick = { onEvent(TriviaSettingsEvents.OpenDifficultyMenu) },
             isDropdownMenuOpen = state.isDifficultyMenuOpen,
@@ -73,7 +56,7 @@ fun TriviaSettingsScreen(navController: NavController) {
             dismissDropdownMenu = { onEvent(TriviaSettingsEvents.DismissDropdownMenu) }
         )
 
-        Extracted(
+        TriviaSettingsDropdownMenu(
             text = state.typeValue?.asString() ?: "Select Type",
             onClick = { onEvent(TriviaSettingsEvents.OpenTypeMenu) },
             isDropdownMenuOpen = state.isTypeMenuOpen,
@@ -83,59 +66,4 @@ fun TriviaSettingsScreen(navController: NavController) {
 
     }
 
-}
-
-@Composable
-private fun Extracted(
-    text: String,
-    onClick: () -> Unit,
-    isDropdownMenuOpen: Boolean,
-    dropdownItems: List<DropdownItem>,
-    dismissDropdownMenu: () -> Unit
-) {
-
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = text, fontFamily = poppinsFamily)
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = onClick) {
-
-                val icon by animateFloatAsState(targetValue = if (isDropdownMenuOpen) 180f else 0f)
-
-                Icon(
-                    modifier = Modifier.graphicsLayer(rotationZ = icon),
-                    imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isDropdownMenuOpen) stringResource(id = R.string.close_menu) else stringResource(
-                        id = R.string.open_menu
-                    )
-                )
-
-            }
-        }
-
-        DropdownMenu(
-            modifier = Modifier.fillMaxWidth(),
-            expanded = isDropdownMenuOpen,
-            onDismissRequest = dismissDropdownMenu
-        ) {
-            dropdownItems.forEach {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = it.text.asString(),
-                            fontFamily = poppinsFamily
-                        )
-                    },
-                    onClick = it.onClick
-                )
-            }
-        }
-    }
-
-    HorizontalDivider(modifier = Modifier.fillMaxWidth())
 }
