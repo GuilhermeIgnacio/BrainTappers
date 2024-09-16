@@ -1,18 +1,12 @@
 package com.guilherme.braintappers.presentation.screen.triviasettings
 
-import androidx.annotation.StringRes
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.domain.model.DropdownItem
+import com.guilherme.braintappers.presentation.UiText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-
-data class DropdownItem(
-    val text: UiText.StringResource,
-    val onClick: () -> Unit
-)
 
 data class TriviaSettingsState(
     val isNumberOfQuestionsMenuOpen: Boolean = false,
@@ -114,24 +108,6 @@ class TriviaSettingsViewModel : ViewModel() {
                     isDifficultyMenuOpen = false
                 ) }
             }
-        }
-    }
-
-}
-
-sealed class UiText {
-    data class DynamicString(val value: String) : UiText()
-
-    class StringResource(
-        @StringRes val resId: Int,
-        vararg val args: Any
-    ) : UiText()
-
-    @Composable
-    fun asString(): String {
-        return when (this) {
-            is DynamicString -> value
-            is StringResource -> stringResource(id = resId, formatArgs = args)
         }
     }
 
