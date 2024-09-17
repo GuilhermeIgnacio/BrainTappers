@@ -29,6 +29,8 @@ sealed interface TriviaSettingsEvents {
     data object OpenTypeMenu : TriviaSettingsEvents
     data class OnTypeSelected(val value: UiText.StringResource) : TriviaSettingsEvents
 
+    data object OnStartButtonClicked : TriviaSettingsEvents
+
     data object DismissDropdownMenu : TriviaSettingsEvents
 }
 
@@ -144,6 +146,10 @@ class TriviaSettingsViewModel : ViewModel() {
                 }
             }
 
+            TriviaSettingsEvents.OnStartButtonClicked -> {
+                
+            }
+
             TriviaSettingsEvents.DismissDropdownMenu -> {
                 _state.update {
                     it.copy(
@@ -153,6 +159,7 @@ class TriviaSettingsViewModel : ViewModel() {
                     )
                 }
             }
+
         }
     }
 

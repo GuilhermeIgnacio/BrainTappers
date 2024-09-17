@@ -19,7 +19,7 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = HomeScren //Todo: Change to Welcome Screen
+        startDestination = HomeScreen //Todo: Change to Welcome Screen
     ) {
 
         composable<WelcomeScreen> {
@@ -42,7 +42,7 @@ fun SetupNavGraph(
             SignInWithEmailScreen(navController = navController)
         }
 
-        composable<HomeScren> {
+        composable<HomeScreen> {
             HomeScreen(navController = navController)
         }
 
@@ -69,7 +69,7 @@ object SignUpWithEmailScreen
 object SignInWithEmailScreen
 
 @Serializable
-object HomeScren
+object HomeScreen
 
 @Serializable
 object TriviaScreen
