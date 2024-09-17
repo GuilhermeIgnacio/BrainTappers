@@ -5,5 +5,5 @@ import com.guilherme.braintappers.presentation.UiText
 data class DropdownItem(
     val apiParameter: String,
     val text: UiText.StringResource,
-    val onClick: () -> Unit
+    val onClick: (DropdownItem) -> Unit
 )

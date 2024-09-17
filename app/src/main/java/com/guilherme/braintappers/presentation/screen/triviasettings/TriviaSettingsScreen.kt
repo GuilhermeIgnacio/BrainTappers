@@ -49,10 +49,7 @@ fun TriviaSettingsScreen(navController: NavController) {
         }
 
         TriviaSettingsDropdownMenu(
-            text = if (!state.numberOfQuestionsValue.isNullOrEmpty())
-                stringResource(id = R.string.question_value, state.numberOfQuestionsValue ?: "")
-            else stringResource(id = R.string.number_of_questions),
-
+            text = state.numberOfQuestionsValue?.text?.asString() ?: stringResource(id = R.string.number_of_questions),
             onClick = { onEvent(TriviaSettingsEvents.OpenNumberOfQuestionsDropdownMenu) },
             isDropdownMenuOpen = state.isNumberOfQuestionsMenuOpen,
             dropdownItems = viewModel.numberOfQuestions,
@@ -62,7 +59,8 @@ fun TriviaSettingsScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(32.dp))
 
         TriviaSettingsDropdownMenu(
-            text = state.difficultyValue?.asString() ?: stringResource(id = R.string.difficulty),
+            text = state.difficultyValue?.text?.asString()
+                ?: stringResource(id = R.string.difficulty),
             onClick = { onEvent(TriviaSettingsEvents.OpenDifficultyMenu) },
             isDropdownMenuOpen = state.isDifficultyMenuOpen,
             dropdownItems = viewModel.difficulty,
@@ -72,7 +70,7 @@ fun TriviaSettingsScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(32.dp))
 
         TriviaSettingsDropdownMenu(
-            text = state.typeValue?.asString() ?: stringResource(id = R.string.select_type),
+            text = state.typeValue?.text?.asString() ?: stringResource(id = R.string.select_type),
             onClick = { onEvent(TriviaSettingsEvents.OpenTypeMenu) },
             isDropdownMenuOpen = state.isTypeMenuOpen,
             dropdownItems = viewModel.type,

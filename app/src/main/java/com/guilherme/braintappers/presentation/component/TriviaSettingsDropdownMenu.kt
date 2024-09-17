@@ -71,11 +71,15 @@ fun TriviaSettingsDropdownMenu(
                             fontFamily = poppinsFamily
                         )
                     },
-                    onClick = it.onClick
+                    onClick = { it.onClick(it) }
                 )
             }
         }
     }
 
-    HorizontalDivider(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp))
+    HorizontalDivider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp)
+    )
 }
