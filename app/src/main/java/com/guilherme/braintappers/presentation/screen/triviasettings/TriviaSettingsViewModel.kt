@@ -1,8 +1,11 @@
 package com.guilherme.braintappers.presentation.screen.triviasettings
 
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.domain.model.DropdownItem
+import com.guilherme.braintappers.navigation.TriviaScreen
 import com.guilherme.braintappers.presentation.UiText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +32,7 @@ sealed interface TriviaSettingsEvents {
     data object OpenTypeMenu : TriviaSettingsEvents
     data class OnTypeSelected(val value: DropdownItem) : TriviaSettingsEvents
 
-    data object OnStartButtonClicked : TriviaSettingsEvents
+    data class OnStartButtonClicked(val value: NavController) : TriviaSettingsEvents
 
     data object DismissDropdownMenu : TriviaSettingsEvents
 }
@@ -42,7 +45,7 @@ class TriviaSettingsViewModel : ViewModel() {
 
     val numberOfQuestions = (1..10).map { number ->
         DropdownItem(
-            apiParameter = number.toString(),
+            apiParameter = "amount=$number",
             text = UiText.StringResource(
                 resId = if (number == 1) R.string.question else R.string.questions,
                 number.toString()
@@ -58,17 +61,17 @@ class TriviaSettingsViewModel : ViewModel() {
             onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected(it)) }
         ),
         DropdownItem(
-            apiParameter = "easy",
+            apiParameter = "&difficulty=easy",
             text = UiText.StringResource(resId = R.string.easy),
             onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected(it)) }
         ),
         DropdownItem(
-            apiParameter = "medium",
+            apiParameter = "&difficulty=medium",
             text = UiText.StringResource(resId = R.string.medium),
             onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected(it)) }
         ),
         DropdownItem(
-            apiParameter = "hard",
+            apiParameter = "&difficulty=hard",
             text = UiText.StringResource(resId = R.string.hard),
             onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected(it)) }
         ),
@@ -81,12 +84,12 @@ class TriviaSettingsViewModel : ViewModel() {
             onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected(it)) }
         ),
         DropdownItem(
-            apiParameter = "multiple",
+            apiParameter = "&type=multiple",
             text = UiText.StringResource(resId = R.string.multiple_choice),
             onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected(it)) }
         ),
         DropdownItem(
-            apiParameter = "boolean",
+            apiParameter = "&type=boolean",
             text = UiText.StringResource(resId = R.string.true_false),
             onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected(it)) }
         ),
@@ -146,8 +149,20 @@ class TriviaSettingsViewModel : ViewModel() {
                 }
             }
 
-            TriviaSettingsEvents.OnStartButtonClicked -> {
+            is TriviaSettingsEvents.OnStartButtonClicked -> {
 
+                val numberOfQuestions: String =
+                    _state.value.numberOfQuestionsValue?.apiParameter ?: "amount=10"
+                val difficulty: String = _state.value.difficultyValue?.apiParameter ?: ""
+                val type: String = _state.value.typeValue?.apiParameter ?: ""
+
+                event.value.navigate(
+                    TriviaScreen(
+                        numberOfQuestions = numberOfQuestions,
+                        difficulty = difficulty,
+                        type = type
+                    )
+                )
             }
 
             TriviaSettingsEvents.DismissDropdownMenu -> {

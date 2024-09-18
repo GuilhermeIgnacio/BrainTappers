@@ -4,12 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.guilherme.braintappers.presentation.screen.home.HomeScreen
 import com.guilherme.braintappers.presentation.screen.triviasettings.TriviaSettingsScreen
 import com.guilherme.braintappers.presentation.screen.signin.SignInScreen
 import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.SignInWithEmailScreen
 import com.guilherme.braintappers.presentation.screen.signup.SignUpScreen
 import com.guilherme.braintappers.presentation.screen.signup.signupwithemail.SignUpWithEmailScreen
+import com.guilherme.braintappers.presentation.screen.trivia.TriviaMainScreen
 import com.guilherme.braintappers.presentation.screen.welcome.WelcomeScreen
 import kotlinx.serialization.Serializable
 
@@ -46,8 +48,20 @@ fun SetupNavGraph(
             HomeScreen(navController = navController)
         }
 
-        composable<TriviaScreen> {
+        composable<TriviaSettingsScreen> {
             TriviaSettingsScreen(navController = navController)
+        }
+
+        composable<TriviaScreen> {
+            val args = it.toRoute<TriviaScreen>()
+
+            TriviaMainScreen(
+                navController = navController,
+                numberOfQuestions = args.numberOfQuestions,
+                difficulty = args.difficulty,
+                type = args.type
+            )
+
         }
 
     }
@@ -72,5 +86,12 @@ object SignInWithEmailScreen
 object HomeScreen
 
 @Serializable
-object TriviaScreen
+object TriviaSettingsScreen
+
+@Serializable
+data class TriviaScreen(
+    val numberOfQuestions: String,
+    val difficulty: String,
+    val type: String
+)
 

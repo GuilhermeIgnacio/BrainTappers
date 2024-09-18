@@ -83,7 +83,7 @@ fun TriviaSettingsScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp),
-            onClick = { },
+            onClick = { onEvent(TriviaSettingsEvents.OnStartButtonClicked(navController)) },
             shape = RoundedCornerShape(20),
             colors = ButtonDefaults.buttonColors(
                 containerColor = primaryColor,

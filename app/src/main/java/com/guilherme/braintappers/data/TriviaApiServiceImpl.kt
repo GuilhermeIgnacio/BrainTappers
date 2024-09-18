@@ -35,9 +35,15 @@ class TriviaApiServiceImpl : TriviaApiService {
         }
     }
 
-    override suspend fun fetchTriviaByCategory(categoryId: String): Result<ApiResponse, DataError> {
+    override suspend fun fetchTriviaByCategory(
+        numberOfQuestions: String,
+        categoryId: String,
+        difficulty: String,
+        type: String
+    ): Result<ApiResponse, DataError> {
         return try {
-            val response = httpClient.get("https://opentdb.com/api.php?amount=10&category=10")
+            val response =
+                httpClient.get("https://opentdb.com/api.php?$numberOfQuestions&category=10$difficulty$type")
 
             when (response.status) {
                 HttpStatusCode.OK -> {

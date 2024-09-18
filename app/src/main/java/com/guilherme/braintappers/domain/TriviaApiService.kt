@@ -5,6 +5,11 @@ import kotlin.Result
 
 interface TriviaApiService {
 
-    suspend fun fetchTriviaByCategory(categoryId: String): com.guilherme.braintappers.domain.Result<ApiResponse, DataError>
+    suspend fun fetchTriviaByCategory(
+        numberOfQuestions: String,
+        categoryId: String,
+        difficulty: String,
+        type: String
+    ): com.guilherme.braintappers.domain.Result<ApiResponse, DataError>
 
 }
