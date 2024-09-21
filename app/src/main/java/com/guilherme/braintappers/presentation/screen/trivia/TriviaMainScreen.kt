@@ -91,7 +91,7 @@ fun TriviaMainScreen(
             answers.forEach {
 
                 val animatedButtonColor by animateColorAsState(
-                    targetValue = if (state.selectedAnswer == it) primaryColor else Color.Transparent,
+                    targetValue = if (state.selectedAnswer[state.currentQuestion] == it) primaryColor else Color.Transparent,
                     animationSpec = tween(200, 0, LinearEasing), label = ""
                 )
 
@@ -100,11 +100,11 @@ fun TriviaMainScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = if (state.selectedAnswer == it) Color.White else Color.Black,
+                        contentColor = if (state.selectedAnswer[state.currentQuestion] == it) Color.White else Color.Black,
                         containerColor = animatedButtonColor,
                     ),
                     border = ButtonDefaults.outlinedButtonBorder(
-                        enabled = if (state.selectedAnswer == it) false else true
+                        enabled = if (state.selectedAnswer[state.currentQuestion] == it) false else true
                     ),
                     onClick = {
                         val userTrivia = UserTrivia(

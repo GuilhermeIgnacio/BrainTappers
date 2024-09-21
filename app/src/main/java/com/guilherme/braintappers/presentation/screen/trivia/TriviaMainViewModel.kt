@@ -1,18 +1,20 @@
 package com.guilherme.braintappers.presentation.screen.trivia
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.domain.TriviaApiService
 import com.guilherme.braintappers.domain.model.Question
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class TriviaMainState(
     val questions: List<Question>? = null,
     val currentQuestion: Int = 0,
     val answeredQuestions: MutableList<UserTrivia> = mutableListOf(),
-    val selectedAnswer: String? = null
+    val selectedAnswer: List<String> = mutableListOf("", "", "", "", "", "", "", "", "", "")
 )
 
 sealed interface TriviaMainEvents {
@@ -78,7 +80,15 @@ class TriviaMainViewModel(
 
             is TriviaMainEvents.OnAnswerClicked -> {
 
+
                 val answeredQuestionsList = _state.value.answeredQuestions
+                val selectedAnswersList = _state.value.selectedAnswer.toMutableList()
+
+                selectedAnswersList[_state.value.currentQuestion] =
+                    event.value.selectedAnswer
+
+
+
 
                 val existingIndex =
                     answeredQuestionsList.indexOfFirst { it.question == event.value.question }
@@ -91,9 +101,16 @@ class TriviaMainViewModel(
                     answeredQuestionsList.add(event.value)
                 }
 
-                _state.update { it.copy(
-                    selectedAnswer = event.value.selectedAnswer
-                ) }
+                _state.update {
+                    it.copy(
+                        selectedAnswer = selectedAnswersList.toList()
+                    )
+                }
+
+//                if (existingAnswerIndex != -1) {
+//
+//                }
+
 
                 println(_state.value.answeredQuestions)
 
