@@ -1,17 +1,18 @@
 package com.guilherme.braintappers.presentation.screen.trivia
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.domain.TriviaApiService
+import com.guilherme.braintappers.domain.model.ApiResponse
 import com.guilherme.braintappers.domain.model.Question
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 data class TriviaMainState(
     val questions: List<Question>? = null,
+    val result: Result<ApiResponse, DataError>? = null,
     val currentQuestion: Int = 0,
     val answeredQuestions: MutableList<UserTrivia> = mutableListOf(),
     val selectedAnswer: List<String> = mutableListOf("", "", "", "", "", "", "", "", "", "")
@@ -44,6 +45,10 @@ class TriviaMainViewModel(
             difficulty = difficulty,
             type = type,
         )
+
+        _state.update { it.copy(
+            result = lorem
+        ) }
 
         when (lorem) {
             is Result.Success -> {

@@ -1,5 +1,20 @@
 package com.guilherme.braintappers.domain
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+
 typealias RootError = Error
 
 sealed interface Error
@@ -9,8 +24,42 @@ sealed interface Result<out D, out E : RootError> {
     data class Error<out D, out E : RootError>(val error: E) : Result<D, E>
 }
 
-sealed interface DataError: Error {
-    enum class Response: DataError{
+@Composable
+fun <D, E : RootError> Result<D, E>.DisplayResult(
+    onIdle: (@Composable () -> Unit)? = null,
+    onLoading: (@Composable () -> Unit)? = null,
+    onError: (@Composable (E) -> Unit)? = null,
+    onSuccess: (@Composable (D) -> Unit)? = null,
+    transitionSpec: ContentTransform = scaleIn(tween(durationMillis = 400))
+            + fadeIn(tween(durationMillis = 800))
+            togetherWith scaleOut(tween(durationMillis = 400))
+            + fadeOut(tween(durationMillis = 800))
+) {
+    AnimatedContent(
+        targetState = this,
+        transitionSpec = { transitionSpec },
+        label = "ContentAnimation"
+    ) { state ->
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            when (state) {
+                is Result.Success -> {
+                    onSuccess?.invoke(state.data)
+                }
+
+                is Result.Error -> {
+                    onError?.invoke(state.error)
+                }
+            }
+        }
+    }
+}
+
+sealed interface DataError : Error {
+    enum class Response : DataError {
         UNKNOWN
     }
 }
