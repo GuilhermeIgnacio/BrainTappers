@@ -21,6 +21,7 @@ sealed interface TriviaMainEvents {
     data class OnAnswerClicked(val value: UserTrivia) : TriviaMainEvents
     data object PreviousQuestion : TriviaMainEvents
     data object NextQuestion : TriviaMainEvents
+    data object FinishTrivia: TriviaMainEvents
 }
 
 class TriviaMainViewModel(
@@ -87,9 +88,6 @@ class TriviaMainViewModel(
                 selectedAnswersList[_state.value.currentQuestion] =
                     event.value.selectedAnswer
 
-
-
-
                 val existingIndex =
                     answeredQuestionsList.indexOfFirst { it.question == event.value.question }
 
@@ -107,13 +105,10 @@ class TriviaMainViewModel(
                     )
                 }
 
-//                if (existingAnswerIndex != -1) {
-//
-//                }
+            }
 
-
-                println(_state.value.answeredQuestions)
-
+            TriviaMainEvents.FinishTrivia -> {
+                
             }
         }
     }

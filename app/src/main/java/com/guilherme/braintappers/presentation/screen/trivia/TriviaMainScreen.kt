@@ -4,6 +4,7 @@ import android.text.Html
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -19,12 +20,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
@@ -66,7 +71,19 @@ fun TriviaMainScreen(
             .fillMaxWidth()
             .statusBarsPadding()
     ) {
-//        LinearProgressIndicator(progress = {  })
+
+        state.questions?.let {
+
+            val linearProgressIndicator by animateFloatAsState(
+                targetValue = state.currentQuestion.plus(1) / it.size.toFloat(),
+            )
+
+            LinearProgressIndicator(
+                modifier = Modifier.fillMaxWidth(),
+                color = primaryColor,
+                progress = { linearProgressIndicator }
+            )
+        }
 
         IconButton(onClick = { navController.navigateUp() }) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
@@ -79,49 +96,57 @@ fun TriviaMainScreen(
                 answers.shuffled().map { it.parseHtml() }
             }
 
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = question[state.currentQuestion].question.parseHtml(),
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                fontWeight = FontWeight.Bold,
-                fontFamily = poppinsFamily
-            )
+            AnimatedContent(targetState = state.currentQuestion) { currentQuestion ->
 
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
 
-            answers.forEach {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = question[currentQuestion].question.parseHtml(),
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = poppinsFamily
+                    )
 
-                val animatedButtonColor by animateColorAsState(
-                    targetValue = if (state.selectedAnswer[state.currentQuestion] == it) primaryColor else Color.Transparent,
-                    animationSpec = tween(200, 0, LinearEasing), label = ""
-                )
+                    answers.forEach {
 
-
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = if (state.selectedAnswer[state.currentQuestion] == it) Color.White else Color.Black,
-                        containerColor = animatedButtonColor,
-                    ),
-                    border = ButtonDefaults.outlinedButtonBorder(
-                        enabled = if (state.selectedAnswer[state.currentQuestion] == it) false else true
-                    ),
-                    onClick = {
-                        val userTrivia = UserTrivia(
-                            question = question[state.currentQuestion].question.parseHtml(),
-                            correctAnswer = question[state.currentQuestion].correctAnswer.parseHtml(),
-                            selectedAnswer = it
+                        val animatedButtonColor by animateColorAsState(
+                            targetValue = if (state.selectedAnswer[state.currentQuestion] == it) primaryColor else Color.Transparent,
+                            animationSpec = tween(200, 0, LinearEasing), label = ""
                         )
 
-                        onEvent(TriviaMainEvents.OnAnswerClicked(userTrivia))
 
+                        OutlinedButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(20),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = if (state.selectedAnswer[state.currentQuestion] == it) Color.White else Color.Black,
+                                containerColor = animatedButtonColor,
+                            ),
+                            border = ButtonDefaults.outlinedButtonBorder(
+                                enabled = state.selectedAnswer[state.currentQuestion] != it
+                            ),
+                            onClick = {
+                                val userTrivia = UserTrivia(
+                                    question = question[state.currentQuestion].question.parseHtml(),
+                                    correctAnswer = question[state.currentQuestion].correctAnswer.parseHtml(),
+                                    selectedAnswer = it
+                                )
+
+                                onEvent(TriviaMainEvents.OnAnswerClicked(userTrivia))
+
+                            }
+                        ) {
+                            Text(
+                                text = it,
+                                fontFamily = poppinsFamily,
+                                fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                            )
+                        }
                     }
-                ) {
-                    Text(
-                        text = it,
-                        fontFamily = poppinsFamily,
-                        fontSize = MaterialTheme.typography.bodyLarge.fontSize
-                    )
+
                 }
             }
 
@@ -144,8 +169,9 @@ fun TriviaMainScreen(
                 Button(
                     modifier = Modifier.weight(1f),
                     onClick = {
-                        if (state.currentQuestion != question.size - 1) onEvent(TriviaMainEvents.NextQuestion) else {/*Todo: Finish Quiz*/
-                        }
+                        if (state.currentQuestion != question.size - 1)
+                            onEvent(TriviaMainEvents.NextQuestion)
+                        else onEvent(TriviaMainEvents.FinishTrivia)
                     },
                     shape = RoundedCornerShape(20),
                     colors = ButtonDefaults.buttonColors(
@@ -156,13 +182,15 @@ fun TriviaMainScreen(
                     AnimatedContent(
                         targetState = state.currentQuestion == question.size - 1
                     ) {
-                        Text(text = if (!it) "Next Question" else "Finish", fontFamily = poppinsFamily)
+                        Text(
+                            text = if (!it) "Next Question" else "Finish",
+                            fontFamily = poppinsFamily
+                        )
                     }
 
                 }
 
             }
-
 
         }
 
