@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,12 +29,25 @@ import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * This code defines a screen for trivia settings using Jetpack Compose. It allows the user to
+ * customize the number of questions, difficulty, and type of questions for a trivia game.
+ *
+ * This Screen Appears Before TriviaMainScreen
+ */
 @Composable
-fun TriviaSettingsScreen(navController: NavController) {
+fun TriviaSettingsScreen(
+    navController: NavController,
+    categoryId: String
+) {
 
     val viewModel = koinViewModel<TriviaSettingsViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
+
+    LaunchedEffect(Unit) {
+        viewModel.setCategoryId(categoryId = categoryId)
+    }
 
     Column(
         modifier = Modifier
@@ -49,7 +63,8 @@ fun TriviaSettingsScreen(navController: NavController) {
         }
 
         TriviaSettingsDropdownMenu(
-            text = state.numberOfQuestionsValue?.text?.asString() ?: stringResource(id = R.string.number_of_questions),
+            text = state.numberOfQuestionsValue?.text?.asString()
+                ?: stringResource(id = R.string.number_of_questions),
             onClick = { onEvent(TriviaSettingsEvents.OpenNumberOfQuestionsDropdownMenu) },
             isDropdownMenuOpen = state.isNumberOfQuestionsMenuOpen,
             dropdownItems = viewModel.numberOfQuestions,

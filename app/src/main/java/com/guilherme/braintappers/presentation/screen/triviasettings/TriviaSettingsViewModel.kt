@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class TriviaSettingsState(
+
+    val categoryId: String? = null,
+
     val isNumberOfQuestionsMenuOpen: Boolean = false,
     val numberOfQuestionsValue: DropdownItem? = null,
 
@@ -95,6 +98,14 @@ class TriviaSettingsViewModel : ViewModel() {
         ),
     )
 
+    fun setCategoryId(categoryId: String) {
+        _state.update {
+            it.copy(
+                categoryId = categoryId
+            )
+        }
+    }
+
     fun onEvent(event: TriviaSettingsEvents) {
         when (event) {
             TriviaSettingsEvents.OpenNumberOfQuestionsDropdownMenu -> {
@@ -151,13 +162,18 @@ class TriviaSettingsViewModel : ViewModel() {
 
             is TriviaSettingsEvents.OnStartButtonClicked -> {
 
+                val categoryId = _state.value.categoryId ?: ""
+
                 val numberOfQuestions: String =
                     _state.value.numberOfQuestionsValue?.apiParameter ?: "amount=10"
+
                 val difficulty: String = _state.value.difficultyValue?.apiParameter ?: ""
+
                 val type: String = _state.value.typeValue?.apiParameter ?: ""
 
                 event.value.navigate(
                     TriviaScreen(
+                        categoryId = categoryId,
                         numberOfQuestions = numberOfQuestions,
                         difficulty = difficulty,
                         type = type

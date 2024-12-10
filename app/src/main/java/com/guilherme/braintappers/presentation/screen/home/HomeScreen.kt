@@ -71,7 +71,7 @@ fun HomeScreen(navController: NavController) {
 
             Card(
                 modifier = Modifier.fillMaxSize(),
-                onClick = { navController.navigate(TriviaSettingsScreen) }
+                onClick = { navController.navigate(TriviaSettingsScreen(categoryId = item.id.toString())) }
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Image(

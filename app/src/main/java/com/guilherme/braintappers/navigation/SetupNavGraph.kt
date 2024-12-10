@@ -49,7 +49,12 @@ fun SetupNavGraph(
         }
 
         composable<TriviaSettingsScreen> {
-            TriviaSettingsScreen(navController = navController)
+            val args = it.toRoute<TriviaSettingsScreen>()
+
+            TriviaSettingsScreen(
+                navController = navController,
+                categoryId = args.categoryId
+            )
         }
 
         composable<TriviaScreen> {
@@ -57,6 +62,7 @@ fun SetupNavGraph(
 
             TriviaMainScreen(
                 navController = navController,
+                categoryId = args.categoryId,
                 numberOfQuestions = args.numberOfQuestions,
                 difficulty = args.difficulty,
                 type = args.type
@@ -86,10 +92,13 @@ object SignInWithEmailScreen
 object HomeScreen
 
 @Serializable
-object TriviaSettingsScreen
+data class TriviaSettingsScreen(
+    val categoryId: String
+)
 
 @Serializable
 data class TriviaScreen(
+    val categoryId: String,
     val numberOfQuestions: String,
     val difficulty: String,
     val type: String
