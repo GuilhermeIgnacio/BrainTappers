@@ -16,12 +16,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class TriviaMainState(
-    val questions: List<Question>? = null,
+    val answers: List<List<String>> = emptyList(),
+    val questions: List<Question> = emptyList(),
+    val questionIndex: Int = 0,
     val result: Result<ApiResponse, DataError>? = null,
 )
 
 sealed interface TriviaMainEvents {
-
+    data object PreviousQuestion : TriviaMainEvents
+    data object NextQuestion : TriviaMainEvents
 }
 
 class TriviaMainViewModel(
@@ -53,8 +56,14 @@ class TriviaMainViewModel(
 
         when (trivia) {
             is Result.Success -> {
+
+                val answers = trivia.data.results.map { it.incorrectAnswers + it.correctAnswer }
+                    .toMutableList()
+                answers.map { it.shuffled() }
+
                 _state.update {
                     it.copy(
+                        answers = answers,
                         questions = trivia.data.results,
                     )
                 }
@@ -69,8 +78,25 @@ class TriviaMainViewModel(
 
     fun onEvent(event: TriviaMainEvents) {
         when (event) {
+            TriviaMainEvents.PreviousQuestion -> {
+                if (_state.value.questionIndex > 0) {
+                    _state.update {
+                        it.copy(
+                            questionIndex = _state.value.questionIndex - 1
+                        )
+                    }
+                }
+            }
 
-            else -> {}
+            TriviaMainEvents.NextQuestion -> {
+                if (_state.value.questionIndex != _state.value.questions.size - 1) {
+                    _state.update {
+                        it.copy(
+                            questionIndex = _state.value.questionIndex + 1
+                        )
+                    }
+                }
+            }
         }
     }
 
