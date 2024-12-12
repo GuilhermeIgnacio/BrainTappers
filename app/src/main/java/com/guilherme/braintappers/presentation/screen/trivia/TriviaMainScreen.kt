@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,6 +35,7 @@ import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.DisplayResult
+import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -78,14 +84,32 @@ fun TriviaMainScreen(
                 val questionIndex = state.questionIndex
                 val answers = state.answers
 
+                // Question
                 Text(
                     text = questions[questionIndex].question.parseHtml(),
-                    fontWeight = FontWeight.Bold
+                    fontFamily = poppinsFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
 
                 LazyColumn {
                     items(answers[questionIndex]) {
-                        Text(text = it.parseHtml())
+
+                        OutlinedButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(10f),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = Color.Black
+                            ),
+                            onClick = {
+                                onEvent(TriviaMainEvents.OnAnswerClicked(it.parseHtml()))
+                            }) {
+                            Text(
+                                text = it.parseHtml(),
+                                fontFamily = poppinsFamily
+                            )
+                        }
+
                     }
                 }
 

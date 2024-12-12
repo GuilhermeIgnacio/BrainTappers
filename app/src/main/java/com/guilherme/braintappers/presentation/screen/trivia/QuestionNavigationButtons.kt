@@ -67,9 +67,10 @@ fun QuestionNavigationButtons(
 
                     Text("Previous", fontFamily = poppinsFamily)
                 }
-            }
 
-            Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+
+            }
 
             OutlinedButton(
                 modifier = Modifier.weight(1f),
@@ -91,7 +92,7 @@ fun QuestionNavigationButtons(
 
                 if (it != questionsListSize - 1) {
                     Icon(
-                        Icons.AutoMirrored.Filled.NavigateNext,
+                        imageVector = Icons.AutoMirrored.Filled.NavigateNext,
                         contentDescription = "Navigate to next question"
                     )
                 }
