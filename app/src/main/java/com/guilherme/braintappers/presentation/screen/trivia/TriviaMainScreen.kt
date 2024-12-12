@@ -92,7 +92,11 @@ fun TriviaMainScreen(
                 /**
                  * Navigation buttons for going to the next, previous question or finish when in the last question
                  */
-                QuestionNavigationButtons(onEvent)
+                QuestionNavigationButtons(
+                    onEvent = onEvent,
+                    questionIndex = questionIndex,
+                    questionsListSize = questions.size,
+                )
 
             }
 
