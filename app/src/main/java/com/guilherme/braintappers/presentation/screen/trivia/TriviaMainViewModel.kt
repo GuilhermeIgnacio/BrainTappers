@@ -20,7 +20,7 @@ data class TriviaMainState(
     val questionIndex: Int = 0,
     val answers: List<List<String>> = emptyList(),
     val questions: List<Question> = emptyList(),
-    val userAnswers: MutableList<String> = mutableListOf()
+    val userAnswers: List<String> = emptyList()
 )
 
 sealed interface TriviaMainEvents {
@@ -103,10 +103,14 @@ class TriviaMainViewModel(
 
             is TriviaMainEvents.OnAnswerClicked -> {
 
-                val userAnswers = _state.value.userAnswers
+                val userAnswers = _state.value.userAnswers.toMutableList()
                 val questionIndex = _state.value.questionIndex
 
                 userAnswers[questionIndex] = event.value
+
+                _state.update { it.copy(
+                    userAnswers = userAnswers
+                ) }
 
             }
         }

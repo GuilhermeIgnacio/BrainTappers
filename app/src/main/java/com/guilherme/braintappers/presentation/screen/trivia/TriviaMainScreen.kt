@@ -35,6 +35,7 @@ import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.DisplayResult
+import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
 
@@ -95,11 +96,15 @@ fun TriviaMainScreen(
                 LazyColumn {
                     items(answers[questionIndex]) {
 
+                        // Check if the current answer is selected by the user
+                        val isSelected = state.userAnswers[questionIndex] == it.parseHtml()
+
                         OutlinedButton(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(10f),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color.Black
+                                contentColor = if (isSelected) Color.White else Color.Black,
+                                containerColor = if (isSelected) primaryColor else Color.Transparent
                             ),
                             onClick = {
                                 onEvent(TriviaMainEvents.OnAnswerClicked(it.parseHtml()))
