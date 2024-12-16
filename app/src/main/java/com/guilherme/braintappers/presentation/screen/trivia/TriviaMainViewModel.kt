@@ -27,6 +27,7 @@ sealed interface TriviaMainEvents {
     data object PreviousQuestion : TriviaMainEvents
     data object NextQuestion : TriviaMainEvents
     data class OnAnswerClicked(val value: String) : TriviaMainEvents
+    data class NavigateToQuestion(val value: Int) : TriviaMainEvents
 }
 
 class TriviaMainViewModel(
@@ -105,13 +106,25 @@ class TriviaMainViewModel(
 
                 val userAnswers = _state.value.userAnswers.toMutableList()
                 val questionIndex = _state.value.questionIndex
+                val questions = _state.value.questions
 
                 userAnswers[questionIndex] = event.value
 
-                _state.update { it.copy(
-                    userAnswers = userAnswers
-                ) }
+                _state.update {
+                    it.copy(
+                        userAnswers = userAnswers,
+                        questionIndex = if (questions.size - 1 != questionIndex) (questionIndex + 1) else questionIndex
+                    )
+                }
 
+            }
+
+            is TriviaMainEvents.NavigateToQuestion -> {
+                _state.update {
+                    it.copy(
+                        questionIndex = event.value
+                    )
+                }
             }
         }
     }
