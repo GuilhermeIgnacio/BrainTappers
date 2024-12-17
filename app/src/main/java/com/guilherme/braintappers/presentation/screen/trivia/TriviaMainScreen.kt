@@ -2,67 +2,36 @@ package com.guilherme.braintappers.presentation.screen.trivia
 
 import android.annotation.SuppressLint
 import android.text.Html
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.NavigateNext
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.DisplayResult
-import com.guilherme.braintappers.ui.theme.primaryColor
-import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TriviaMainScreen(
     navController: NavHostController,
@@ -112,137 +81,35 @@ fun TriviaMainScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        space = 8.dp,
-                        alignment = Alignment.CenterHorizontally
-                    ),
-                ) {
-                    items(questions.size) {
-
-                        // Check if the question was answered by the user
-                        val isAnswered = state.userAnswers[it].isNotBlank()
-
-                        val current by animateColorAsState(
-                            targetValue = if (questions[questionIndex].question == questions[it].question) Color.Gray else Color.Transparent,
-                            label = ""
-                        )
-
-                        OutlinedButton(
-                            modifier = Modifier.size(40.dp),
-                            onClick = {
-                                onEvent(TriviaMainEvents.NavigateToQuestion(it))
-                            },
-                            shape = CircleShape,
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = if (isAnswered) primaryColor else Color.Transparent,
-                                contentColor = if (isAnswered) Color.White else Color.Black
-                            ),
-                            border = BorderStroke(
-                                width = 1.dp,
-                                color = current
-                            ),
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Text(
-                                text = (it + 1).toString(),
-                                fontFamily = poppinsFamily,
-                            )
-                        }
-                    }
-                }
+                /**
+                 * Displays a row of numbered buttons for navigating between questions
+                 */
+                NumberedNavigationButtons(
+                    questions = questions,
+                    state = state,
+                    questionIndex = questionIndex,
+                    onEvent = onEvent
+                )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                AnimatedContent(
-                    targetState = questionIndex,
-                    transitionSpec = {
-                        if (targetState > initialState) {
-                            slideInHorizontally(
-                                initialOffsetX = { it },
-                                animationSpec = tween(300)
-                            ) togetherWith slideOutHorizontally(
-                                targetOffsetX = { -it },
-                                animationSpec = tween(300)
-                            )
-                        } else {
-                            slideInHorizontally(
-                                initialOffsetX = { -it },
-                                animationSpec = tween(300)
-                            ) togetherWith slideOutHorizontally(
-                                targetOffsetX = { it },
-                                animationSpec = tween(300)
-                            )
-                        }
-                    },
-                    label = ""
-                ) {
+                /**
+                 * Displays a trivia question and its answer options, with animated transitions between questions.
+                 */
+                QuestionDisplay(
+                    questionIndex = questionIndex,
+                    questions = questions,
+                    answers = answers,
+                    state = state,
+                    onEvent = onEvent
+                )
 
-                    LazyColumn {
+                Spacer(modifier = Modifier.height(8.dp))
 
-                        item {
-                            // Question
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = questions[questionIndex].question.parseHtml(),
-                                textAlign = TextAlign.Center,
-                                fontFamily = poppinsFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        }
-
-                        items(answers[questionIndex]) {
-
-                            // Check if the current answer is selected by the user
-                            val isSelected = state.userAnswers[questionIndex] == it.parseHtml()
-
-
-
-                            OutlinedButton(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(10f),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = if (isSelected) Color.White else Color.Black,
-                                    containerColor = if (isSelected) primaryColor else Color.Transparent
-                                ),
-                                border = ButtonDefaults.outlinedButtonBorder(enabled = !isSelected),
-                                onClick = {
-                                    onEvent(TriviaMainEvents.OnAnswerClicked(it.parseHtml()))
-                                }) {
-                                Text(
-                                    text = it.parseHtml(),
-                                    fontFamily = poppinsFamily
-                                )
-                            }
-                        }
-
-                    }
-                }
-
-                AnimatedVisibility(
-                    visible = questions.size == questionIndex + 1,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    OutlinedButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = { TODO("Finish Event") },
-                        shape = RoundedCornerShape(10f),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = primaryColor,
-                            contentColor = Color.White
-                        ),
-                        border = ButtonDefaults.outlinedButtonBorder(enabled = false)
-                    ) {
-                        Text(
-                            text = "Finish",
-                            fontFamily = poppinsFamily
-                        )
-                    }
-                }
-
+                /**
+                 * Displays a "Finish" button that becomes visible when the user reaches the last question of the trivia.
+                 */
+                FinishTriviaButton(questions = questions, questionIndex = questionIndex)
 
             }
 
