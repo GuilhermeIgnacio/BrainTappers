@@ -1,9 +1,7 @@
 package com.guilherme.braintappers.presentation.screen.welcome
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,11 +31,15 @@ import com.guilherme.braintappers.navigation.SignInScreen
 import com.guilherme.braintappers.navigation.SignUpScreen
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun WelcomeScreen(
     navController: NavHostController
 ) {
+
+    val viewModel = koinViewModel<WelcomeScreenViewModel>()
+    val onEvent = viewModel::onEvent
 
     Column(
         Modifier.fillMaxSize(),
@@ -125,7 +127,9 @@ fun WelcomeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp),
-            onClick = {},
+            onClick = {
+                onEvent(WelcomeEvents.OnContinueAnonymously(navController))
+            },
             shape = RoundedCornerShape(20),
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Color.Black

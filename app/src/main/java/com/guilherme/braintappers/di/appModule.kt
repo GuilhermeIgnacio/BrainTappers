@@ -10,6 +10,7 @@ import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.Sig
 import com.guilherme.braintappers.presentation.screen.signup.SignUpViewModel
 import com.guilherme.braintappers.presentation.screen.signup.signupwithemail.SignUpWithEmailViewModel
 import com.guilherme.braintappers.presentation.screen.trivia.TriviaMainViewModel
+import com.guilherme.braintappers.presentation.screen.welcome.WelcomeScreenViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -24,6 +25,7 @@ val appModule = module {
     viewModel { HomeViewModel() }
     viewModel { TriviaSettingsViewModel() }
     viewModel { TriviaMainViewModel(get()) }
+    viewModel { WelcomeScreenViewModel(get()) }
 
 }
 
