@@ -1,6 +1,14 @@
 package com.guilherme.braintappers.presentation.screen.trivia
 
+import android.annotation.SuppressLint
 import android.text.Html
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,6 +57,7 @@ import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
 
+@SuppressLint("UnusedContentLambdaTargetStateParameter")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TriviaMainScreen(
@@ -101,12 +110,20 @@ fun TriviaMainScreen(
 
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.CenterHorizontally),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = 8.dp,
+                        alignment = Alignment.CenterHorizontally
+                    ),
                 ) {
                     items(questions.size) {
 
                         // Check if the question was answered by the user
                         val isAnswered = state.userAnswers[it].isNotBlank()
+
+                        val current by animateColorAsState(
+                            targetValue = if (questions[questionIndex].question == questions[it].question) Color.Gray else Color.Transparent,
+                            label = ""
+                        )
 
                         OutlinedButton(
                             modifier = Modifier.size(40.dp),
@@ -118,7 +135,10 @@ fun TriviaMainScreen(
                                 containerColor = if (isAnswered) primaryColor else Color.Transparent,
                                 contentColor = if (isAnswered) Color.White else Color.Black
                             ),
-                            border = ButtonDefaults.outlinedButtonBorder(enabled = !isAnswered),
+                            border = BorderStroke(
+                                width = 1.dp,
+                                color = current
+                            ),
                             contentPadding = PaddingValues(0.dp)
                         ) {
                             Text(
@@ -131,37 +151,67 @@ fun TriviaMainScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Question
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = questions[questionIndex].question.parseHtml(),
-                    textAlign = TextAlign.Center,
-                    fontFamily = poppinsFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize
-                )
-
-                LazyColumn {
-                    items(answers[questionIndex]) {
-
-                        // Check if the current answer is selected by the user
-                        val isSelected = state.userAnswers[questionIndex] == it.parseHtml()
-
-                        OutlinedButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(10f),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = if (isSelected) Color.White else Color.Black,
-                                containerColor = if (isSelected) primaryColor else Color.Transparent
-                            ),
-                            border = ButtonDefaults.outlinedButtonBorder(enabled = !isSelected),
-                            onClick = {
-                                onEvent(TriviaMainEvents.OnAnswerClicked(it.parseHtml()))
-                            }) {
-                            Text(
-                                text = it.parseHtml(),
-                                fontFamily = poppinsFamily
+                AnimatedContent(
+                    targetState = questionIndex,
+                    transitionSpec = {
+                        if (targetState > initialState) {
+                            slideInHorizontally(
+                                initialOffsetX = { it },
+                                animationSpec = tween(300)
+                            ) togetherWith slideOutHorizontally(
+                                targetOffsetX = { -it },
+                                animationSpec = tween(300)
                             )
+                        } else {
+                            slideInHorizontally(
+                                initialOffsetX = { -it },
+                                animationSpec = tween(300)
+                            ) togetherWith slideOutHorizontally(
+                                targetOffsetX = { it },
+                                animationSpec = tween(300)
+                            )
+                        }
+                    },
+                    label = ""
+                ) {
+
+                    LazyColumn {
+
+                        item {
+                            // Question
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = questions[questionIndex].question.parseHtml(),
+                                textAlign = TextAlign.Center,
+                                fontFamily = poppinsFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+
+                        items(answers[questionIndex]) {
+
+                            // Check if the current answer is selected by the user
+                            val isSelected = state.userAnswers[questionIndex] == it.parseHtml()
+
+
+
+                            OutlinedButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(10f),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = if (isSelected) Color.White else Color.Black,
+                                    containerColor = if (isSelected) primaryColor else Color.Transparent
+                                ),
+                                border = ButtonDefaults.outlinedButtonBorder(enabled = !isSelected),
+                                onClick = {
+                                    onEvent(TriviaMainEvents.OnAnswerClicked(it.parseHtml()))
+                                }) {
+                                Text(
+                                    text = it.parseHtml(),
+                                    fontFamily = poppinsFamily
+                                )
+                            }
                         }
 
                     }
