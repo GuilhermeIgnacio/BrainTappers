@@ -3,8 +3,11 @@ package com.guilherme.braintappers.presentation.screen.trivia
 import android.annotation.SuppressLint
 import android.text.Html
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -29,6 +32,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -217,14 +221,28 @@ fun TriviaMainScreen(
                     }
                 }
 
-                /**
-                 * Navigation buttons for going to the next, previous question or finish when in the last question
-                 */
-                QuestionNavigationButtons(
-                    onEvent = onEvent,
-                    questionIndex = questionIndex,
-                    questionsListSize = questions.size,
-                )
+                AnimatedVisibility(
+                    visible = questions.size == questionIndex + 1,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    OutlinedButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { TODO("Finish Event") },
+                        shape = RoundedCornerShape(10f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = primaryColor,
+                            contentColor = Color.White
+                        ),
+                        border = ButtonDefaults.outlinedButtonBorder(enabled = false)
+                    ) {
+                        Text(
+                            text = "Finish",
+                            fontFamily = poppinsFamily
+                        )
+                    }
+                }
+
 
             }
 
