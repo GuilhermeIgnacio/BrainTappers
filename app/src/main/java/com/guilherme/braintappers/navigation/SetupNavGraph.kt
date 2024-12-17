@@ -21,7 +21,7 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = HomeScreen //Todo: Change to Welcome Screen
+        startDestination = WelcomeScreen //Todo: Change to Welcome Screen
     ) {
 
         composable<WelcomeScreen> {
