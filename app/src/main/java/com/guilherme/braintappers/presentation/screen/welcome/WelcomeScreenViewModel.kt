@@ -1,5 +1,7 @@
 package com.guilherme.braintappers.presentation.screen.welcome
 
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -12,7 +14,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class WelcomeState(
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val snackbarHostState: SnackbarHostState = SnackbarHostState()
 )
 
 sealed interface WelcomeEvents {
@@ -31,36 +34,49 @@ class WelcomeScreenViewModel(
             is WelcomeEvents.OnContinueAnonymously -> {
                 viewModelScope.launch {
 
-                    _state.update {
-                        it.copy(
-                            isLoading = true
-                        )
-                    }
+                    updateLoadingState(true)
 
                     try {
                         firebase.createAnonymousAccount()
                     } catch (e: FirebaseException) {
-                        e.printStackTrace()
+                        showErrorMessage(e)
                     }
 
                     try {
                         if (firebase.currentUser() != null) {
                             event.value.navigate(HomeScreen)
                         }
-                    } catch (e: FirebaseException){
-                        e.printStackTrace()
+                    } catch (e: FirebaseException) {
+                        showErrorMessage(e)
                     }
 
-
-                    _state.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
+                    updateLoadingState(false)
 
                 }
             }
         }
+    }
+
+    private fun updateLoadingState(isLoading: Boolean) {
+        _state.update {
+            it.copy(
+                isLoading = isLoading
+            )
+        }
+    }
+
+    private suspend fun showErrorMessage(e: FirebaseException) {
+        _state.update {
+            it.copy(
+                isLoading = false
+            )
+        }
+
+        _state.value.snackbarHostState.showSnackbar(
+            message = "${e.message}",
+            actionLabel = "Close",
+            duration = SnackbarDuration.Long
+        )
     }
 
 }

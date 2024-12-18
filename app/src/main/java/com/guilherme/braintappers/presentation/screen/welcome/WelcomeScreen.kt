@@ -17,6 +17,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,110 +48,114 @@ fun WelcomeScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
 
-    Column(
-        Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = state.snackbarHostState)
+        }
     ) {
-
-        Image(
-            painter = painterResource(id = R.drawable.collaboration_amico),
-            contentDescription = null
-        )
-
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Welcome to Brain Tappers!",
-            fontFamily = poppinsFamily,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            fontSize = MaterialTheme.typography.titleLarge.fontSize
-        )
-
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Test your knowledge and have fun with our trivia quizzes!",
-            fontFamily = poppinsFamily,
-            textAlign = TextAlign.Center,
-            fontSize = MaterialTheme.typography.titleMedium.fontSize
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp),
-            onClick = {
-                navController.navigate(SignUpScreen)
-            },
-            shape = RoundedCornerShape(20),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = primaryColor,
-                contentColor = Color.Black
-            )
+        Column(
+            Modifier.fillMaxSize().padding(it),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.collaboration_amico),
+                contentDescription = null
+            )
+
             Text(
-                text = "Sign Up",
-                fontFamily = poppinsFamily
+                modifier = Modifier.fillMaxWidth(),
+                text = "Welcome to Brain Tappers!",
+                fontFamily = poppinsFamily,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                fontSize = MaterialTheme.typography.titleLarge.fontSize
             )
-        }
 
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp),
-            onClick = {
-                navController.navigate(SignInScreen)
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = primaryColor,
-                contentColor = Color.Black
-            ),
-            shape = RoundedCornerShape(20)
-        ) {
             Text(
-                text = "Sign In",
-                fontFamily = poppinsFamily
+                modifier = Modifier.fillMaxWidth(),
+                text = "Test your knowledge and have fun with our trivia quizzes!",
+                fontFamily = poppinsFamily,
+                textAlign = TextAlign.Center,
+                fontSize = MaterialTheme.typography.titleMedium.fontSize
             )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 10.dp),
+                onClick = {
+                    navController.navigate(SignUpScreen)
+                },
+                shape = RoundedCornerShape(20),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = primaryColor,
+                    contentColor = Color.Black
+                )
+            ) {
+                Text(
+                    text = "Sign Up",
+                    fontFamily = poppinsFamily
+                )
+            }
+
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 10.dp),
+                onClick = {
+                    navController.navigate(SignInScreen)
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = primaryColor,
+                    contentColor = Color.Black
+                ),
+                shape = RoundedCornerShape(20)
+            ) {
+                Text(
+                    text = "Sign In",
+                    fontFamily = poppinsFamily
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                HorizontalDivider(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(text = "Or", fontFamily = poppinsFamily)
+                Spacer(modifier = Modifier.width(10.dp))
+                HorizontalDivider(modifier = Modifier.weight(1f))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 10.dp),
+                onClick = {
+                    onEvent(WelcomeEvents.OnContinueAnonymously(navController))
+                },
+                shape = RoundedCornerShape(20),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Text(
+                    text = "Continue Anonymously",
+                    fontFamily = poppinsFamily
+                )
+            }
+
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            HorizontalDivider(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(text = "Or", fontFamily = poppinsFamily)
-            Spacer(modifier = Modifier.width(10.dp))
-            HorizontalDivider(modifier = Modifier.weight(1f))
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp),
-            onClick = {
-                onEvent(WelcomeEvents.OnContinueAnonymously(navController))
-            },
-            shape = RoundedCornerShape(20),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = Color.Black
-            )
-        ) {
-            Text(
-                text = "Continue Anonymously",
-                fontFamily = poppinsFamily
-            )
-        }
-
-        Spacer(modifier = Modifier.navigationBarsPadding())
-
     }
 
     if (state.isLoading) {
