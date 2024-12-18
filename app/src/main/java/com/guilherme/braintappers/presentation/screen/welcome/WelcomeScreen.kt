@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.navigation.SignInScreen
@@ -39,6 +43,7 @@ fun WelcomeScreen(
 ) {
 
     val viewModel = koinViewModel<WelcomeScreenViewModel>()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
 
     Column(
@@ -111,7 +116,9 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp, end = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             HorizontalDivider(modifier = Modifier.weight(1f))
@@ -143,6 +150,15 @@ fun WelcomeScreen(
 
         Spacer(modifier = Modifier.navigationBarsPadding())
 
+    }
+
+    if (state.isLoading) {
+        Dialog(onDismissRequest = {}) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.secondary,
+                trackColor = primaryColor,
+            )
+        }
     }
 
 }
