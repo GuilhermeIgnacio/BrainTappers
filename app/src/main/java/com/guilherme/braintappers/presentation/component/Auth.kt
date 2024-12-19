@@ -36,6 +36,7 @@ import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.ui.theme.primaryColor
+import com.guilherme.braintappers.util.poppinsFamily
 import kotlinx.coroutines.launch
 
 @Composable
@@ -66,7 +67,8 @@ fun Auth(
             text = title,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            fontSize = MaterialTheme.typography.titleLarge.fontSize
+            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+            fontFamily = poppinsFamily
         )
 
         Button(
@@ -81,7 +83,8 @@ fun Auth(
             )
         ) {
             Text(
-                text = stringResource(id = R.string.continue_with_email)
+                text = stringResource(id = R.string.continue_with_email),
+                fontFamily = poppinsFamily
             )
         }
 
@@ -132,7 +135,8 @@ fun Auth(
             Spacer(modifier = Modifier.width(2.dp))
 
             Text(
-                text = stringResource(id = R.string.continue_with_google)
+                text = stringResource(id = R.string.continue_with_google),
+                fontFamily = poppinsFamily
             )
 
         }
@@ -142,6 +146,7 @@ fun Auth(
             text = labelText,
             fontSize = MaterialTheme.typography.bodyMedium.fontSize,
             textAlign = TextAlign.Center,
+            fontFamily = poppinsFamily
         )
 
         Text(
@@ -156,6 +161,7 @@ fun Auth(
             fontSize = MaterialTheme.typography.bodyMedium.fontSize,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
+            fontFamily = poppinsFamily
         )
 
     }
