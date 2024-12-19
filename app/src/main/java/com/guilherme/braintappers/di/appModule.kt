@@ -1,5 +1,6 @@
 package com.guilherme.braintappers.di
 
+import com.guilherme.braintappers.MainViewModel
 import com.guilherme.braintappers.data.FirebaseImpl
 import com.guilherme.braintappers.data.TriviaApiServiceImpl
 import com.guilherme.braintappers.domain.FirebaseRepository
@@ -26,6 +27,7 @@ val appModule = module {
     viewModel { TriviaSettingsViewModel() }
     viewModel { TriviaMainViewModel(get()) }
     viewModel { WelcomeScreenViewModel(get()) }
+    viewModel { MainViewModel(get()) }
 
 }
 

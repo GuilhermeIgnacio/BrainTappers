@@ -17,11 +17,12 @@ import kotlinx.serialization.Serializable
 
 @Composable
 fun SetupNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    startDestination: Any
 ) {
     NavHost(
         navController = navController,
-        startDestination = WelcomeScreen //Todo: Change to Welcome Screen
+        startDestination = startDestination
     ) {
 
         composable<WelcomeScreen> {
