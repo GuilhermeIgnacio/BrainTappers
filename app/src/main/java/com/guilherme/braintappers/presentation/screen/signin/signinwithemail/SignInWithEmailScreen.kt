@@ -43,7 +43,7 @@ fun SignInWithEmailScreen(navController: NavHostController) {
             onValueChange = {
                 onEvent(SignInWithEmailEvents.OnEmailTextFieldChanged(it))
             },
-            placeholder = { Text(text = stringResource(id = R.string.authenticate_with_email_placeholder)) },
+            placeholder = stringResource(id = R.string.authenticate_with_email_placeholder),
             isError = false,
             errorSupportingText = ""
         )
@@ -52,7 +52,7 @@ fun SignInWithEmailScreen(navController: NavHostController) {
             modifier = Modifier,
             value = state.passwordTextField,
             onValueChange = { onEvent(SignInWithEmailEvents.OnPasswordTextFieldChanged(it)) },
-            placeholder = { Text(text = stringResource(id = R.string.authenticate_with_email_password_placeholder)) },
+            placeholder = stringResource(id = R.string.authenticate_with_email_password_placeholder),
             isError = false,
             errorSupportingText = ""
         )

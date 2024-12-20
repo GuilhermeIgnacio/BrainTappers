@@ -52,12 +52,7 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
             modifier = modifier,
             value = state.emailTextField,
             onValueChange = { onEvent(SignUpWithEmailEvents.OnEmailTextFieldChanged(it)) },
-            placeholder = {
-                Text(
-                    text = stringResource(id = R.string.authenticate_with_email_placeholder),
-                    fontFamily = poppinsFamily
-                )
-            },
+            placeholder = stringResource(id = R.string.authenticate_with_email_placeholder),
             isError = state.emailTextField.isNotEmpty() && !state.emailTextField.isValidEmail(),
             errorSupportingText = stringResource(id = R.string.sign_up_with_email_error_supporting_text)
         )
@@ -67,7 +62,7 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
             modifier = modifier,
             value = state.confirmEmailTextField,
             onValueChange = { onEvent(SignUpWithEmailEvents.OnConfirmEmailTextFieldChanged(it)) },
-            placeholder = { Text(text = stringResource(id = R.string.authenticate_with_email_confirm_email_placeholder), fontFamily = poppinsFamily) },
+            placeholder = stringResource(id = R.string.authenticate_with_email_confirm_email_placeholder),
             isError = state.confirmEmailTextField.isNotEmpty() && state.emailTextField != state.confirmEmailTextField,
             errorSupportingText = stringResource(id = R.string.sign_up_with_email_confirm_error_supporting_text)
         )
@@ -80,7 +75,7 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
             modifier = modifier,
             value = state.passwordTextField,
             onValueChange = { onEvent(SignUpWithEmailEvents.OnPasswordTextFieldChanged(it)) },
-            placeholder = { Text(text = stringResource(id = R.string.authenticate_with_email_password_placeholder), fontFamily = poppinsFamily) },
+            placeholder = stringResource(id = R.string.authenticate_with_email_password_placeholder),
             isError = state.passwordTextField.isNotEmpty() && !state.passwordTextField.isValidPassword(),
             errorSupportingText = stringResource(id = R.string.sign_up_with_password_error_suporting_text)
         )
@@ -89,7 +84,7 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
             modifier = modifier,
             value = state.confirmPasswordTextField,
             onValueChange = { onEvent(SignUpWithEmailEvents.OnConfirmPasswordTextFieldChanged(it)) },
-            placeholder = { Text(text = stringResource(id = R.string.authenticate_with_email_confirm_password_placeholder), fontFamily = poppinsFamily) },
+            placeholder = stringResource(id = R.string.authenticate_with_email_confirm_password_placeholder),
             isError = state.confirmPasswordTextField.isNotEmpty() && state.confirmPasswordTextField != state.passwordTextField,
             errorSupportingText = stringResource(id = R.string.sign_up_with_password_confirm_error_suporting_text)
         )

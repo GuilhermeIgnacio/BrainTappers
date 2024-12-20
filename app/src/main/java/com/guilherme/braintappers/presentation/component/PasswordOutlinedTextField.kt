@@ -22,8 +22,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.guilherme.braintappers.R
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 
@@ -32,7 +34,7 @@ fun PasswordOutlinedTextField(
     modifier: Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    placeholder: @Composable () -> Unit,
+    placeholder: String,
     isError: Boolean,
     errorSupportingText: String
 ) {
@@ -41,7 +43,12 @@ fun PasswordOutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         value = value,
         onValueChange = onValueChange,
-        placeholder = placeholder,
+        placeholder = {
+            Text(
+                text = placeholder,
+                fontFamily = poppinsFamily
+            )
+        },
         visualTransformation = if (passWordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = primaryColor.copy(alpha = .5f),
