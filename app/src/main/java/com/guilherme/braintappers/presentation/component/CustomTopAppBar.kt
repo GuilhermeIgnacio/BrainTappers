@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import com.guilherme.braintappers.util.poppinsFamily
 
 @Composable
 fun CustomTopAppBar(
@@ -31,7 +32,8 @@ fun CustomTopAppBar(
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = title ?: "",
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = poppinsFamily
         )
 
     }
