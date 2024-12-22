@@ -20,6 +20,7 @@ data class SignUpWithEmailState(
     val confirmEmailTextField: String = "",
     val passwordTextField: String = "",
     val confirmPasswordTextField: String = "",
+    val isLoading: Boolean = false,
     val snackbarHostState: SnackbarHostState = SnackbarHostState()
 )
 
@@ -84,15 +85,34 @@ class SignUpWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
                     val email = _state.value.emailTextField
                     val password = _state.value.passwordTextField
 
-                    when(val result = firebase.signUpWithEmail(email, password)){
+                    _state.update {
+                        it.copy(
+                            isLoading = true
+                        )
+                    }
+
+                    when (val result = firebase.signUpWithEmail(email, password)) {
+
                         is Result.Success -> {
                             event.value.navigate(HomeScreen)
+                            _state.update {
+                                it.copy(
+                                    isLoading = false
+                                )
+                            }
                         }
+
                         is Result.Error -> {
+
+                            _state.update {
+                                it.copy(
+                                    isLoading = false
+                                )
+                            }
 
                             val snackBar = _state.value.snackbarHostState
 
-                            when(result.error) {
+                            when (result.error) {
 
                                 FirebaseError.UNKNOWN -> {
                                     snackBar.showSnackbar(
@@ -115,6 +135,7 @@ class SignUpWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
 
                         }
                     }
+
 
                 }
             }
