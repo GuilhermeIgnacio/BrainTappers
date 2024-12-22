@@ -6,7 +6,7 @@ interface FirebaseRepository {
 
     suspend fun currentUser(): FirebaseUser?
     suspend fun createAnonymousAccount()
-    suspend fun signUpWithEmail(email: String, password: String)
+    suspend fun signUpWithEmail(email: String, password: String): Result<Unit, FirebaseError>
     suspend fun signUpWithGoogle(idToken: String)
 
 }

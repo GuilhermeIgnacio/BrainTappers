@@ -137,7 +137,7 @@ fun TriviaMainScreen(
                 )
 
                 when (it) {
-                    DataError.Response.UNKNOWN -> {
+                    DataError.UNKNOWN -> {
 
                     }
                 }

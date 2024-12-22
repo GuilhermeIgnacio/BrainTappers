@@ -2,7 +2,9 @@ package com.guilherme.braintappers.data
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.google.android.gms.common.api.Response
 import com.guilherme.braintappers.domain.DataError
+import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.domain.TriviaApiService
 import com.guilherme.braintappers.domain.model.ApiResponse
 import io.ktor.client.HttpClient
@@ -14,7 +16,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.json.Json
-import com.guilherme.braintappers.domain.Result
 
 class TriviaApiServiceImpl : TriviaApiService {
 
@@ -54,10 +55,10 @@ class TriviaApiServiceImpl : TriviaApiService {
 
                 HttpStatusCode.NotFound -> {
                     Log.e(TAG, "Error 404")
-                    Result.Error(DataError.Response.UNKNOWN)
+                    Result.Error(DataError.UNKNOWN)
                 }
 
-                else -> Result.Error(DataError.Response.UNKNOWN)
+                else -> Result.Error(DataError.UNKNOWN)
 
             }
 
@@ -66,12 +67,12 @@ class TriviaApiServiceImpl : TriviaApiService {
 
             Log.e(TAG, "Failed Request")
             e.stackTrace
-            Result.Error(DataError.Response.UNKNOWN)
+            Result.Error(DataError.UNKNOWN)
 
         } catch (e: IOException) { // Internet Exceptions
 
             Log.e(TAG, "IOException", e)
-            Result.Error(DataError.Response.UNKNOWN)
+            Result.Error(DataError.UNKNOWN)
         }
     }
 }

@@ -58,8 +58,12 @@ fun <D, E : RootError> Result<D, E>.DisplayResult(
     }
 }
 
-sealed interface DataError : Error {
-    enum class Response : DataError {
-        UNKNOWN
-    }
+enum class DataError: Error {
+    UNKNOWN
+}
+
+enum class FirebaseError : Error {
+    UNKNOWN,
+    FIREBASE_AUTH_USER_COLLISION,
+    FIREBASE_NETWORK
 }

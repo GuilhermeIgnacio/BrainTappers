@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,81 +38,87 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
 
     val modifier = Modifier.padding(start = 8.dp, end = 8.dp)
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-    ) {
-        CustomTopAppBar(
-            title = stringResource(id = R.string.sign_up_with_email_screen_title),
-            onReturnClick = { navController.navigateUp() }
-        )
-
-        //Email
-
-        EmailOutlinedTextField(
-            modifier = modifier,
-            value = state.emailTextField,
-            onValueChange = { onEvent(SignUpWithEmailEvents.OnEmailTextFieldChanged(it)) },
-            placeholder = stringResource(id = R.string.authenticate_with_email_placeholder),
-            isError = state.emailTextField.isNotEmpty() && !state.emailTextField.isValidEmail(),
-            errorSupportingText = stringResource(id = R.string.sign_up_with_email_error_supporting_text)
-        )
-
-
-        EmailOutlinedTextField(
-            modifier = modifier,
-            value = state.confirmEmailTextField,
-            onValueChange = { onEvent(SignUpWithEmailEvents.OnConfirmEmailTextFieldChanged(it)) },
-            placeholder = stringResource(id = R.string.authenticate_with_email_confirm_email_placeholder),
-            isError = state.confirmEmailTextField.isNotEmpty() && state.emailTextField != state.confirmEmailTextField,
-            errorSupportingText = stringResource(id = R.string.sign_up_with_email_confirm_error_supporting_text)
-        )
-
-        //Email
-
-        //Password
-
-        PasswordOutlinedTextField(
-            modifier = modifier,
-            value = state.passwordTextField,
-            onValueChange = { onEvent(SignUpWithEmailEvents.OnPasswordTextFieldChanged(it)) },
-            placeholder = stringResource(id = R.string.authenticate_with_email_password_placeholder),
-            isError = state.passwordTextField.isNotEmpty() && !state.passwordTextField.isValidPassword(),
-            errorSupportingText = stringResource(id = R.string.sign_up_with_password_error_suporting_text)
-        )
-
-        PasswordOutlinedTextField(
-            modifier = modifier,
-            value = state.confirmPasswordTextField,
-            onValueChange = { onEvent(SignUpWithEmailEvents.OnConfirmPasswordTextFieldChanged(it)) },
-            placeholder = stringResource(id = R.string.authenticate_with_email_confirm_password_placeholder),
-            isError = state.confirmPasswordTextField.isNotEmpty() && state.confirmPasswordTextField != state.passwordTextField,
-            errorSupportingText = stringResource(id = R.string.sign_up_with_password_confirm_error_suporting_text)
-        )
-
-        //Password
-
-        Button(
-            modifier = modifier.fillMaxWidth(),
-            onClick = {
-                onEvent(SignUpWithEmailEvents.OnNextButtonClick)
-            },
-            shape = RoundedCornerShape(20),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = primaryColor,
-                contentColor = Color.Black
-            ),
-            enabled = state.emailTextField.isValidEmail() &&
-                    state.emailTextField == state.confirmEmailTextField &&
-                    state.passwordTextField.isValidPassword() &&
-                    state.passwordTextField == state.confirmPasswordTextField
-        ) {
-            Text(
-                text = "Next",
-                fontFamily = poppinsFamily
-            )
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = state.snackbarHostState)
         }
+    ) {_ ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+        ) {
+            CustomTopAppBar(
+                title = stringResource(id = R.string.sign_up_with_email_screen_title),
+                onReturnClick = { navController.navigateUp() }
+            )
 
+            //Email
+
+            EmailOutlinedTextField(
+                modifier = modifier,
+                value = state.emailTextField,
+                onValueChange = { onEvent(SignUpWithEmailEvents.OnEmailTextFieldChanged(it)) },
+                placeholder = stringResource(id = R.string.authenticate_with_email_placeholder),
+                isError = state.emailTextField.isNotEmpty() && !state.emailTextField.isValidEmail(),
+                errorSupportingText = stringResource(id = R.string.sign_up_with_email_error_supporting_text)
+            )
+
+
+            EmailOutlinedTextField(
+                modifier = modifier,
+                value = state.confirmEmailTextField,
+                onValueChange = { onEvent(SignUpWithEmailEvents.OnConfirmEmailTextFieldChanged(it)) },
+                placeholder = stringResource(id = R.string.authenticate_with_email_confirm_email_placeholder),
+                isError = state.confirmEmailTextField.isNotEmpty() && state.emailTextField != state.confirmEmailTextField,
+                errorSupportingText = stringResource(id = R.string.sign_up_with_email_confirm_error_supporting_text)
+            )
+
+            //Email
+
+            //Password
+
+            PasswordOutlinedTextField(
+                modifier = modifier,
+                value = state.passwordTextField,
+                onValueChange = { onEvent(SignUpWithEmailEvents.OnPasswordTextFieldChanged(it)) },
+                placeholder = stringResource(id = R.string.authenticate_with_email_password_placeholder),
+                isError = state.passwordTextField.isNotEmpty() && !state.passwordTextField.isValidPassword(),
+                errorSupportingText = stringResource(id = R.string.sign_up_with_password_error_suporting_text)
+            )
+
+            PasswordOutlinedTextField(
+                modifier = modifier,
+                value = state.confirmPasswordTextField,
+                onValueChange = { onEvent(SignUpWithEmailEvents.OnConfirmPasswordTextFieldChanged(it)) },
+                placeholder = stringResource(id = R.string.authenticate_with_email_confirm_password_placeholder),
+                isError = state.confirmPasswordTextField.isNotEmpty() && state.confirmPasswordTextField != state.passwordTextField,
+                errorSupportingText = stringResource(id = R.string.sign_up_with_password_confirm_error_suporting_text)
+            )
+
+            //Password
+
+            Button(
+                modifier = modifier.fillMaxWidth(),
+                onClick = {
+                    onEvent(SignUpWithEmailEvents.OnNextButtonClick(navController))
+                },
+                shape = RoundedCornerShape(20),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = primaryColor,
+                    contentColor = Color.Black
+                ),
+                enabled = state.emailTextField.isValidEmail() &&
+                        state.emailTextField == state.confirmEmailTextField &&
+                        state.passwordTextField.isValidPassword() &&
+                        state.passwordTextField == state.confirmPasswordTextField
+            ) {
+                Text(
+                    text = "Next",
+                    fontFamily = poppinsFamily
+                )
+            }
+
+        }
     }
 }
