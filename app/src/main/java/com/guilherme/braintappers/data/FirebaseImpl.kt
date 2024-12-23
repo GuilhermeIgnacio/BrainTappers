@@ -87,8 +87,10 @@ class FirebaseImpl : FirebaseRepository {
         password: String
     ): Result<Unit, FirebaseSignInWithEmailAndPasswordError> {
         return try {
+
             Firebase.auth.signInWithEmailAndPassword(email, password).await()
             Result.Success(Unit)
+
         } catch (e: FirebaseAuthInvalidCredentialsException) {
 
             e.printStackTrace()

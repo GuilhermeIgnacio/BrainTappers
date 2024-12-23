@@ -1,22 +1,47 @@
 package com.guilherme.braintappers.presentation.screen.signin
 
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.navigation.SignInWithEmailScreen
 import com.guilherme.braintappers.presentation.component.Auth
+import com.guilherme.braintappers.presentation.component.CustomCircularProgressIndicator
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SignInScreen(
     navController: NavHostController
 ) {
-    Auth(
-        title = stringResource(id = R.string.sign_in_title),
-        onContinueWithEmailClick = { navController.navigate(SignInWithEmailScreen) },
-        onContinueWithGoogleClick = {credential ->/*Todo*/},
-        labelText = stringResource(R.string.sign_in_label),
-        actionText = stringResource(R.string.sign_in_action_text),
-        onTextClick = { navController.navigate(com.guilherme.braintappers.navigation.SignUpScreen) }
-    )
+
+    val viewModel = koinViewModel<SignInViewModel>()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val onEvent = viewModel::onEvent
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = state.snackbarHostState) }
+    ) { _ ->
+        Auth(
+            title = stringResource(id = R.string.sign_in_title),
+            onContinueWithEmailClick = { navController.navigate(SignInWithEmailScreen) },
+            onContinueWithGoogleClick = { credential ->
+                onEvent(
+                    SignInEvents.OnSignInWithGoogleClick(
+                        credential = credential,
+                        navController = navController
+                    )
+                )
+            },
+            labelText = stringResource(R.string.sign_in_label),
+            actionText = stringResource(R.string.sign_in_action_text),
+            onTextClick = { navController.navigate(com.guilherme.braintappers.navigation.SignUpScreen) }
+        )
+    }
+
+    CustomCircularProgressIndicator(visible = state.isLoading)
+
 }

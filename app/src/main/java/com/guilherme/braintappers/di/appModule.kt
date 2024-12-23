@@ -6,6 +6,7 @@ import com.guilherme.braintappers.data.TriviaApiServiceImpl
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.TriviaApiService
 import com.guilherme.braintappers.presentation.screen.home.HomeViewModel
+import com.guilherme.braintappers.presentation.screen.signin.SignInViewModel
 import com.guilherme.braintappers.presentation.screen.triviasettings.TriviaSettingsViewModel
 import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.SignInWithEmailViewModel
 import com.guilherme.braintappers.presentation.screen.signup.SignUpViewModel
@@ -28,6 +29,7 @@ val appModule = module {
     viewModel { TriviaMainViewModel(get()) }
     viewModel { WelcomeScreenViewModel(get()) }
     viewModel { MainViewModel(get()) }
+    viewModel { SignInViewModel(get()) }
 
 }
 
