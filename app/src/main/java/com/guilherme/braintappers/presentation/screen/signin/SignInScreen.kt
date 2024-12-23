@@ -14,7 +14,7 @@ fun SignInScreen(
     Auth(
         title = stringResource(id = R.string.sign_in_title),
         onContinueWithEmailClick = { navController.navigate(SignInWithEmailScreen) },
-        onContinueWithGoogleClick = {},
+        onContinueWithGoogleClick = {credential ->/*Todo*/},
         labelText = stringResource(R.string.sign_in_label),
         actionText = stringResource(R.string.sign_in_action_text),
         onTextClick = { navController.navigate(com.guilherme.braintappers.navigation.SignUpScreen) }

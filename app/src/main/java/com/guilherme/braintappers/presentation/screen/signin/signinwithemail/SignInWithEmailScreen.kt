@@ -6,12 +6,17 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
@@ -28,50 +33,67 @@ fun SignInWithEmailScreen(navController: NavHostController) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
 
-    Column(
-        modifier = Modifier.fillMaxWidth().statusBarsPadding()
-    ) {
-
-        CustomTopAppBar(
-            title = "Sign In",
-            onReturnClick = { navController.navigateUp() }
-        )
-
-        EmailOutlinedTextField(
-            modifier = Modifier,
-            value = state.emailTextField,
-            onValueChange = {
-                onEvent(SignInWithEmailEvents.OnEmailTextFieldChanged(it))
-            },
-            placeholder = stringResource(id = R.string.authenticate_with_email_placeholder),
-            isError = false,
-            errorSupportingText = ""
-        )
-
-        PasswordOutlinedTextField(
-            modifier = Modifier,
-            value = state.passwordTextField,
-            onValueChange = { onEvent(SignInWithEmailEvents.OnPasswordTextFieldChanged(it)) },
-            placeholder = stringResource(id = R.string.authenticate_with_email_password_placeholder),
-            isError = false,
-            errorSupportingText = ""
-        )
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {},
-            shape = RoundedCornerShape(20),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = primaryColor,
-                contentColor = Color.Black
-            ),
-            enabled = state.emailTextField.isNotEmpty() && state.passwordTextField.isNotEmpty()
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = state.snackbarHostState) }
+    ) { _ ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
         ) {
-            Text(
-                text = "Next"
+
+            CustomTopAppBar(
+                title = "Sign In",
+                onReturnClick = { navController.navigateUp() }
+            )
+
+            EmailOutlinedTextField(
+                modifier = Modifier,
+                value = state.emailTextField,
+                onValueChange = {
+                    onEvent(SignInWithEmailEvents.OnEmailTextFieldChanged(it))
+                },
+                placeholder = stringResource(id = R.string.authenticate_with_email_placeholder),
+                isError = false,
+                errorSupportingText = ""
+            )
+
+            PasswordOutlinedTextField(
+                modifier = Modifier,
+                value = state.passwordTextField,
+                onValueChange = { onEvent(SignInWithEmailEvents.OnPasswordTextFieldChanged(it)) },
+                placeholder = stringResource(id = R.string.authenticate_with_email_password_placeholder),
+                isError = false,
+                errorSupportingText = ""
+            )
+
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    onEvent(SignInWithEmailEvents.OnNextButtonClick(navController))
+                },
+                shape = RoundedCornerShape(20),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = primaryColor,
+                    contentColor = Color.Black
+                ),
+                enabled = state.emailTextField.isNotEmpty() && state.passwordTextField.isNotEmpty()
+            ) {
+                Text(
+                    text = "Next"
+                )
+            }
+
+        }
+    }
+
+    if (state.isLoading) {
+        Dialog(onDismissRequest = {}) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.secondary,
+                trackColor = primaryColor,
             )
         }
-
     }
 
 }

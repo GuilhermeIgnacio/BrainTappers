@@ -13,6 +13,7 @@ import com.google.firebase.auth.auth
 import com.guilherme.braintappers.domain.FirebaseEmailAndPasswordAuthError
 import com.guilherme.braintappers.domain.FirebaseGoogleAuthError
 import com.guilherme.braintappers.domain.FirebaseRepository
+import com.guilherme.braintappers.domain.FirebaseSignInWithEmailAndPasswordError
 import com.guilherme.braintappers.domain.Result
 import kotlinx.coroutines.tasks.await
 
@@ -76,6 +77,32 @@ class FirebaseImpl : FirebaseRepository {
 
             Log.e(TAG, e.message.toString())
             Result.Error(FirebaseGoogleAuthError.UNKNOWN)
+
+        }
+
+    }
+
+    override suspend fun signInWithEmail(
+        email: String,
+        password: String
+    ): Result<Unit, FirebaseSignInWithEmailAndPasswordError> {
+        return try {
+            Firebase.auth.signInWithEmailAndPassword(email, password).await()
+            Result.Success(Unit)
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseSignInWithEmailAndPasswordError.FIREBASE_AUTH_INVALID_CREDENTIALS)
+
+        } catch (e: FirebaseNetworkException){
+
+            e.printStackTrace()
+            Result.Error(FirebaseSignInWithEmailAndPasswordError.FIREBASE_NETWORK)
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseSignInWithEmailAndPasswordError.UNKNOWN)
 
         }
 
