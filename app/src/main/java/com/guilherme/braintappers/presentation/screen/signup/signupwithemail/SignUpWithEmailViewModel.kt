@@ -4,8 +4,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.guilherme.braintappers.domain.DataError
-import com.guilherme.braintappers.domain.FirebaseError
+import com.guilherme.braintappers.domain.FirebaseEmailAndPasswordAuthError
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.navigation.HomeScreen
@@ -80,7 +79,6 @@ class SignUpWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
             }
 
             is SignUpWithEmailEvents.OnNextButtonClick -> {
-                //Todo: Loading State
                 viewModelScope.launch {
                     val email = _state.value.emailTextField
                     val password = _state.value.passwordTextField
@@ -114,19 +112,19 @@ class SignUpWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
 
                             when (result.error) {
 
-                                FirebaseError.UNKNOWN -> {
+                                FirebaseEmailAndPasswordAuthError.UNKNOWN -> {
                                     snackBar.showSnackbar(
                                         message = "Unknown error, please restart the app or try later.",
                                     )
                                 }
 
-                                FirebaseError.FIREBASE_AUTH_USER_COLLISION -> {
+                                FirebaseEmailAndPasswordAuthError.FIREBASE_AUTH_USER_COLLISION -> {
                                     snackBar.showSnackbar(
                                         message = "The email address is already in use by another account.",
                                     )
                                 }
 
-                                FirebaseError.FIREBASE_NETWORK -> {
+                                FirebaseEmailAndPasswordAuthError.FIREBASE_NETWORK -> {
                                     snackBar.showSnackbar(
                                         message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
                                     )

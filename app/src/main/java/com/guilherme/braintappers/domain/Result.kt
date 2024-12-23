@@ -62,8 +62,15 @@ enum class DataError: Error {
     UNKNOWN
 }
 
-enum class FirebaseError : Error {
+enum class FirebaseEmailAndPasswordAuthError : Error {
     UNKNOWN,
     FIREBASE_AUTH_USER_COLLISION,
     FIREBASE_NETWORK
+}
+
+enum class FirebaseGoogleAuthError: Error {
+    UNKNOWN,
+    FIREBASE_AUTH_INVALID_USER,
+    FIREBASE_AUTH_INVALID_CREDENTIALS,
+    FIREBASE_AUTH_USER_COLLISION,
 }
