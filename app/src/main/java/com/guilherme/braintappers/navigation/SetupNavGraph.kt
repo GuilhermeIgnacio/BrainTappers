@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.guilherme.braintappers.presentation.screen.home.HomeScreen
+import com.guilherme.braintappers.presentation.screen.profile.ProfileScreen
 import com.guilherme.braintappers.presentation.screen.triviasettings.TriviaSettingsScreen
 import com.guilherme.braintappers.presentation.screen.signin.SignInScreen
 import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.SignInWithEmailScreen
@@ -47,6 +48,10 @@ fun SetupNavGraph(
 
         composable<HomeScreen> {
             HomeScreen(navController = navController)
+        }
+
+        composable<ProfileScreen> {
+            ProfileScreen(navController = navController)
         }
 
         composable<TriviaSettingsScreen> {
@@ -91,6 +96,9 @@ object SignInWithEmailScreen
 
 @Serializable
 object HomeScreen
+
+@Serializable
+object ProfileScreen
 
 @Serializable
 data class TriviaSettingsScreen(

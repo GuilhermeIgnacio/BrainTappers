@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.navigation.ProfileScreen
 import com.guilherme.braintappers.navigation.TriviaSettingsScreen
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
@@ -47,8 +48,8 @@ fun HomeScreen(navController: NavController) {
             .statusBarsPadding()
     ) {
 
-        IconButton(onClick = { /*TODO*/ }) {
-            Icon(Icons.Filled.Person, contentDescription = "")
+        IconButton(onClick = { navController.navigate(ProfileScreen) }) {
+            Icon(Icons.Filled.Person, contentDescription = "Open profile screen")
         }
 
         Text(
@@ -103,3 +104,4 @@ fun HomeScreen(navController: NavController) {
 
     }
 }
+
