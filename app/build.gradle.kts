@@ -98,6 +98,10 @@ dependencies {
     //Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.1")
 
+    //Coil
+    implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

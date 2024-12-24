@@ -20,7 +20,12 @@ import kotlinx.coroutines.tasks.await
 class FirebaseImpl : FirebaseRepository {
 
     override suspend fun currentUser(): FirebaseUser? {
-        return Firebase.auth.currentUser
+        return try {
+             Firebase.auth.currentUser
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     override suspend fun createAnonymousAccount() {
