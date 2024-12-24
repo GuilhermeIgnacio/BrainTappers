@@ -18,7 +18,6 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -48,6 +47,7 @@ import com.guilherme.braintappers.R
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
+import kotlin.reflect.KFunction1
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -182,44 +182,65 @@ fun ProfileScreen(navController: NavController) {
     }
 
     //Sign Out Dialog
-    if (isSignOutDialogVisible) {
+    ProfileCustomDialog(
+        visibility = isSignOutDialogVisible,
+        onDismissRequest = {},
+        icon = Icons.AutoMirrored.Filled.Logout,
+        iconContentDescription = "Logout Icon",
+        title = "Signing Out",
+        text = "Are You Sure You Want to Sign Out?",
+        onConfirmClick = {
+            isSignOutDialogVisible = false
+            onEvent(ProfileEvents.OnConfirmSignOut(navController))
+        },
+        confirmButtonText = "Sign Out"
+    )
+
+}
+
+@Composable
+fun ProfileCustomDialog(
+    visibility: Boolean,
+    onDismissRequest: () -> Unit,
+    icon: ImageVector,
+    iconContentDescription: String,
+    title: String,
+    text: String,
+    onConfirmClick: () -> Unit,
+    confirmButtonText: String
+) {
+    if (visibility) {
         AlertDialog(
             icon = {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = "Logout Icon",
+                    imageVector = icon,
+                    contentDescription = iconContentDescription,
                     tint = Color.Red
                 )
             },
             title = {
-                Text(text = "Signing Out", fontFamily = poppinsFamily, color = Color.Red)
+                Text(text = title, fontFamily = poppinsFamily, color = Color.Red)
             },
             text = {
-                Text(text = "Are You Sure You Want to Sign Out?", fontFamily = poppinsFamily)
+                Text(text = text, fontFamily = poppinsFamily)
             },
-            onDismissRequest = { isSignOutDialogVisible = false },
+            onDismissRequest = onDismissRequest,
             confirmButton = {
                 TextButton(
-                    onClick = {
-                        isSignOutDialogVisible = false
-                        onEvent(ProfileEvents.OnConfirmSignOut(navController))
-                    }
+                    onClick = onConfirmClick
                 ) {
-                    Text(text = "Sign Out", fontFamily = poppinsFamily, color = Color.Red)
+                    Text(text = confirmButtonText, fontFamily = poppinsFamily, color = Color.Red)
                 }
             },
             dismissButton = {
                 TextButton(
-                    onClick = {
-                        isSignOutDialogVisible = false
-                    }
+                    onClick = onDismissRequest
                 ) {
                     Text(text = "Dismiss", fontFamily = poppinsFamily)
                 }
             }
         )
     }
-
 }
 
 @Composable
