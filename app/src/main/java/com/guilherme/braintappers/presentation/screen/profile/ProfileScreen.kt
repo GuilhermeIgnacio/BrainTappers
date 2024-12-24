@@ -17,14 +17,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +54,10 @@ fun ProfileScreen(navController: NavController) {
 
     val viewModel = koinViewModel<ProfileViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val onEvent = viewModel::onEvent
+
+    var isSignOutDialogVisible by remember { mutableStateOf(false) }
+
     Column {
         Column(
             modifier = Modifier
@@ -143,15 +152,6 @@ fun ProfileScreen(navController: NavController) {
                 }
             }*/
 
-            //Delete Account Button
-            CustomSurface(
-                onClick = { TODO("Delete Account") },
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                icon = Icons.Default.DeleteForever,
-                iconContentDescription = "Delete Icon",
-                text = "Delete Account"
-            )
-
             //Clear History Button
             CustomSurface(
                 onClick = { TODO("Clear History") },
@@ -161,15 +161,63 @@ fun ProfileScreen(navController: NavController) {
                 text = "Clear History"
             )
 
+            //Delete Account Button
+            CustomSurface(
+                onClick = { TODO("Delete Account") },
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                icon = Icons.Default.DeleteForever,
+                iconContentDescription = "Delete Icon",
+                text = "Delete Account"
+            )
+
             //Sign Out Button
             CustomSurface(
-                onClick = { TODO("Implement Sign Out Logic") },
+                onClick = { isSignOutDialogVisible = true },
                 shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
                 icon = Icons.AutoMirrored.Filled.Logout,
                 iconContentDescription = "Logout Icon",
                 text = "Sign Out"
             )
         }
+    }
+
+    //Sign Out Dialog
+    if (isSignOutDialogVisible) {
+        AlertDialog(
+            icon = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Logout,
+                    contentDescription = "Logout Icon",
+                    tint = Color.Red
+                )
+            },
+            title = {
+                Text(text = "Signing Out", fontFamily = poppinsFamily, color = Color.Red)
+            },
+            text = {
+                Text(text = "Are You Sure You Want to Sign Out?", fontFamily = poppinsFamily)
+            },
+            onDismissRequest = { isSignOutDialogVisible = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        isSignOutDialogVisible = false
+                        onEvent(ProfileEvents.OnConfirmSignOut(navController))
+                    }
+                ) {
+                    Text(text = "Sign Out", fontFamily = poppinsFamily, color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        isSignOutDialogVisible = false
+                    }
+                ) {
+                    Text(text = "Dismiss", fontFamily = poppinsFamily)
+                }
+            }
+        )
     }
 
 }

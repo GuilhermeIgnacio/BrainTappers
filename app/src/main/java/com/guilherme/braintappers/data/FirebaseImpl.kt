@@ -21,7 +21,7 @@ class FirebaseImpl : FirebaseRepository {
 
     override suspend fun currentUser(): FirebaseUser? {
         return try {
-             Firebase.auth.currentUser
+            Firebase.auth.currentUser
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -101,7 +101,7 @@ class FirebaseImpl : FirebaseRepository {
             e.printStackTrace()
             Result.Error(FirebaseSignInWithEmailAndPasswordError.FIREBASE_AUTH_INVALID_CREDENTIALS)
 
-        } catch (e: FirebaseNetworkException){
+        } catch (e: FirebaseNetworkException) {
 
             e.printStackTrace()
             Result.Error(FirebaseSignInWithEmailAndPasswordError.FIREBASE_NETWORK)
@@ -113,5 +113,14 @@ class FirebaseImpl : FirebaseRepository {
 
         }
 
+    }
+
+    override suspend fun signOut() {
+        try {
+            Firebase.auth.signOut()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            println("Sign Out: $e")
+        }
     }
 }
