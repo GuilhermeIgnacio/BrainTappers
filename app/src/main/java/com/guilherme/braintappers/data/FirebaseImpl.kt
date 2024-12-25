@@ -6,10 +6,12 @@ import com.google.firebase.Firebase
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import com.guilherme.braintappers.domain.FirebaseAccountDeletion
 import com.guilherme.braintappers.domain.FirebaseEmailAndPasswordAuthError
 import com.guilherme.braintappers.domain.FirebaseGoogleAuthError
 import com.guilherme.braintappers.domain.FirebaseRepository
@@ -121,6 +123,33 @@ class FirebaseImpl : FirebaseRepository {
         } catch (e: Exception) {
             e.printStackTrace()
             println("Sign Out: $e")
+        }
+    }
+
+    override suspend fun deleteAccount(): Result<Unit, FirebaseAccountDeletion> {
+        return try {
+            Firebase.auth.currentUser?.delete()?.await()
+            Result.Success(Unit)
+        } catch (e: FirebaseAuthInvalidUserException) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseAccountDeletion.FIREBASE_AUTH_INVALID_USER)
+
+        } catch (e: FirebaseAuthRecentLoginRequiredException) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseAccountDeletion.FIREBASE_AUTH_RECENT_LOGIN_REQUIRED)
+
+        } catch (e: FirebaseNetworkException) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseAccountDeletion.FIREBASE_NETWORK)
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseAccountDeletion.UNKNOWN)
+
         }
     }
 }

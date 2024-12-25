@@ -80,3 +80,10 @@ enum class FirebaseSignInWithEmailAndPasswordError: Error {
     FIREBASE_AUTH_INVALID_CREDENTIALS,
     FIREBASE_NETWORK
 }
+
+enum class FirebaseAccountDeletion: Error {
+    FIREBASE_AUTH_INVALID_USER,
+    FIREBASE_AUTH_RECENT_LOGIN_REQUIRED,
+    FIREBASE_NETWORK,
+    UNKNOWN,
+}

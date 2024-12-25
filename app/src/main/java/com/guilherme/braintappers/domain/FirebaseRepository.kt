@@ -10,5 +10,6 @@ interface FirebaseRepository {
     suspend fun signUpWithGoogle(idToken: String): Result<Unit, FirebaseGoogleAuthError>
     suspend fun signInWithEmail(email: String, password: String): Result<Unit, FirebaseSignInWithEmailAndPasswordError>
     suspend fun signOut()
+    suspend fun deleteAccount(): Result<Unit, FirebaseAccountDeletion>
 
 }

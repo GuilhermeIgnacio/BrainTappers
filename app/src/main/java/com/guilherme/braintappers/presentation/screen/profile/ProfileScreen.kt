@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,134 +59,156 @@ fun ProfileScreen(navController: NavController) {
     val onEvent = viewModel::onEvent
 
     var isSignOutDialogVisible by remember { mutableStateOf(false) }
+    var isDeleteAccountDialogVisible by remember { mutableStateOf(false) }
 
-    Column {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
-                .background(color = primaryColor.copy(alpha = 0.5f))
-                .statusBarsPadding()
-        ) {
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = state.snackbarHostState) }
+    ) { _ ->
 
-            AsyncImage(
+        Column {
+            Column(
                 modifier = Modifier
-                    .size(128.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(16.dp)
-                    .clip(CircleShape),
-                model = state.user?.photoUrl,
-                contentDescription = "Profile Picture",
-                placeholder = painterResource(R.drawable.profile_avatar_placeholder),
-                error = painterResource(R.drawable.profile_avatar_placeholder)
-            )
-
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
+                    .background(color = primaryColor.copy(alpha = 0.5f))
+                    .statusBarsPadding()
             ) {
-                Text(
-                    text = "0\nQuizzes",
-                    textAlign = TextAlign.Center,
-                    fontFamily = poppinsFamily,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Light
-                )
 
-                VerticalDivider(
+                AsyncImage(
                     modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .height(30.dp)
-                        .padding(horizontal = 16.dp)
-                        .clip(RoundedCornerShape(20)),
-                    thickness = 1.dp,
-                    color = Color.Gray.copy(alpha = 0.5f)
+                        .size(128.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .padding(16.dp)
+                        .clip(CircleShape),
+                    model = state.user?.photoUrl,
+                    contentDescription = "Profile Picture",
+                    placeholder = painterResource(R.drawable.profile_avatar_placeholder),
+                    error = painterResource(R.drawable.profile_avatar_placeholder)
                 )
 
-                Text(
-                    text = "0\nCorrect Answers",
-                    textAlign = TextAlign.Center,
-                    fontFamily = poppinsFamily,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Light
-                )
-
-                VerticalDivider(
+                Row(
                     modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .height(30.dp)
-                        .padding(horizontal = 16.dp)
-                        .clip(RoundedCornerShape(20)),
-                    thickness = 1.dp,
-                    color = Color.Gray.copy(alpha = 0.5f)
-                )
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        text = "0\nQuizzes",
+                        textAlign = TextAlign.Center,
+                        fontFamily = poppinsFamily,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Light
+                    )
 
-                Text(
-                    text = "0\nRank",
-                    textAlign = TextAlign.Center,
-                    fontFamily = poppinsFamily,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Light
-                )
+                    VerticalDivider(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .height(30.dp)
+                            .padding(horizontal = 16.dp)
+                            .clip(RoundedCornerShape(20)),
+                        thickness = 1.dp,
+                        color = Color.Gray.copy(alpha = 0.5f)
+                    )
+
+                    Text(
+                        text = "0\nCorrect Answers",
+                        textAlign = TextAlign.Center,
+                        fontFamily = poppinsFamily,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Light
+                    )
+
+                    VerticalDivider(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .height(30.dp)
+                            .padding(horizontal = 16.dp)
+                            .clip(RoundedCornerShape(20)),
+                        thickness = 1.dp,
+                        color = Color.Gray.copy(alpha = 0.5f)
+                    )
+
+                    Text(
+                        text = "0\nRank",
+                        textAlign = TextAlign.Center,
+                        fontFamily = poppinsFamily,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Light
+                    )
+
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
 
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-        }
-
-        Column(modifier = Modifier.padding(16.dp)) {
-            /*Surface(
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                shadowElevation = 16.dp
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.CenterHorizontally)
-                        .padding(16.dp)
+            Column(modifier = Modifier.padding(16.dp)) {
+                /*Surface(
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    shadowElevation = 16.dp
                 ) {
-                    Icon(
-                        Icons.Default.Settings,
-                        contentDescription = ""
-                    )
-                    Text("Lorem Ipsum Dolor Sit Amet")
-                }
-            }*/
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally)
+                            .padding(16.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = ""
+                        )
+                        Text("Lorem Ipsum Dolor Sit Amet")
+                    }
+                }*/
 
-            //Clear History Button
-            CustomSurface(
-                onClick = { TODO("Clear History") },
-                shape = null,
-                icon = Icons.Default.History,
-                iconContentDescription = "History Icon",
-                text = "Clear History"
-            )
+                //Clear History Button
+                CustomSurface(
+                    onClick = { TODO("Open Clear History Dialog") },
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    icon = Icons.Default.History,
+                    iconContentDescription = "History Icon",
+                    text = "Clear History"
+                )
 
-            //Delete Account Button
-            CustomSurface(
-                onClick = { TODO("Delete Account") },
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                icon = Icons.Default.DeleteForever,
-                iconContentDescription = "Delete Icon",
-                text = "Delete Account"
-            )
+                //Delete Account Button
+                CustomSurface(
+                    onClick = { isDeleteAccountDialogVisible = true },
+                    shape = null,
+                    icon = Icons.Default.DeleteForever,
+                    iconContentDescription = "Delete Icon",
+                    text = "Delete Account"
+                )
 
-            //Sign Out Button
-            CustomSurface(
-                onClick = { isSignOutDialogVisible = true },
-                shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
-                icon = Icons.AutoMirrored.Filled.Logout,
-                iconContentDescription = "Logout Icon",
-                text = "Sign Out"
-            )
+                //Sign Out Button
+                CustomSurface(
+                    onClick = { isSignOutDialogVisible = true },
+                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
+                    icon = Icons.AutoMirrored.Filled.Logout,
+                    iconContentDescription = "Logout Icon",
+                    text = "Sign Out"
+                )
+            }
         }
     }
+
+    //Delete Account Dialog
+    ProfileCustomDialog(
+        visibility = isDeleteAccountDialogVisible,
+        onDismissRequest = { isDeleteAccountDialogVisible = false },
+        icon = Icons.Default.DeleteForever,
+        iconContentDescription = "Delete Icon",
+        title = "Delete Account",
+        text = "Are you sure you want to delete your account?\nThis action is permanent and cannot be undone. All your data will be erased.",
+        onConfirmClick = {
+            isDeleteAccountDialogVisible = false
+            onEvent(ProfileEvents.OnConfirmAccountDeletion(navController))
+        },
+        confirmButtonText = "Delete Account"
+
+    )
 
     //Sign Out Dialog
     ProfileCustomDialog(
         visibility = isSignOutDialogVisible,
-        onDismissRequest = {},
+        onDismissRequest = { isSignOutDialogVisible = false },
         icon = Icons.AutoMirrored.Filled.Logout,
         iconContentDescription = "Logout Icon",
         title = "Signing Out",
@@ -222,7 +246,7 @@ fun ProfileCustomDialog(
                 Text(text = title, fontFamily = poppinsFamily, color = Color.Red)
             },
             text = {
-                Text(text = text, fontFamily = poppinsFamily)
+                Text(text = text, fontFamily = poppinsFamily, textAlign = TextAlign.Center)
             },
             onDismissRequest = onDismissRequest,
             confirmButton = {
