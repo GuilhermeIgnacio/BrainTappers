@@ -20,12 +20,20 @@ import okhttp3.internal.wait
 
 data class ProfileState(
     val user: FirebaseUser? = null,
-    val snackbarHostState: SnackbarHostState = SnackbarHostState()
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
+    val modalBottomSheetVisibility: Boolean = false,
+    val emailTextField: String = "",
+    val passwordTextField: String = ""
 )
 
 sealed interface ProfileEvents {
     data class OnConfirmSignOut(val value: NavController) : ProfileEvents
     data class OnConfirmAccountDeletion(val value: NavController) : ProfileEvents
+    data class OnEmailTextFieldValueChanged(val value: String) : ProfileEvents
+    data class OnPasswordChanged(val value: String): ProfileEvents
+    data object DismissModalBottomSheet: ProfileEvents
+
+    data object ReauthenticateWithEmailAndPassword: ProfileEvents
 }
 
 class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
@@ -52,6 +60,18 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                 }
             }
 
+            is ProfileEvents.OnEmailTextFieldValueChanged -> {
+                _state.update { it.copy(emailTextField = event.value) }
+            }
+
+            is ProfileEvents.OnPasswordChanged -> {
+                _state.update { it.copy(passwordTextField = event.value) }
+            }
+
+            ProfileEvents.DismissModalBottomSheet -> {
+                _state.update { it.copy(modalBottomSheetVisibility = false) }
+            }
+
             is ProfileEvents.OnConfirmAccountDeletion -> {
                 viewModelScope.launch {
                     when (val result = firebase.deleteAccount()) {
@@ -72,20 +92,29 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
 
                                 FirebaseAccountDeletion.FIREBASE_AUTH_RECENT_LOGIN_REQUIRED -> {
 
-                                    when(val result = firebase.getCurrentUserProviderId()) {
+                                    when (val providerIdResult =
+                                        firebase.getCurrentUserProviderId()) {
                                         is Result.Success -> {
 
-                                            when(result.data) {
+                                            when (providerIdResult.data) {
 
-                                                FirebaseProviderId.PASSWORD -> TODO()
+                                                FirebaseProviderId.PASSWORD -> {
+                                                    _state.update {
+                                                        it.copy(
+                                                            modalBottomSheetVisibility = true
+                                                        )
+                                                    }
+                                                }
+
                                                 FirebaseProviderId.GOOGLE -> TODO()
 
                                             }
 
                                         }
+
                                         is Result.Error -> {
 
-                                            when(result.error) {
+                                            when (providerIdResult.error) {
                                                 FirebaseCurrentUser.NULL_VALUE -> {
                                                     TODO()
                                                 }
@@ -121,6 +150,12 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                             }
                         }
                     }
+                }
+            }
+
+            ProfileEvents.ReauthenticateWithEmailAndPassword -> {
+                viewModelScope.launch {
+
                 }
             }
         }

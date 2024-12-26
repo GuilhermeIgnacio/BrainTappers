@@ -18,8 +18,12 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
@@ -46,11 +50,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.presentation.component.EmailOutlinedTextField
+import com.guilherme.braintappers.presentation.component.PasswordOutlinedTextField
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
 import kotlin.reflect.KFunction1
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
 
@@ -219,6 +226,78 @@ fun ProfileScreen(navController: NavController) {
         },
         confirmButtonText = "Sign Out"
     )
+
+    if (state.modalBottomSheetVisibility) {
+        ModalBottomSheet(
+            onDismissRequest = { onEvent(ProfileEvents.DismissModalBottomSheet) }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
+            ) {
+                EmailOutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    value = state.emailTextField,
+                    onValueChange = { onEvent(ProfileEvents.OnEmailTextFieldValueChanged(it)) },
+                    placeholder = "Email",
+                    isError = false,
+                    errorSupportingText = ""
+                )
+
+                PasswordOutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    value = state.passwordTextField,
+                    onValueChange = { onEvent(ProfileEvents.OnPasswordChanged(it)) },
+                    placeholder = "Password",
+                    isError = false,
+                    errorSupportingText = ""
+                )
+
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                ) {
+
+                    Button(
+                        modifier = Modifier,
+                        onClick = { onEvent(ProfileEvents.DismissModalBottomSheet) },
+                        shape = RoundedCornerShape(20),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.LightGray,
+                            contentColor = Color.Black
+                        ),
+                    ) {
+                        Text(
+                            text = "Close",
+                            fontFamily = poppinsFamily
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Button(
+                        modifier = Modifier,
+                        onClick = { onEvent(ProfileEvents.ReauthenticateWithEmailAndPassword) },
+                        shape = RoundedCornerShape(20),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = primaryColor,
+                            contentColor = Color.Black
+                        ),
+                        enabled = state.emailTextField.isNotEmpty() && state.passwordTextField.isNotEmpty()
+                    ) {
+                        Text(
+                            text = "Re-authenticate",
+                            fontFamily = poppinsFamily
+                        )
+                    }
+                }
+
+            }
+        }
+    }
 
 }
 
