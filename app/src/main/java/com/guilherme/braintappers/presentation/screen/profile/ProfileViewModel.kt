@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseUser
+import com.guilherme.braintappers.data.FirebaseProviderId
 import com.guilherme.braintappers.domain.FirebaseAccountDeletion
+import com.guilherme.braintappers.domain.FirebaseCurrentUser
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.navigation.WelcomeScreen
@@ -69,9 +71,39 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                                 }
 
                                 FirebaseAccountDeletion.FIREBASE_AUTH_RECENT_LOGIN_REQUIRED -> {
-                                    snackBar.showSnackbar(
-                                        message = "Error: The user's last sign-in time does not meet the security threshold."
-                                    )
+
+                                    when(val result = firebase.getCurrentUserProviderId()) {
+                                        is Result.Success -> {
+
+                                            when(result.data) {
+
+                                                FirebaseProviderId.PASSWORD -> TODO()
+                                                FirebaseProviderId.GOOGLE -> TODO()
+
+                                            }
+
+                                        }
+                                        is Result.Error -> {
+
+                                            when(result.error) {
+                                                FirebaseCurrentUser.NULL_VALUE -> {
+                                                    TODO()
+                                                }
+
+                                                FirebaseCurrentUser.UNEXPECTED_PROVIDER -> {
+                                                    TODO()
+                                                }
+
+                                                FirebaseCurrentUser.UNKNOWN -> {
+                                                    TODO()
+                                                }
+                                            }
+                                        }
+                                    }
+
+//                                    snackBar.showSnackbar(
+//                                        message = "Error: The user's last sign-in time does not meet the security threshold."
+//                                    )
                                 }
 
                                 FirebaseAccountDeletion.FIREBASE_NETWORK -> {

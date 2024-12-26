@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.guilherme.braintappers.domain.FirebaseAccountDeletion
+import com.guilherme.braintappers.domain.FirebaseCurrentUser
 import com.guilherme.braintappers.domain.FirebaseEmailAndPasswordAuthError
 import com.guilherme.braintappers.domain.FirebaseGoogleAuthError
 import com.guilherme.braintappers.domain.FirebaseRepository
@@ -152,4 +153,39 @@ class FirebaseImpl : FirebaseRepository {
 
         }
     }
+
+    override suspend fun getCurrentUserProviderId(): Result<FirebaseProviderId, FirebaseCurrentUser> {
+
+        val user = Firebase.auth.currentUser
+        return if (user != null) {
+
+            var providerId: Result<FirebaseProviderId, FirebaseCurrentUser> =
+                Result.Error(FirebaseCurrentUser.UNEXPECTED_PROVIDER)
+
+            for (profile in user.providerData) {
+                // Id of the provider (ex: google.com)
+                providerId = when(profile.providerId) {
+                    "password" -> Result.Success(FirebaseProviderId.PASSWORD)
+                    "google.com" -> Result.Success(FirebaseProviderId.GOOGLE)
+                    else -> Result.Error(FirebaseCurrentUser.UNEXPECTED_PROVIDER)
+                }
+
+            }
+
+            providerId
+
+        } else {
+            Result.Error(FirebaseCurrentUser.NULL_VALUE)
+        }
+
+    }
+}
+
+sealed interface ProviderId
+
+typealias Provider = ProviderId
+
+enum class FirebaseProviderId : ProviderId {
+    PASSWORD,
+    GOOGLE,
 }

@@ -87,3 +87,9 @@ enum class FirebaseAccountDeletion: Error {
     FIREBASE_NETWORK,
     UNKNOWN,
 }
+
+enum class FirebaseCurrentUser: Error {
+    NULL_VALUE,
+    UNEXPECTED_PROVIDER,
+    UNKNOWN
+}

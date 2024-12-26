@@ -1,6 +1,7 @@
 package com.guilherme.braintappers.domain
 
 import com.google.firebase.auth.FirebaseUser
+import com.guilherme.braintappers.data.FirebaseProviderId
 
 interface FirebaseRepository {
 
@@ -11,5 +12,5 @@ interface FirebaseRepository {
     suspend fun signInWithEmail(email: String, password: String): Result<Unit, FirebaseSignInWithEmailAndPasswordError>
     suspend fun signOut()
     suspend fun deleteAccount(): Result<Unit, FirebaseAccountDeletion>
-
+    suspend fun getCurrentUserProviderId(): Result<FirebaseProviderId, FirebaseCurrentUser>
 }
