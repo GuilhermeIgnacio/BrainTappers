@@ -13,4 +13,5 @@ interface FirebaseRepository {
     suspend fun signOut()
     suspend fun deleteAccount(): Result<Unit, FirebaseAccountDeletion>
     suspend fun getCurrentUserProviderId(): Result<FirebaseProviderId, FirebaseCurrentUser>
+    suspend fun reauthenticateWithEmailAndPassword(email: String, password: String): Result<Unit, FirebaseReauthenticate>
 }

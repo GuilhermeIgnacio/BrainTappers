@@ -93,3 +93,10 @@ enum class FirebaseCurrentUser: Error {
     UNEXPECTED_PROVIDER,
     UNKNOWN
 }
+
+enum class FirebaseReauthenticate: Error {
+    FIREBASE_AUTH_INVALID_USER,
+    FIREBASE_AUTH_INVALID_CREDENTIALS,
+    FIREBASE_NETWORK,
+    UNKNOWN
+}

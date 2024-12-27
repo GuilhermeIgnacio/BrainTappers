@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.guilherme.braintappers.data.FirebaseProviderId
 import com.guilherme.braintappers.domain.FirebaseAccountDeletion
 import com.guilherme.braintappers.domain.FirebaseCurrentUser
+import com.guilherme.braintappers.domain.FirebaseReauthenticate
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.navigation.WelcomeScreen
@@ -30,10 +31,10 @@ sealed interface ProfileEvents {
     data class OnConfirmSignOut(val value: NavController) : ProfileEvents
     data class OnConfirmAccountDeletion(val value: NavController) : ProfileEvents
     data class OnEmailTextFieldValueChanged(val value: String) : ProfileEvents
-    data class OnPasswordChanged(val value: String): ProfileEvents
-    data object DismissModalBottomSheet: ProfileEvents
+    data class OnPasswordChanged(val value: String) : ProfileEvents
+    data object DismissModalBottomSheet : ProfileEvents
 
-    data object ReauthenticateWithEmailAndPassword: ProfileEvents
+    data class ReauthenticateWithEmailAndPassword(val value: NavController) : ProfileEvents
 }
 
 class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
@@ -153,9 +154,50 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                 }
             }
 
-            ProfileEvents.ReauthenticateWithEmailAndPassword -> {
+            is ProfileEvents.ReauthenticateWithEmailAndPassword -> {
                 viewModelScope.launch {
 
+                    val email = _state.value.emailTextField
+                    val password = _state.value.passwordTextField
+
+                    when (val result =
+                        firebase.reauthenticateWithEmailAndPassword(email, password)
+                    ) {
+
+                        is Result.Success -> {
+                            _state.update { it.copy(modalBottomSheetVisibility = false) }
+                            event.value.navigate(WelcomeScreen)
+                        }
+
+                        is Result.Error -> {
+                            val snackbar = _state.value.snackbarHostState
+                            when (result.error) {
+                                FirebaseReauthenticate.FIREBASE_AUTH_INVALID_USER -> {
+                                    snackbar.showSnackbar(
+                                        message = "Invalid User Error: The current user's account has been disabled, deleted, or its credentials are no longer valid."
+                                    )
+                                }
+
+                                FirebaseReauthenticate.FIREBASE_AUTH_INVALID_CREDENTIALS -> {
+                                    snackbar.showSnackbar(
+                                        message = "The supplied credentials do not correspond to the previously signed in user."
+                                    )
+                                }
+
+                                FirebaseReauthenticate.FIREBASE_NETWORK -> {
+                                    snackbar.showSnackbar(
+                                        message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
+                                    )
+                                }
+
+                                FirebaseReauthenticate.UNKNOWN -> {
+                                    snackbar.showSnackbar(
+                                        message = "Unknown error, please restart the app or try later."
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

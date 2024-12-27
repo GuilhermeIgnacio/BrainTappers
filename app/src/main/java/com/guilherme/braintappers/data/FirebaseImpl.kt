@@ -1,9 +1,11 @@
 package com.guilherme.braintappers.data
 
 import android.content.ContentValues.TAG
+import android.os.DeadObjectException
 import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
@@ -15,6 +17,7 @@ import com.guilherme.braintappers.domain.FirebaseAccountDeletion
 import com.guilherme.braintappers.domain.FirebaseCurrentUser
 import com.guilherme.braintappers.domain.FirebaseEmailAndPasswordAuthError
 import com.guilherme.braintappers.domain.FirebaseGoogleAuthError
+import com.guilherme.braintappers.domain.FirebaseReauthenticate
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.FirebaseSignInWithEmailAndPasswordError
 import com.guilherme.braintappers.domain.Result
@@ -178,6 +181,37 @@ class FirebaseImpl : FirebaseRepository {
             Result.Error(FirebaseCurrentUser.NULL_VALUE)
         }
 
+    }
+
+    override suspend fun reauthenticateWithEmailAndPassword(email: String, password: String): Result<Unit, FirebaseReauthenticate> {
+        return try {
+
+            val credential = EmailAuthProvider.getCredential(email, password)
+            Firebase.auth.currentUser?.reauthenticate(credential)?.await()
+            deleteAccount()
+            Result.Success(Unit)
+
+        } catch (e: FirebaseAuthInvalidUserException) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseReauthenticate.FIREBASE_AUTH_INVALID_USER)
+
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseReauthenticate.FIREBASE_AUTH_INVALID_CREDENTIALS)
+
+        } catch (e: FirebaseNetworkException) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseReauthenticate.FIREBASE_NETWORK)
+
+        }  catch (e: Exception) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseReauthenticate.UNKNOWN)
+
+        }
     }
 }
 

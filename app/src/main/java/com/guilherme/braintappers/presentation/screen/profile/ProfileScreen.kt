@@ -280,7 +280,7 @@ fun ProfileScreen(navController: NavController) {
 
                     Button(
                         modifier = Modifier,
-                        onClick = { onEvent(ProfileEvents.ReauthenticateWithEmailAndPassword) },
+                        onClick = { onEvent(ProfileEvents.ReauthenticateWithEmailAndPassword(navController)) },
                         shape = RoundedCornerShape(20),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = primaryColor,
