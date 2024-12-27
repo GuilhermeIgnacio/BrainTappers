@@ -4,7 +4,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseUser
 import com.guilherme.braintappers.data.FirebaseProviderId
 import com.guilherme.braintappers.domain.FirebaseAccountDeletion
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 data class ProfileState(
     val user: FirebaseUser? = null,
@@ -107,7 +105,38 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                                                     }
                                                 }
 
-                                                FirebaseProviderId.GOOGLE -> TODO()
+                                                FirebaseProviderId.GOOGLE -> {
+                                                    when (
+                                                        val reauthenticateWithGoogleResult =
+                                                            firebase.reauthenticateWithGoogle()
+                                                    ) {
+
+                                                        is Result.Success -> {
+                                                            event.value.navigate(WelcomeScreen)
+                                                        }
+
+                                                        is Result.Error -> {
+                                                            when (reauthenticateWithGoogleResult.error) {
+
+                                                                FirebaseReauthenticate.FIREBASE_AUTH_INVALID_USER -> {
+                                                                    //TODO()
+                                                                }
+
+                                                                FirebaseReauthenticate.FIREBASE_AUTH_INVALID_CREDENTIALS -> {
+                                                                    //TODO()
+                                                                }
+
+                                                                FirebaseReauthenticate.FIREBASE_NETWORK -> {
+                                                                    //TODO()
+                                                                }
+
+                                                                FirebaseReauthenticate.UNKNOWN -> {
+                                                                    //TODO()
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
 
                                             }
 
@@ -131,9 +160,6 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                                         }
                                     }
 
-//                                    snackBar.showSnackbar(
-//                                        message = "Error: The user's last sign-in time does not meet the security threshold."
-//                                    )
                                 }
 
                                 FirebaseAccountDeletion.FIREBASE_NETWORK -> {

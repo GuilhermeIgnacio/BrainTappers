@@ -1,10 +1,19 @@
 package com.guilherme.braintappers.data
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.DeadObjectException
 import android.util.Log
+import androidx.credentials.Credential
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
+import androidx.credentials.exceptions.GetCredentialException
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -13,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import com.guilherme.braintappers.R
 import com.guilherme.braintappers.domain.FirebaseAccountDeletion
 import com.guilherme.braintappers.domain.FirebaseCurrentUser
 import com.guilherme.braintappers.domain.FirebaseEmailAndPasswordAuthError
@@ -20,10 +30,11 @@ import com.guilherme.braintappers.domain.FirebaseGoogleAuthError
 import com.guilherme.braintappers.domain.FirebaseReauthenticate
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.FirebaseSignInWithEmailAndPasswordError
+import com.guilherme.braintappers.domain.GetCredential
 import com.guilherme.braintappers.domain.Result
 import kotlinx.coroutines.tasks.await
 
-class FirebaseImpl : FirebaseRepository {
+class FirebaseImpl(private val context: Context) : FirebaseRepository {
 
     override suspend fun currentUser(): FirebaseUser? {
         return try {
@@ -167,7 +178,7 @@ class FirebaseImpl : FirebaseRepository {
 
             for (profile in user.providerData) {
                 // Id of the provider (ex: google.com)
-                providerId = when(profile.providerId) {
+                providerId = when (profile.providerId) {
                     "password" -> Result.Success(FirebaseProviderId.PASSWORD)
                     "google.com" -> Result.Success(FirebaseProviderId.GOOGLE)
                     else -> Result.Error(FirebaseCurrentUser.UNEXPECTED_PROVIDER)
@@ -183,7 +194,10 @@ class FirebaseImpl : FirebaseRepository {
 
     }
 
-    override suspend fun reauthenticateWithEmailAndPassword(email: String, password: String): Result<Unit, FirebaseReauthenticate> {
+    override suspend fun reauthenticateWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Result<Unit, FirebaseReauthenticate> {
         return try {
 
             val credential = EmailAuthProvider.getCredential(email, password)
@@ -206,14 +220,100 @@ class FirebaseImpl : FirebaseRepository {
             e.printStackTrace()
             Result.Error(FirebaseReauthenticate.FIREBASE_NETWORK)
 
-        }  catch (e: Exception) {
+        } catch (e: Exception) {
 
             e.printStackTrace()
             Result.Error(FirebaseReauthenticate.UNKNOWN)
 
         }
     }
+
+    override suspend fun reauthenticateWithGoogle(): Result<Unit, FirebaseReauthenticate> {
+
+        when (val result = authenticateWithGoogle()) {
+
+            is Result.Success -> {
+
+                val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(result.data.data)
+                val lorem = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
+
+                return try {
+
+                    Firebase.auth.currentUser?.reauthenticate(lorem)
+                    deleteAccount()
+                    Result.Success(Unit)
+
+                } catch (e: FirebaseAuthInvalidUserException) {
+
+                    e.printStackTrace()
+                    Result.Error(FirebaseReauthenticate.FIREBASE_AUTH_INVALID_USER)
+
+                } catch (e: FirebaseAuthInvalidCredentialsException) {
+
+                    e.printStackTrace()
+                    Result.Error(FirebaseReauthenticate.FIREBASE_AUTH_INVALID_CREDENTIALS)
+
+                } catch (e: Exception) {
+
+                    e.printStackTrace()
+                    Result.Error(FirebaseReauthenticate.UNKNOWN)
+
+                }
+            }
+
+            is Result.Error -> {
+                return when (result.error) {
+                    GetCredential.GET_CREDENTIAL -> {
+                        Result.Error(FirebaseReauthenticate.UNKNOWN)
+                    }
+
+                    GetCredential.UNKNOWN -> {
+                        Result.Error(FirebaseReauthenticate.UNKNOWN)
+                    }
+                }
+            }
+        }
+
+    }
+
+    private suspend fun authenticateWithGoogle(): Result<Credential, GetCredential> {
+        //Todo: Set Nonce
+
+        val credentialManager = CredentialManager.create(context)
+
+        val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(true)
+            .setServerClientId(context.getString(R.string.web_client_id))
+            .setAutoSelectEnabled(true)
+            .build()
+
+        val request: GetCredentialRequest = GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
+
+        return try {
+            val result = credentialManager.getCredential(
+                request = request,
+                context = context,
+            )
+
+            Result.Success(result.credential)
+
+        } catch (e: GetCredentialException) {
+
+            e.printStackTrace()
+            Result.Error(GetCredential.GET_CREDENTIAL)
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+            Result.Error(GetCredential.UNKNOWN)
+
+        }
+    }
+
 }
+
 
 sealed interface ProviderId
 

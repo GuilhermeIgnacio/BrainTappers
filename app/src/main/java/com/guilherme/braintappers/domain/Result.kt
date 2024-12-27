@@ -100,3 +100,8 @@ enum class FirebaseReauthenticate: Error {
     FIREBASE_NETWORK,
     UNKNOWN
 }
+
+enum class GetCredential: Error {
+    GET_CREDENTIAL,
+    UNKNOWN
+}

@@ -1,5 +1,6 @@
 package com.guilherme.braintappers.di
 
+import android.content.Context
 import com.guilherme.braintappers.MainViewModel
 import com.guilherme.braintappers.data.FirebaseImpl
 import com.guilherme.braintappers.data.TriviaApiServiceImpl
@@ -18,23 +19,26 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
-val appModule = module {
 
-    single<FirebaseRepository> { FirebaseImpl() }
-    single<TriviaApiService> { TriviaApiServiceImpl() }
-    viewModel { SignUpViewModel(get()) }
-    viewModel { SignUpWithEmailViewModel(get()) }
-    viewModel { SignInWithEmailViewModel(get()) }
-    viewModel { HomeViewModel() }
-    viewModel { TriviaSettingsViewModel() }
-    viewModel { TriviaMainViewModel(get()) }
-    viewModel { WelcomeScreenViewModel(get()) }
-    viewModel { MainViewModel(get()) }
-    viewModel { SignInViewModel(get()) }
-    viewModel { ProfileViewModel(get()) }
 
-}
+fun koinConfiguration(context: Context) = koinApplication {
 
-fun koinConfiguration() = koinApplication {
+    val appModule = module {
+
+        single<FirebaseRepository> { FirebaseImpl(context) }
+        single<TriviaApiService> { TriviaApiServiceImpl() }
+        viewModel { SignUpViewModel(get()) }
+        viewModel { SignUpWithEmailViewModel(get()) }
+        viewModel { SignInWithEmailViewModel(get()) }
+        viewModel { HomeViewModel() }
+        viewModel { TriviaSettingsViewModel() }
+        viewModel { TriviaMainViewModel(get()) }
+        viewModel { WelcomeScreenViewModel(get()) }
+        viewModel { MainViewModel(get()) }
+        viewModel { SignInViewModel(get()) }
+        viewModel { ProfileViewModel(get()) }
+
+    }
+
     modules(appModule)
 }

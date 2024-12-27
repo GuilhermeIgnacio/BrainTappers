@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
-            KoinApplication(::koinConfiguration) {
+            KoinApplication(application = { koinConfiguration(this@MainActivity) }) {
                 val viewModel = koinViewModel<MainViewModel>()
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 splashScreen.setKeepOnScreenCondition { state.isLoading }
