@@ -90,76 +90,7 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                                 }
 
                                 FirebaseAccountDeletion.FIREBASE_AUTH_RECENT_LOGIN_REQUIRED -> {
-
-                                    when (val providerIdResult =
-                                        firebase.getCurrentUserProviderId()) {
-                                        is Result.Success -> {
-
-                                            when (providerIdResult.data) {
-
-                                                FirebaseProviderId.PASSWORD -> {
-                                                    _state.update {
-                                                        it.copy(
-                                                            modalBottomSheetVisibility = true
-                                                        )
-                                                    }
-                                                }
-
-                                                FirebaseProviderId.GOOGLE -> {
-                                                    when (
-                                                        val reauthenticateWithGoogleResult =
-                                                            firebase.reauthenticateWithGoogle()
-                                                    ) {
-
-                                                        is Result.Success -> {
-                                                            event.value.navigate(WelcomeScreen)
-                                                        }
-
-                                                        is Result.Error -> {
-                                                            when (reauthenticateWithGoogleResult.error) {
-
-                                                                FirebaseReauthenticate.FIREBASE_AUTH_INVALID_USER -> {
-                                                                    //TODO()
-                                                                }
-
-                                                                FirebaseReauthenticate.FIREBASE_AUTH_INVALID_CREDENTIALS -> {
-                                                                    //TODO()
-                                                                }
-
-                                                                FirebaseReauthenticate.FIREBASE_NETWORK -> {
-                                                                    //TODO()
-                                                                }
-
-                                                                FirebaseReauthenticate.UNKNOWN -> {
-                                                                    //TODO()
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-
-                                            }
-
-                                        }
-
-                                        is Result.Error -> {
-
-                                            when (providerIdResult.error) {
-                                                FirebaseCurrentUser.NULL_VALUE -> {
-                                                    TODO()
-                                                }
-
-                                                FirebaseCurrentUser.UNEXPECTED_PROVIDER -> {
-                                                    TODO()
-                                                }
-
-                                                FirebaseCurrentUser.UNKNOWN -> {
-                                                    TODO()
-                                                }
-                                            }
-                                        }
-                                    }
-
+                                    reauthenticateUser(event.value, snackBar)
                                 }
 
                                 FirebaseAccountDeletion.FIREBASE_NETWORK -> {
@@ -223,6 +154,95 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun reauthenticateUser(
+        navController: NavController,
+        snackbar: SnackbarHostState
+    ) {
+        when (val providerIdResult =
+            firebase.getCurrentUserProviderId()) {
+
+            is Result.Success -> {
+
+                when (providerIdResult.data) {
+
+                    FirebaseProviderId.PASSWORD -> {
+                        _state.update {
+                            it.copy(
+                                modalBottomSheetVisibility = true
+                            )
+                        }
+                    }
+
+                    FirebaseProviderId.GOOGLE -> {
+                        when (
+                            val reauthenticateWithGoogleResult =
+                                firebase.reauthenticateWithGoogle()
+                        ) {
+
+                            is Result.Success -> {
+                                navController.navigate(WelcomeScreen)
+                            }
+
+                            is Result.Error -> {
+                                when (reauthenticateWithGoogleResult.error) {
+
+                                    FirebaseReauthenticate.FIREBASE_AUTH_INVALID_USER -> {
+                                        snackbar.showSnackbar(
+                                            message = "Invalid User Error: The current user's account has been disabled, deleted, or its credentials are no longer valid."
+                                        )
+                                    }
+
+                                    FirebaseReauthenticate.FIREBASE_AUTH_INVALID_CREDENTIALS -> {
+                                        snackbar.showSnackbar(
+                                            message = "The supplied credentials do not correspond to the previously signed in user."
+                                        )
+                                    }
+
+                                    FirebaseReauthenticate.FIREBASE_NETWORK -> {
+                                        snackbar.showSnackbar(
+                                            message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
+                                        )
+                                    }
+
+                                    FirebaseReauthenticate.UNKNOWN -> {
+                                        snackbar.showSnackbar(
+                                            message = "Unknown error, please restart the app or try later."
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+            is Result.Error -> {
+
+                when (providerIdResult.error) {
+                    FirebaseCurrentUser.NULL_VALUE -> {
+                        snackbar.showSnackbar(
+                            message = "Error: Current User is null. If the error persists restart the or contact support."
+                        )
+                    }
+
+                    FirebaseCurrentUser.UNEXPECTED_PROVIDER -> {
+                        snackbar.showSnackbar(
+                            message = "Error: Unexpected provider. Please restart the app and try again."
+                        )
+                    }
+
+                    FirebaseCurrentUser.UNKNOWN -> {
+                        snackbar.showSnackbar(
+                            message = "Unknown error, please restart the app or try later."
+                        )
                     }
                 }
             }
