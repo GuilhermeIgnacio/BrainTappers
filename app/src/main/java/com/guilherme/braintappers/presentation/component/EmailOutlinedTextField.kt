@@ -27,6 +27,7 @@ fun EmailOutlinedTextField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     isError: Boolean,
+    isEnabled: Boolean = true,
     errorSupportingText: String
 ) {
     TextField(
@@ -39,6 +40,7 @@ fun EmailOutlinedTextField(
                 fontFamily = poppinsFamily
             )
         },
+        enabled = isEnabled,
         maxLines = 1,
         textStyle = LocalTextStyle.current.copy(fontFamily = poppinsFamily),
         colors = TextFieldDefaults.colors(

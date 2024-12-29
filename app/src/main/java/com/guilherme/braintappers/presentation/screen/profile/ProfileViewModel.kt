@@ -22,7 +22,10 @@ data class ProfileState(
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
     val modalBottomSheetVisibility: Boolean = false,
     val emailTextField: String = "",
-    val passwordTextField: String = ""
+    val passwordTextField: String = "",
+    val isReauthenticateWithEmailAndPasswordError: Boolean = false,
+    val errorSupportingText: String = "",
+    val isLoading: Boolean = false
 )
 
 sealed interface ProfileEvents {
@@ -68,7 +71,15 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
             }
 
             ProfileEvents.DismissModalBottomSheet -> {
-                _state.update { it.copy(modalBottomSheetVisibility = false) }
+                _state.update {
+                    it.copy(
+                        modalBottomSheetVisibility = false,
+                        emailTextField = "",
+                        passwordTextField = "",
+                        errorSupportingText = "",
+                        isReauthenticateWithEmailAndPasswordError = false
+                    )
+                }
             }
 
             is ProfileEvents.OnConfirmAccountDeletion -> {
@@ -114,6 +125,8 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
             is ProfileEvents.ReauthenticateWithEmailAndPassword -> {
                 viewModelScope.launch {
 
+                    _state.update { it.copy(isLoading = true) }
+
                     val email = _state.value.emailTextField
                     val password = _state.value.passwordTextField
 
@@ -122,35 +135,65 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                     ) {
 
                         is Result.Success -> {
-                            _state.update { it.copy(modalBottomSheetVisibility = false) }
+                            _state.update {
+                                it.copy(
+                                    modalBottomSheetVisibility = false,
+                                    isLoading = false,
+                                    isReauthenticateWithEmailAndPasswordError = false
+                                )
+                            }
+
                             event.value.navigate(WelcomeScreen)
                         }
 
                         is Result.Error -> {
-                            val snackbar = _state.value.snackbarHostState
+
+                            _state.update {
+                                it.copy(
+                                    isReauthenticateWithEmailAndPasswordError = true,
+                                    isLoading = false
+                                )
+                            }
+
                             when (result.error) {
                                 FirebaseReauthenticate.FIREBASE_AUTH_INVALID_USER -> {
-                                    snackbar.showSnackbar(
-                                        message = "Invalid User Error: The current user's account has been disabled, deleted, or its credentials are no longer valid."
-                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            errorSupportingText = "Invalid User Error: The current user's account has been disabled, deleted, or its credentials are no longer valid."
+                                        )
+                                    }
+
                                 }
 
                                 FirebaseReauthenticate.FIREBASE_AUTH_INVALID_CREDENTIALS -> {
-                                    snackbar.showSnackbar(
-                                        message = "The supplied credentials do not correspond to the previously signed in user."
-                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            errorSupportingText = "The supplied credentials do not correspond to the previously signed in user."
+                                        )
+                                    }
+
                                 }
 
                                 FirebaseReauthenticate.FIREBASE_NETWORK -> {
-                                    snackbar.showSnackbar(
-                                        message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
-                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            errorSupportingText = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
+                                        )
+                                    }
+
                                 }
 
                                 FirebaseReauthenticate.UNKNOWN -> {
-                                    snackbar.showSnackbar(
-                                        message = "Unknown error, please restart the app or try later."
-                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            errorSupportingText = "Unknown error, please restart the app or try later."
+                                        )
+                                    }
+
                                 }
                             }
                         }

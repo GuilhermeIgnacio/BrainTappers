@@ -1,5 +1,6 @@
 package com.guilherme.braintappers.presentation.screen.profile
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -194,6 +196,9 @@ fun ProfileScreen(navController: NavController) {
                 )
             }
         }
+
+        ReauthenticateModalBottomSheet(state, onEvent, navController)
+
     }
 
     //Delete Account Dialog
@@ -227,10 +232,30 @@ fun ProfileScreen(navController: NavController) {
         confirmButtonText = "Sign Out"
     )
 
+
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun ReauthenticateModalBottomSheet(
+    state: ProfileState,
+    onEvent: (ProfileEvents) -> Unit,
+    navController: NavController
+) {
     if (state.modalBottomSheetVisibility) {
         ModalBottomSheet(
-            onDismissRequest = { onEvent(ProfileEvents.DismissModalBottomSheet) }
+            onDismissRequest = {
+                onEvent(ProfileEvents.DismissModalBottomSheet)
+            }
         ) {
+
+            if (state.isLoading) {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = primaryColor
+                )
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -242,7 +267,8 @@ fun ProfileScreen(navController: NavController) {
                     value = state.emailTextField,
                     onValueChange = { onEvent(ProfileEvents.OnEmailTextFieldValueChanged(it)) },
                     placeholder = "Email",
-                    isError = false,
+                    isEnabled = !state.isLoading,
+                    isError = state.isReauthenticateWithEmailAndPasswordError,
                     errorSupportingText = ""
                 )
 
@@ -252,9 +278,12 @@ fun ProfileScreen(navController: NavController) {
                     value = state.passwordTextField,
                     onValueChange = { onEvent(ProfileEvents.OnPasswordChanged(it)) },
                     placeholder = "Password",
-                    isError = false,
-                    errorSupportingText = ""
+                    isEnabled = !state.isLoading,
+                    isError = state.isReauthenticateWithEmailAndPasswordError,
+                    errorSupportingText = state.errorSupportingText
                 )
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
                     modifier = Modifier
@@ -265,6 +294,7 @@ fun ProfileScreen(navController: NavController) {
                         modifier = Modifier,
                         onClick = { onEvent(ProfileEvents.DismissModalBottomSheet) },
                         shape = RoundedCornerShape(20),
+                        enabled = !state.isLoading,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.LightGray,
                             contentColor = Color.Black
@@ -280,13 +310,19 @@ fun ProfileScreen(navController: NavController) {
 
                     Button(
                         modifier = Modifier,
-                        onClick = { onEvent(ProfileEvents.ReauthenticateWithEmailAndPassword(navController)) },
+                        onClick = {
+                            onEvent(
+                                ProfileEvents.ReauthenticateWithEmailAndPassword(
+                                    navController
+                                )
+                            )
+                        },
                         shape = RoundedCornerShape(20),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = primaryColor,
                             contentColor = Color.Black
                         ),
-                        enabled = state.emailTextField.isNotEmpty() && state.passwordTextField.isNotEmpty()
+                        enabled = state.emailTextField.isNotEmpty() && state.passwordTextField.isNotEmpty() && !state.isLoading
                     ) {
                         Text(
                             text = "Re-authenticate",
@@ -298,7 +334,6 @@ fun ProfileScreen(navController: NavController) {
             }
         }
     }
-
 }
 
 @Composable

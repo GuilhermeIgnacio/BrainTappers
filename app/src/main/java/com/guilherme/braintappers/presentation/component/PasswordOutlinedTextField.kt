@@ -37,6 +37,7 @@ fun PasswordOutlinedTextField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     isError: Boolean,
+    isEnabled: Boolean = true,
     errorSupportingText: String
 ) {
     var passWordVisible by rememberSaveable { mutableStateOf(false) }
@@ -45,6 +46,7 @@ fun PasswordOutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         textStyle = LocalTextStyle.current.copy(fontFamily = poppinsFamily),
+        enabled = isEnabled,
         placeholder = {
             Text(
                 text = placeholder,
@@ -66,7 +68,7 @@ fun PasswordOutlinedTextField(
         supportingText = {
             Crossfade(targetState = isError, label = "") { isError ->
                 if (isError) {
-                    Text(text = errorSupportingText, fontFamily = poppinsFamily)
+                    Text(text = errorSupportingText, fontFamily = poppinsFamily, color = Color.Red)
                 }
             }
         },
