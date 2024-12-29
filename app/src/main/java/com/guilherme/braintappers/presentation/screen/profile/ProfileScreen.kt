@@ -52,6 +52,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.presentation.component.CustomCircularProgressIndicator
 import com.guilherme.braintappers.presentation.component.EmailOutlinedTextField
 import com.guilherme.braintappers.presentation.component.PasswordOutlinedTextField
 import com.guilherme.braintappers.ui.theme.primaryColor
@@ -232,6 +233,7 @@ fun ProfileScreen(navController: NavController) {
         confirmButtonText = "Sign Out"
     )
 
+    CustomCircularProgressIndicator(state.isLoading)
 
 }
 
@@ -248,13 +250,6 @@ fun ReauthenticateModalBottomSheet(
                 onEvent(ProfileEvents.DismissModalBottomSheet)
             }
         ) {
-
-            if (state.isLoading) {
-                LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = primaryColor
-                )
-            }
 
             Column(
                 modifier = Modifier
