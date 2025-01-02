@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.DisplayResult
+import com.guilherme.braintappers.presentation.component.CustomCircularProgressIndicator
 import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
@@ -109,7 +110,7 @@ fun TriviaMainScreen(
                 /**
                  * Displays a "Finish" button that becomes visible when the user reaches the last question of the trivia.
                  */
-                FinishTriviaButton(questions = questions, questionIndex = questionIndex)
+                FinishTriviaButton(questions = questions, questionIndex = questionIndex, onEvent = onEvent)
 
             }
 
@@ -119,6 +120,8 @@ fun TriviaMainScreen(
             if (isDialogOpen) {
                 CloseTriviaDialog(navController, closeDialog = { isDialogOpen = false })
             }
+
+            CustomCircularProgressIndicator(visible = state.isLoading)
 
         },
         onError = {

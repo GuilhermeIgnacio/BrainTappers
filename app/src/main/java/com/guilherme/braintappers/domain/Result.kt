@@ -105,3 +105,7 @@ enum class GetCredential: Error {
     GET_CREDENTIAL,
     UNKNOWN
 }
+
+enum class FirestoreError: Error{
+    UNKNOWN
+}

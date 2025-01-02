@@ -2,8 +2,10 @@ package com.guilherme.braintappers.di
 
 import android.content.Context
 import com.guilherme.braintappers.MainViewModel
+import com.guilherme.braintappers.data.FirebaseFirestoreImpl
 import com.guilherme.braintappers.data.FirebaseImpl
 import com.guilherme.braintappers.data.TriviaApiServiceImpl
+import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.TriviaApiService
 import com.guilherme.braintappers.presentation.screen.home.HomeViewModel
@@ -26,13 +28,14 @@ fun koinConfiguration(context: Context) = koinApplication {
     val appModule = module {
 
         single<FirebaseRepository> { FirebaseImpl(context) }
+        single<FirebaseFirestoreRepository> { FirebaseFirestoreImpl() }
         single<TriviaApiService> { TriviaApiServiceImpl() }
         viewModel { SignUpViewModel(get()) }
         viewModel { SignUpWithEmailViewModel(get()) }
         viewModel { SignInWithEmailViewModel(get()) }
         viewModel { HomeViewModel() }
         viewModel { TriviaSettingsViewModel() }
-        viewModel { TriviaMainViewModel(get()) }
+        viewModel { TriviaMainViewModel(get(), get()) }
         viewModel { WelcomeScreenViewModel(get()) }
         viewModel { MainViewModel(get()) }
         viewModel { SignInViewModel(get()) }

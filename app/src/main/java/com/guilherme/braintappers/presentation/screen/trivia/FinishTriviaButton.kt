@@ -27,7 +27,8 @@ import com.guilherme.braintappers.util.poppinsFamily
 @Composable
 fun FinishTriviaButton(
     questions: List<Question>,
-    questionIndex: Int
+    questionIndex: Int,
+    onEvent: (TriviaMainEvents) -> Unit
 ) {
     AnimatedVisibility(
         visible = questions.size == questionIndex + 1,
@@ -36,7 +37,7 @@ fun FinishTriviaButton(
     ) {
         OutlinedButton(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { TODO("Finish Event") },
+            onClick = { onEvent(TriviaMainEvents.OnFinishButtonClicked) },
             shape = RoundedCornerShape(10f),
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = primaryColor,
