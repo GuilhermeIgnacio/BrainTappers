@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.navigation.HomeScreen
+import com.guilherme.braintappers.navigation.QuizzesPlayedScreen
 import com.guilherme.braintappers.presentation.component.CustomCircularProgressIndicator
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
@@ -149,7 +150,7 @@ fun ProfileScreen(navController: NavController) {
 
                 CustomSurface(
                     onClick = {
-                        TODO("Navigate To PlayedQuizzes Screen")
+                        navController.navigate(QuizzesPlayedScreen)
                     },
                     shape = RoundedCornerShape(16.dp),
                     icon = painterResource(R.drawable.rounded_cognition_2_24),

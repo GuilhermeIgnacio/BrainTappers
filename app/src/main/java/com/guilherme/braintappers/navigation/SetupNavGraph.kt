@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.guilherme.braintappers.presentation.screen.home.HomeScreen
 import com.guilherme.braintappers.presentation.screen.profile.ProfileScreen
+import com.guilherme.braintappers.presentation.screen.quizzesplayed.QuizzesPlayedScreen
 import com.guilherme.braintappers.presentation.screen.triviasettings.TriviaSettingsScreen
 import com.guilherme.braintappers.presentation.screen.signin.SignInScreen
 import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.SignInWithEmailScreen
@@ -54,6 +55,10 @@ fun SetupNavGraph(
             ProfileScreen(navController = navController)
         }
 
+        composable<QuizzesPlayedScreen> {
+            QuizzesPlayedScreen(navController = navController)
+        }
+
         composable<TriviaSettingsScreen> {
             val args = it.toRoute<TriviaSettingsScreen>()
 
@@ -99,6 +104,9 @@ object HomeScreen
 
 @Serializable
 object ProfileScreen
+
+@Serializable
+object QuizzesPlayedScreen
 
 @Serializable
 data class TriviaSettingsScreen(

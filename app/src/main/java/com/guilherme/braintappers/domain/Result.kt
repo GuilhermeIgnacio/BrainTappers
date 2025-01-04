@@ -109,3 +109,7 @@ enum class GetCredential: Error {
 enum class FirestoreError: Error{
     UNKNOWN
 }
+
+enum class FirebaseGetUserQuizzes: Error {
+    UNKNOWN
+}
