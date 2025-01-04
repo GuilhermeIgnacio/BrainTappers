@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -38,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.navigation.HomeScreen
 import com.guilherme.braintappers.presentation.component.CustomCircularProgressIndicator
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
@@ -65,6 +69,15 @@ fun ProfileScreen(navController: NavController) {
                     .background(color = primaryColor.copy(alpha = 0.5f))
                     .statusBarsPadding()
             ) {
+
+                IconButton(
+                    onClick = {navController.navigate(HomeScreen)}
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Return to home screen",
+                    )
+                }
 
                 AsyncImage(
                     modifier = Modifier
@@ -134,22 +147,36 @@ fun ProfileScreen(navController: NavController) {
 
             Column(modifier = Modifier.padding(16.dp)) {
 
+                CustomSurface(
+                    onClick = {
+                        TODO("Navigate To PlayedQuizzes Screen")
+                    },
+                    shape = RoundedCornerShape(16.dp),
+                    icon = painterResource(R.drawable.rounded_cognition_2_24),
+                    iconContentDescription = "",
+                    text = "Played Quizzes",
+                    color = primaryColor
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 //Clear History Button
                 CustomSurface(
                     onClick = { TODO("Open Clear History Dialog") },
                     shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                     icon = Icons.Default.History,
                     iconContentDescription = "History Icon",
-                    text = "Clear History"
+                    text = "Clear History",
+                    color = Color.Red
                 )
 
                 //Delete Account Button
                 CustomSurface(
                     onClick = { isDeleteAccountDialogVisible = true },
-                    shape = null,
                     icon = Icons.Default.DeleteForever,
                     iconContentDescription = "Delete Icon",
-                    text = "Delete Account"
+                    text = "Delete Account",
+                    color = Color.Red
                 )
 
                 //Sign Out Button
@@ -158,7 +185,8 @@ fun ProfileScreen(navController: NavController) {
                     shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
                     icon = Icons.AutoMirrored.Filled.Logout,
                     iconContentDescription = "Logout Icon",
-                    text = "Sign Out"
+                    text = "Sign Out",
+                    color = Color.Red
                 )
             }
         }
