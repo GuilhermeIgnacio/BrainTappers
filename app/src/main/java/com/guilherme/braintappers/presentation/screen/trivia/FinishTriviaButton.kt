@@ -28,10 +28,11 @@ import com.guilherme.braintappers.util.poppinsFamily
 fun FinishTriviaButton(
     questions: List<Question>,
     questionIndex: Int,
+    isFinished: Boolean,
     onEvent: (TriviaMainEvents) -> Unit
 ) {
     AnimatedVisibility(
-        visible = questions.size == questionIndex + 1,
+        visible = questions.size == questionIndex + 1 && !isFinished,
         enter = fadeIn(),
         exit = fadeOut()
     ) {

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
+import com.guilherme.braintappers.domain.FirestoreError
 import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.domain.TriviaApiService
 import com.guilherme.braintappers.domain.model.ApiResponse
@@ -24,7 +25,8 @@ data class TriviaMainState(
     val answers: List<List<String>> = emptyList(),
     val questions: List<Question> = emptyList(),
     val userAnswers: List<String> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isTriviaFinished: Boolean = false
 )
 
 sealed interface TriviaMainEvents {
@@ -152,15 +154,22 @@ class TriviaMainViewModel(
 
                     when (val result = firestore.write(quizUid = uuid, data = data)) {
                         is Result.Success -> {
-                            _state.update { it.copy(isLoading = false) }
+                            _state.update { it.copy(isLoading = false, isTriviaFinished = true) }
 
                         }
 
                         is Result.Error -> {
                             _state.update { it.copy(isLoading = false) }
 
+                            when(result.error) {
+                                FirestoreError.UNKNOWN -> {
+                                    //TODO()
+                                }
+                            }
+
                         }
                     }
+
 
                 }
             }

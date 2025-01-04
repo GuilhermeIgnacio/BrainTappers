@@ -57,16 +57,26 @@ fun NumberedNavigationButtons(
                 label = ""
             )
 
+            val isCorrect = state.userAnswers[it] == state.questions[it].correctAnswer
+
+            val notFinishedTriviaColors = ButtonDefaults.outlinedButtonColors(
+                containerColor = if (isAnswered) primaryColor else Color.Transparent,
+                contentColor = if (isAnswered) Color.White else Color.Black
+            )
+
+            val finishedTriviaColors = ButtonDefaults.outlinedButtonColors(
+                containerColor = if (isCorrect) primaryColor else Color.Red,
+                contentColor = Color.White
+            )
+
+
             OutlinedButton(
                 modifier = Modifier.size(40.dp),
                 onClick = {
                     onEvent(TriviaMainEvents.NavigateToQuestion(it))
                 },
                 shape = CircleShape,
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = if (isAnswered) primaryColor else Color.Transparent,
-                    contentColor = if (isAnswered) Color.White else Color.Black
-                ),
+                colors = if (!state.isTriviaFinished) notFinishedTriviaColors else finishedTriviaColors,
                 border = BorderStroke(
                     width = 1.dp,
                     color = current

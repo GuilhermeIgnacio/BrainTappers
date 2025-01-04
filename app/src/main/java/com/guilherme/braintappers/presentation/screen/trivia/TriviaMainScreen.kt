@@ -110,7 +110,7 @@ fun TriviaMainScreen(
                 /**
                  * Displays a "Finish" button that becomes visible when the user reaches the last question of the trivia.
                  */
-                FinishTriviaButton(questions = questions, questionIndex = questionIndex, onEvent = onEvent)
+                FinishTriviaButton(questions = questions, questionIndex = questionIndex, isFinished = state.isTriviaFinished, onEvent = onEvent)
 
             }
 
