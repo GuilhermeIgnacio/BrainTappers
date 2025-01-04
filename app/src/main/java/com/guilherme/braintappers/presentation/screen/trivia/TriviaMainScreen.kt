@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.DisplayResult
+import com.guilherme.braintappers.navigation.HomeScreen
 import com.guilherme.braintappers.presentation.component.CustomCircularProgressIndicator
 import org.koin.androidx.compose.koinViewModel
 
@@ -68,7 +69,13 @@ fun TriviaMainScreen(
             ) {
                 // Close Trivia Button
                 IconButton(onClick = {
-                    isDialogOpen = !isDialogOpen
+
+                    if (!state.isTriviaFinished) {
+                        isDialogOpen = !isDialogOpen
+                    } else {
+                        navController.navigate(HomeScreen)
+                    }
+
                 }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -110,7 +117,12 @@ fun TriviaMainScreen(
                 /**
                  * Displays a "Finish" button that becomes visible when the user reaches the last question of the trivia.
                  */
-                FinishTriviaButton(questions = questions, questionIndex = questionIndex, isFinished = state.isTriviaFinished, onEvent = onEvent)
+                FinishTriviaButton(
+                    questions = questions,
+                    questionIndex = questionIndex,
+                    isFinished = state.isTriviaFinished,
+                    onEvent = onEvent
+                )
 
             }
 
