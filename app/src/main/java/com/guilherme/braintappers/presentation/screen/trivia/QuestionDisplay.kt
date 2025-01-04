@@ -2,7 +2,10 @@ package com.guilherme.braintappers.presentation.screen.trivia
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -116,9 +119,14 @@ fun QuestionDisplay(
                 }
             }
 
-            if (state.isTriviaFinished) {
-                item {
 
+            // Display answer feedback only when the trivia is finished
+            item {
+                AnimatedVisibility(
+                    visible = state.isTriviaFinished,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
                     //Check if user answer is correct
                     val foo =
                         state.userAnswers[questionIndex] == state.questions[questionIndex].correctAnswer
@@ -159,9 +167,10 @@ fun QuestionDisplay(
                             )
                         }
                     }
-
                 }
+
             }
+
 
         }
     }
