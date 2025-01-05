@@ -1,23 +1,19 @@
 package com.guilherme.braintappers.data
 
-import androidx.lifecycle.get
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObjects
 import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
 import com.guilherme.braintappers.domain.FirebaseGetUserQuizzes
 import com.guilherme.braintappers.domain.FirestoreError
 import com.guilherme.braintappers.domain.Result
-import com.guilherme.braintappers.domain.model.Question
 import kotlinx.coroutines.tasks.await
-import kotlinx.serialization.Serializable
 
 class FirebaseFirestoreImpl : FirebaseFirestoreRepository {
 
     override suspend fun write(
         quizUid: String,
-        data: HashMap<String, List<String>>
+        data: HashMap<String, Any?>
     ): Result<Unit, FirestoreError> {
 
         return try {

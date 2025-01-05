@@ -52,7 +52,7 @@ fun TriviaMainScreen(
     LaunchedEffect(Unit) {
         viewModel.fetchTrivia(
             numberOfQuestions = numberOfQuestions,
-            categoryId = "", //Todo: Get Category
+            categoryId = categoryId,
             difficulty = difficulty,
             type = type
         )

@@ -2,7 +2,7 @@ package com.guilherme.braintappers.presentation.screen.trivia
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
+import com.google.firebase.Timestamp
 import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
 import com.guilherme.braintappers.domain.FirestoreError
@@ -10,14 +10,13 @@ import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.domain.TriviaApiService
 import com.guilherme.braintappers.domain.model.ApiResponse
 import com.guilherme.braintappers.domain.model.Question
-import com.guilherme.braintappers.navigation.HomeScreen
-import kotlinx.coroutines.delay
+import com.guilherme.braintappers.items
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 import java.util.UUID
-import kotlin.uuid.Uuid
 
 data class TriviaMainState(
     val result: Result<ApiResponse, DataError>? = null,
@@ -26,7 +25,8 @@ data class TriviaMainState(
     val questions: List<Question> = emptyList(),
     val userAnswers: List<String> = emptyList(),
     val isLoading: Boolean = false,
-    val isTriviaFinished: Boolean = false
+    val isTriviaFinished: Boolean = false,
+    val categoryId: Int = 0
 )
 
 sealed interface TriviaMainEvents {
@@ -77,6 +77,7 @@ class TriviaMainViewModel(
                         answers = answers,
                         userAnswers = MutableList(answers.size) { "" },
                         questions = trivia.data.results,
+                        categoryId = categoryId.toInt()
                     )
                 }
             }
@@ -149,8 +150,12 @@ class TriviaMainViewModel(
                     val data = hashMapOf(
                         "questions" to questions,
                         "userAnswers" to userAnswers,
-                        "correctAnswers" to correctAnswers
+                        "correctAnswers" to correctAnswers,
+                        "categoryId" to items.find { it.id == _state.value.categoryId }?.contentDescription,
+                        "createdAt" to Timestamp(Date())
                     )
+
+
 
                     when (val result = firestore.write(quizUid = uuid, data = data)) {
                         is Result.Success -> {

@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.items
 import com.guilherme.braintappers.navigation.ProfileScreen
 import com.guilherme.braintappers.navigation.TriviaSettingsScreen
 import com.guilherme.braintappers.util.poppinsFamily
@@ -68,7 +69,7 @@ fun HomeScreen(navController: NavController) {
             itemSpacing = 8.dp,
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) { i ->
-            val item = viewModel.items[i]
+            val item = items[i]
 
             Card(
                 modifier = Modifier.fillMaxSize(),

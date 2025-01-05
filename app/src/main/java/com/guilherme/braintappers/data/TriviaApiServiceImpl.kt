@@ -44,7 +44,7 @@ class TriviaApiServiceImpl : TriviaApiService {
     ): Result<ApiResponse, DataError> {
         return try {
             val response =
-                httpClient.get("https://opentdb.com/api.php?$numberOfQuestions&category=10$difficulty$type")
+                httpClient.get("https://opentdb.com/api.php?$numberOfQuestions&category=$categoryId$difficulty$type")
 
             when (response.status) {
                 HttpStatusCode.OK -> {
