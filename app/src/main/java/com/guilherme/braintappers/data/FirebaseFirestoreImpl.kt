@@ -1,6 +1,7 @@
 package com.guilherme.braintappers.data
 
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
@@ -8,6 +9,7 @@ import com.guilherme.braintappers.domain.FirebaseGetUserQuizzes
 import com.guilherme.braintappers.domain.FirestoreError
 import com.guilherme.braintappers.domain.Result
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 
 class FirebaseFirestoreImpl : FirebaseFirestoreRepository {
 
@@ -86,7 +88,9 @@ class FirebaseFirestoreImpl : FirebaseFirestoreRepository {
                     QuizResults(
                         questions = document.data?.get("questions") as List<String>,
                         userAnswers = document.data?.get("userAnswers") as List<String>,
-                        correctAnswers = document.data?.get("correctAnswers") as List<String>
+                        correctAnswers = document.data?.get("correctAnswers") as List<String>,
+                        category = document.data?.get("category") as String?,
+                        createdAt = document.data?.get("createdAt") as Timestamp?
                     )
                 }
 
@@ -101,9 +105,11 @@ class FirebaseFirestoreImpl : FirebaseFirestoreRepository {
 
 }
 
-
+//Todo: Extract this data class to a separate file
 data class QuizResults(
     val questions: List<String> = emptyList(),
     val userAnswers: List<String> = emptyList(),
-    val correctAnswers: List<String> = emptyList()
+    val correctAnswers: List<String> = emptyList(),
+    val category: String? = null,
+    val createdAt: Timestamp? = null
 )

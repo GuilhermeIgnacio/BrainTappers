@@ -151,7 +151,7 @@ class TriviaMainViewModel(
                         "questions" to questions,
                         "userAnswers" to userAnswers,
                         "correctAnswers" to correctAnswers,
-                        "categoryId" to items.find { it.id == _state.value.categoryId }?.contentDescription,
+                        "category" to items.find { it.id == _state.value.categoryId }?.contentDescription,
                         "createdAt" to Timestamp(Date())
                     )
 
