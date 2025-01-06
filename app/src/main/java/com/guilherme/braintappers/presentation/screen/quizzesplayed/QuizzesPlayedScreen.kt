@@ -13,6 +13,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,10 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.guilherme.braintappers.navigation.ProfileScreen
 import com.guilherme.braintappers.navigation.QuizPlayedDetailScreen
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
@@ -44,11 +48,21 @@ fun QuizzesPlayedScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(top = 8.dp)
-            .padding(horizontal = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .navigationBarsPadding(),
+
     ) {
+
+        item {
+            IconButton(
+                onClick = { navController.navigate(ProfileScreen) }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Return to Quizzes Played Screen"
+                )
+            }
+        }
+
         items(state.quizResults) {
 
             val instant = Instant.ofEpochSecond(it.createdAt?.seconds ?: 0)
@@ -63,15 +77,18 @@ fun QuizzesPlayedScreen(navController: NavController) {
                     .map { (a, _) -> a }
 
             Surface(
+                modifier = Modifier.padding(8.dp),
                 shape = RoundedCornerShape(16.dp),
                 shadowElevation = 16.dp,
-                onClick = { navController.navigate(
-                    QuizPlayedDetailScreen(
-                        questions = it.questions,
-                        userAnswers = it.userAnswers,
-                        correctAnswers = it.correctAnswers
+                onClick = {
+                    navController.navigate(
+                        QuizPlayedDetailScreen(
+                            questions = it.questions,
+                            userAnswers = it.userAnswers,
+                            correctAnswers = it.correctAnswers
+                        )
                     )
-                )},
+                },
                 color = primaryColor
             ) {
                 Row(
