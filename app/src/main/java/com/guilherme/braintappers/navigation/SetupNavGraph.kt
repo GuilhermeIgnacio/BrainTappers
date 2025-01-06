@@ -1,12 +1,15 @@
 package com.guilherme.braintappers.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.guilherme.braintappers.data.QuizResults
 import com.guilherme.braintappers.presentation.screen.home.HomeScreen
 import com.guilherme.braintappers.presentation.screen.profile.ProfileScreen
+import com.guilherme.braintappers.presentation.screen.quizplayeddetails.QuizPlayedDetailScreen
 import com.guilherme.braintappers.presentation.screen.quizzesplayed.QuizzesPlayedScreen
 import com.guilherme.braintappers.presentation.screen.triviasettings.TriviaSettingsScreen
 import com.guilherme.braintappers.presentation.screen.signin.SignInScreen
@@ -15,6 +18,7 @@ import com.guilherme.braintappers.presentation.screen.signup.SignUpScreen
 import com.guilherme.braintappers.presentation.screen.signup.signupwithemail.SignUpWithEmailScreen
 import com.guilherme.braintappers.presentation.screen.trivia.TriviaMainScreen
 import com.guilherme.braintappers.presentation.screen.welcome.WelcomeScreen
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -57,6 +61,17 @@ fun SetupNavGraph(
 
         composable<QuizzesPlayedScreen> {
             QuizzesPlayedScreen(navController = navController)
+        }
+
+        composable<QuizPlayedDetailScreen> {
+            val args = it.toRoute<QuizPlayedDetailScreen>()
+
+            QuizPlayedDetailScreen(
+                navController=navController,
+                questions = args.questions,
+                userAnswers = args.userAnswers,
+                correctAnswers = args.correctAnswers
+            )
         }
 
         composable<TriviaSettingsScreen> {
@@ -111,6 +126,13 @@ object QuizzesPlayedScreen
 @Serializable
 data class TriviaSettingsScreen(
     val categoryId: String
+)
+
+@Serializable
+data class QuizPlayedDetailScreen(
+    val questions: List<String>,
+    val userAnswers: List<String>,
+    val correctAnswers: List<String>
 )
 
 @Serializable

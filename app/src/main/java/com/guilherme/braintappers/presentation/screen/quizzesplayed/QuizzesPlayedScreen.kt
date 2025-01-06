@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.guilherme.braintappers.navigation.QuizPlayedDetailScreen
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
@@ -42,8 +43,10 @@ fun QuizzesPlayedScreen(navController: NavController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .padding(vertical = 8.dp),
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(top = 8.dp)
+            .padding(horizontal = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(state.quizResults) {
@@ -62,6 +65,13 @@ fun QuizzesPlayedScreen(navController: NavController) {
             Surface(
                 shape = RoundedCornerShape(16.dp),
                 shadowElevation = 16.dp,
+                onClick = { navController.navigate(
+                    QuizPlayedDetailScreen(
+                        questions = it.questions,
+                        userAnswers = it.userAnswers,
+                        correctAnswers = it.correctAnswers
+                    )
+                )},
                 color = primaryColor
             ) {
                 Row(
