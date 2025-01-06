@@ -1,9 +1,11 @@
 package com.guilherme.braintappers.data
 
 import com.google.firebase.Firebase
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.guilherme.braintappers.domain.FirebaseFirestoreDeleteError
 import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
 import com.guilherme.braintappers.domain.FirebaseGetUserQuizzes
 import com.guilherme.braintappers.domain.FirestoreError
@@ -30,48 +32,6 @@ class FirebaseFirestoreImpl : FirebaseFirestoreRepository {
         }
 
     }
-
-    /*
-        override suspend fun getUserPlayedQuizzes(): Result<List<QuizResults>, FirebaseGetUserQuizzes> {
-            val db = Firebase.firestore
-            val currentUserUid = Firebase.auth.currentUser?.uid
-
-            val foo: MutableList<QuizResults> = mutableListOf()
-
-            val docRef =
-                db.collection("users")
-                    .document(currentUserUid.toString())
-                    .collection("quizzesPlayed")
-
-            return try {
-                docRef.get()
-                    .addOnSuccessListener { documents ->
-
-                        for (document in documents) {
-
-                            foo.add(
-                                QuizResults(
-                                    question = document.data["questions"] as List<String>,
-                                    userAnswer = document.data["userAnswers"] as List<String>,
-                                    correctAnswer = document.data["correctAnswers"] as List<String>
-                                )
-                            )
-
-                        }
-
-                    }
-                    .addOnFailureListener {
-                        println("Operation Failed $it")
-                    }
-                    .await()
-
-                Result.Success(foo)
-            } catch (e: Exception) {
-                Result.Error(FirebaseGetUserQuizzes.UNKNOWN)
-            }
-
-        }
-    */
 
     override suspend fun getUserPlayedQuizzes(): Result<List<QuizResults>, FirebaseGetUserQuizzes> {
 
@@ -100,6 +60,40 @@ class FirebaseFirestoreImpl : FirebaseFirestoreRepository {
             e.printStackTrace()
             Result.Error(FirebaseGetUserQuizzes.UNKNOWN)
         }
+
+    }
+
+    override suspend fun deleteData(): Result<Unit, FirebaseFirestoreDeleteError> {
+
+        val db = Firebase.firestore
+        val currentUserUid = Firebase.auth.currentUser?.uid.toString()
+
+        val documentPath = db.collection("users")
+            .document(currentUserUid)
+            .collection("quizzesPlayed")
+
+        return try {
+
+            val documentsIds = documentPath.get().await().documents.map { it.id }
+
+            documentsIds.forEach { documentPath.document(it).delete().await() }
+
+            Firebase.firestore.clearPersistence().await()
+
+            Result.Success(Unit)
+
+        } catch (e: FirebaseNetworkException) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseFirestoreDeleteError.FIREBASE_NETWORK)
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+            Result.Error(FirebaseFirestoreDeleteError.UNKNOWN)
+
+        }
+
 
     }
 

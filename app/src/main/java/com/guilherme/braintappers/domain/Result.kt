@@ -113,3 +113,8 @@ enum class FirestoreError: Error{
 enum class FirebaseGetUserQuizzes: Error {
     UNKNOWN
 }
+
+enum class FirebaseFirestoreDeleteError: Error {
+    UNKNOWN,
+    FIREBASE_NETWORK
+}

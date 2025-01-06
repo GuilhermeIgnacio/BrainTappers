@@ -57,6 +57,7 @@ fun ProfileScreen(navController: NavController) {
 
     var isSignOutDialogVisible by remember { mutableStateOf(false) }
     var isDeleteAccountDialogVisible by remember { mutableStateOf(false) }
+    var isClearHistoryDialogVisible by remember { mutableStateOf(false) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = state.snackbarHostState) }
@@ -163,7 +164,7 @@ fun ProfileScreen(navController: NavController) {
 
                 //Clear History Button
                 CustomSurface(
-                    onClick = { TODO("Open Clear History Dialog") },
+                    onClick = { isClearHistoryDialogVisible = true },
                     shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                     icon = Icons.Default.History,
                     iconContentDescription = "History Icon",
@@ -225,6 +226,21 @@ fun ProfileScreen(navController: NavController) {
             onEvent(ProfileEvents.OnConfirmSignOut(navController))
         },
         confirmButtonText = "Sign Out"
+    )
+
+    //Clear History Dialog
+    ProfileCustomDialog(
+        visibility = isClearHistoryDialogVisible,
+        onDismissRequest = { isClearHistoryDialogVisible = false },
+        icon = Icons.Default.History,
+        iconContentDescription = "History Icon",
+        title = "Clear History?",
+        text = "Are you sure you want to clear all your history? All quizzes data will be lost. This action cannot be undone.",
+        onConfirmClick = {
+            isClearHistoryDialogVisible = false
+            onEvent(ProfileEvents.OnConfirmClearHistory)
+        },
+        confirmButtonText = "Clear History"
     )
 
     CustomCircularProgressIndicator(state.isLoading)

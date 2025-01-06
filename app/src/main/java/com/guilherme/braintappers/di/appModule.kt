@@ -40,7 +40,7 @@ fun koinConfiguration(context: Context) = koinApplication {
         viewModel { WelcomeScreenViewModel(get()) }
         viewModel { MainViewModel(get()) }
         viewModel { SignInViewModel(get()) }
-        viewModel { ProfileViewModel(get()) }
+        viewModel { ProfileViewModel(get(), get()) }
         viewModel { QuizzesPlayedViewModel(get()) }
 
     }

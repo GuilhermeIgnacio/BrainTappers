@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.guilherme.braintappers.data.FirebaseProviderId
 import com.guilherme.braintappers.domain.FirebaseAccountDeletion
 import com.guilherme.braintappers.domain.FirebaseCurrentUser
+import com.guilherme.braintappers.domain.FirebaseFirestoreDeleteError
+import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
 import com.guilherme.braintappers.domain.FirebaseReauthenticate
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.Result
@@ -31,6 +33,7 @@ data class ProfileState(
 sealed interface ProfileEvents {
     data class OnConfirmSignOut(val value: NavController) : ProfileEvents
     data class OnConfirmAccountDeletion(val value: NavController) : ProfileEvents
+    data object OnConfirmClearHistory : ProfileEvents
     data class OnEmailTextFieldValueChanged(val value: String) : ProfileEvents
     data class OnPasswordChanged(val value: String) : ProfileEvents
     data object DismissModalBottomSheet : ProfileEvents
@@ -38,7 +41,10 @@ sealed interface ProfileEvents {
     data class ReauthenticateWithEmailAndPassword(val value: NavController) : ProfileEvents
 }
 
-class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
+class ProfileViewModel(
+    private val firebase: FirebaseRepository,
+    private val firestore: FirebaseFirestoreRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.asStateFlow()
@@ -59,6 +65,36 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                 viewModelScope.launch {
                     firebase.signOut()
                     event.value.navigate(WelcomeScreen)
+                }
+            }
+
+            ProfileEvents.OnConfirmClearHistory -> {
+                viewModelScope.launch {
+                    val snackbar = _state.value.snackbarHostState
+                    when (val result = firestore.deleteData()) {
+                        is Result.Success -> {
+                            println("Delete Data Operation Success")
+                            snackbar.showSnackbar(
+                                message = "Your history has been completely cleared. All previously saved information has been removed"
+                            )
+                        }
+
+                        is Result.Error -> {
+                            when (result.error) {
+                                FirebaseFirestoreDeleteError.FIREBASE_NETWORK -> {
+                                    snackbar.showSnackbar(
+                                        message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
+                                    )
+                                }
+
+                                FirebaseFirestoreDeleteError.UNKNOWN -> {
+                                    snackbar.showSnackbar(
+                                        message = "Unknown error, please restart the app or try later."
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -200,6 +236,7 @@ class ProfileViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                     }
                 }
             }
+
         }
     }
 
