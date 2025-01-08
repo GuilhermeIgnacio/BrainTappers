@@ -21,7 +21,9 @@ data class SignInWithEmailState(
     val recoverEmailTextField: String = "",
     val recoverModalBottomSheetVisibility: Boolean = false,
     val isLoading: Boolean = false,
-    val snackbarHostState: SnackbarHostState = SnackbarHostState()
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
+    val resetPasswordState: ResetPasswordState = ResetPasswordState.NONE,
+    val resetPasswordErrorMessage: String = ""
 )
 
 sealed interface SignInWithEmailEvents {
@@ -58,11 +60,12 @@ class SignInWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
             }
 
 
-
             SignInWithEmailEvents.OnForgotPasswordButtonClicked -> {
-                _state.update { it.copy(
-                    recoverModalBottomSheetVisibility = true
-                ) }
+                _state.update {
+                    it.copy(
+                        recoverModalBottomSheetVisibility = true
+                    )
+                }
             }
 
             is SignInWithEmailEvents.OnRecoverTextFieldChanged -> {
@@ -81,26 +84,39 @@ class SignInWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
                 viewModelScope.launch {
                     val email = _state.value.recoverEmailTextField
 
-                    when(val result = firebase.resetPassword(email)) {
+                    when (val result = firebase.resetPassword(email)) {
 
                         is Result.Success -> {
-
+                            _state.update {
+                                it.copy(
+                                    resetPasswordState = ResetPasswordState.SUCCESS
+                                )
+                            }
                         }
 
                         is Result.Error -> {
-                            val snackbar = _state.value.snackbarHostState
-                            when(result.error) {
+                            _state.update {
+                                it.copy(
+                                    resetPasswordState = ResetPasswordState.ERROR
+                                )
+                            }
+
+                            when (result.error) {
 
                                 ResetPasswordError.FIREBASE_NETWORK -> {
-                                    snackbar.showSnackbar(
-                                        message = "Network Error"
-                                    )
+                                    _state.update {
+                                        it.copy(
+                                            resetPasswordErrorMessage = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
+                                        )
+                                    }
                                 }
 
                                 ResetPasswordError.UNKNOWN -> {
-                                    snackbar.showSnackbar(
-                                        message = "Unknown Error"
-                                    )
+                                    _state.update {
+                                        it.copy(
+                                            resetPasswordErrorMessage = "Unknown error, please restart the app or try later."
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -155,4 +171,10 @@ class SignInWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
         }
     }
 
+}
+
+enum class ResetPasswordState {
+    NONE,
+    SUCCESS,
+    ERROR
 }
