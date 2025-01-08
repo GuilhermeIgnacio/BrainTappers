@@ -1,12 +1,10 @@
 package com.guilherme.braintappers.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.guilherme.braintappers.data.QuizResults
 import com.guilherme.braintappers.presentation.screen.home.HomeScreen
 import com.guilherme.braintappers.presentation.screen.profile.ProfileScreen
 import com.guilherme.braintappers.presentation.screen.quizplayeddetails.QuizPlayedDetailScreen
@@ -18,7 +16,6 @@ import com.guilherme.braintappers.presentation.screen.signup.SignUpScreen
 import com.guilherme.braintappers.presentation.screen.signup.signupwithemail.SignUpWithEmailScreen
 import com.guilherme.braintappers.presentation.screen.trivia.TriviaMainScreen
 import com.guilherme.braintappers.presentation.screen.welcome.WelcomeScreen
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Composable

@@ -2,7 +2,7 @@ package com.guilherme.braintappers.presentation.screen.quizzesplayed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.guilherme.braintappers.data.QuizResults
+import com.guilherme.braintappers.domain.model.QuizResults
 import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
 import com.guilherme.braintappers.domain.Result
 import kotlinx.coroutines.flow.MutableStateFlow
