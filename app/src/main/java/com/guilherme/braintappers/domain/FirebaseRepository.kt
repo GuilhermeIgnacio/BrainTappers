@@ -15,4 +15,5 @@ interface FirebaseRepository {
     suspend fun getCurrentUserProviderId(): Result<FirebaseProviderId, FirebaseCurrentUser>
     suspend fun reauthenticateWithEmailAndPassword(email: String, password: String): Result<Unit, FirebaseReauthenticate>
     suspend fun reauthenticateWithGoogle(): Result<Unit, FirebaseReauthenticate>
+    suspend fun resetPassword(email: String): Result<Unit, ResetPasswordError>
 }

@@ -118,3 +118,8 @@ enum class FirebaseFirestoreDeleteError: Error {
     UNKNOWN,
     FIREBASE_NETWORK
 }
+
+enum class ResetPasswordError: Error {
+    FIREBASE_NETWORK,
+    UNKNOWN
+}

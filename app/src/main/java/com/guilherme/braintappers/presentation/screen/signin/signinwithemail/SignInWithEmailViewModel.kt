@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.FirebaseSignInWithEmailAndPasswordError
+import com.guilherme.braintappers.domain.ResetPasswordError
 import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.navigation.HomeScreen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,8 @@ import kotlinx.coroutines.launch
 data class SignInWithEmailState(
     val emailTextField: String = "",
     val passwordTextField: String = "",
+    val recoverEmailTextField: String = "",
+    val recoverModalBottomSheetVisibility: Boolean = false,
     val isLoading: Boolean = false,
     val snackbarHostState: SnackbarHostState = SnackbarHostState()
 )
@@ -24,6 +27,10 @@ data class SignInWithEmailState(
 sealed interface SignInWithEmailEvents {
     data class OnEmailTextFieldChanged(val value: String) : SignInWithEmailEvents
     data class OnPasswordTextFieldChanged(val value: String) : SignInWithEmailEvents
+    data class OnRecoverTextFieldChanged(val value: String) : SignInWithEmailEvents
+    data object OnForgotPasswordButtonClicked : SignInWithEmailEvents
+    data object OnSendResetPasswordEmailClicked : SignInWithEmailEvents
+    data object DismissRecoverModalBottomSheet : SignInWithEmailEvents
     data class OnNextButtonClick(val value: NavHostController) : SignInWithEmailEvents
 }
 
@@ -47,6 +54,58 @@ class SignInWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
                     it.copy(
                         passwordTextField = event.value
                     )
+                }
+            }
+
+
+
+            SignInWithEmailEvents.OnForgotPasswordButtonClicked -> {
+                _state.update { it.copy(
+                    recoverModalBottomSheetVisibility = true
+                ) }
+            }
+
+            is SignInWithEmailEvents.OnRecoverTextFieldChanged -> {
+                _state.update {
+                    it.copy(
+                        recoverEmailTextField = event.value
+                    )
+                }
+            }
+
+            SignInWithEmailEvents.DismissRecoverModalBottomSheet -> {
+                _state.update { it.copy(recoverModalBottomSheetVisibility = false) }
+            }
+
+            SignInWithEmailEvents.OnSendResetPasswordEmailClicked -> {
+                viewModelScope.launch {
+                    val email = _state.value.recoverEmailTextField
+
+                    when(val result = firebase.resetPassword(email)) {
+
+                        is Result.Success -> {
+
+                        }
+
+                        is Result.Error -> {
+                            val snackbar = _state.value.snackbarHostState
+                            when(result.error) {
+
+                                ResetPasswordError.FIREBASE_NETWORK -> {
+                                    snackbar.showSnackbar(
+                                        message = "Network Error"
+                                    )
+                                }
+
+                                ResetPasswordError.UNKNOWN -> {
+                                    snackbar.showSnackbar(
+                                        message = "Unknown Error"
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
 
@@ -92,6 +151,7 @@ class SignInWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
                     }
                 }
             }
+
         }
     }
 

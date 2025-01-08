@@ -31,6 +31,7 @@ import com.guilherme.braintappers.domain.FirebaseReauthenticate
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.FirebaseSignInWithEmailAndPasswordError
 import com.guilherme.braintappers.domain.GetCredential
+import com.guilherme.braintappers.domain.ResetPasswordError
 import com.guilherme.braintappers.domain.Result
 import kotlinx.coroutines.tasks.await
 
@@ -272,6 +273,22 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
                     }
                 }
             }
+        }
+
+    }
+
+    override suspend fun resetPassword(email: String): Result<Unit, ResetPasswordError> {
+        val user = Firebase.auth
+
+        return try {
+            user.sendPasswordResetEmail(email).await()
+            Result.Success(Unit)
+        } catch (e: FirebaseNetworkException) {
+            e.printStackTrace()
+            Result.Error(ResetPasswordError.FIREBASE_NETWORK)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.Error(ResetPasswordError.UNKNOWN)
         }
 
     }
