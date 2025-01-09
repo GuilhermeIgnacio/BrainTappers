@@ -133,6 +133,13 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
 
     }
 
+    override suspend fun linkAccountWithEmail(email: String, password: String) {
+
+        val credential = EmailAuthProvider.getCredential(email,password)
+
+        Firebase.auth.currentUser?.linkWithCredential(credential)
+    }
+
     override suspend fun signOut() {
         try {
             Firebase.auth.signOut()

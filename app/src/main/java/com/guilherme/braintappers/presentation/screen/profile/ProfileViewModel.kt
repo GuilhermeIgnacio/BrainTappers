@@ -22,12 +22,15 @@ import kotlinx.coroutines.launch
 data class ProfileState(
     val user: FirebaseUser? = null,
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
-    val modalBottomSheetVisibility: Boolean = false,
+    val profileModalBottomSheetState: ProfileModalBottomSheetState = ProfileModalBottomSheetState.INACTIVE,
     val emailTextField: String = "",
+    val confirmEmailTextField: String = "",
     val passwordTextField: String = "",
+    val confirmPasswordTextField: String = "",
     val isReauthenticateWithEmailAndPasswordError: Boolean = false,
     val errorSupportingText: String = "",
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isAnonymousUser: Boolean = false
 )
 
 sealed interface ProfileEvents {
@@ -35,10 +38,14 @@ sealed interface ProfileEvents {
     data class OnConfirmAccountDeletion(val value: NavController) : ProfileEvents
     data object OnConfirmClearHistory : ProfileEvents
     data class OnEmailTextFieldValueChanged(val value: String) : ProfileEvents
+    data class OnConfirmEmailTextFieldValueChanged(val value: String) : ProfileEvents
     data class OnPasswordChanged(val value: String) : ProfileEvents
+    data class OnConfirmPasswordTextFieldValueChanged(val value: String) : ProfileEvents
     data object DismissModalBottomSheet : ProfileEvents
 
     data class ReauthenticateWithEmailAndPassword(val value: NavController) : ProfileEvents
+
+    data object OpenLinkAccountWithEmailModalBottomSheet : ProfileEvents
 }
 
 class ProfileViewModel(
@@ -53,7 +60,8 @@ class ProfileViewModel(
         viewModelScope.launch {
             _state.update {
                 it.copy(
-                    user = firebase.currentUser()
+                    user = firebase.currentUser(),
+                    isAnonymousUser = firebase.currentUser()?.isAnonymous ?: true
                 )
             }
         }
@@ -102,14 +110,26 @@ class ProfileViewModel(
                 _state.update { it.copy(emailTextField = event.value) }
             }
 
+            is ProfileEvents.OnConfirmEmailTextFieldValueChanged -> {
+                _state.update {
+                    it.copy(
+                        confirmEmailTextField = event.value
+                    )
+                }
+            }
+
             is ProfileEvents.OnPasswordChanged -> {
                 _state.update { it.copy(passwordTextField = event.value) }
+            }
+
+            is ProfileEvents.OnConfirmPasswordTextFieldValueChanged -> {
+                _state.update { it.copy(confirmPasswordTextField = event.value) }
             }
 
             ProfileEvents.DismissModalBottomSheet -> {
                 _state.update {
                     it.copy(
-                        modalBottomSheetVisibility = false,
+                        profileModalBottomSheetState = ProfileModalBottomSheetState.INACTIVE,
                         emailTextField = "",
                         passwordTextField = "",
                         errorSupportingText = "",
@@ -173,7 +193,7 @@ class ProfileViewModel(
                         is Result.Success -> {
                             _state.update {
                                 it.copy(
-                                    modalBottomSheetVisibility = false,
+                                    profileModalBottomSheetState = ProfileModalBottomSheetState.INACTIVE,
                                     isLoading = false,
                                     isReauthenticateWithEmailAndPasswordError = false
                                 )
@@ -237,6 +257,9 @@ class ProfileViewModel(
                 }
             }
 
+            ProfileEvents.OpenLinkAccountWithEmailModalBottomSheet -> {
+                _state.update { it.copy(profileModalBottomSheetState = ProfileModalBottomSheetState.LINK_ANONYMOUS_USER_WITH_EMAIL) }
+            }
         }
     }
 
@@ -254,7 +277,7 @@ class ProfileViewModel(
                     FirebaseProviderId.PASSWORD -> {
                         _state.update {
                             it.copy(
-                                modalBottomSheetVisibility = true
+                                profileModalBottomSheetState = ProfileModalBottomSheetState.AUTHENTICATE_WITH_EMAIL
                             )
                         }
                     }
@@ -329,4 +352,10 @@ class ProfileViewModel(
         }
     }
 
+}
+
+enum class ProfileModalBottomSheetState {
+    INACTIVE,
+    AUTHENTICATE_WITH_EMAIL,
+    LINK_ANONYMOUS_USER_WITH_EMAIL
 }

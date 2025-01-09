@@ -1,6 +1,7 @@
 package com.guilherme.braintappers.presentation.screen.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,15 +16,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,8 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -59,6 +59,8 @@ fun ProfileScreen(navController: NavController) {
     var isDeleteAccountDialogVisible by remember { mutableStateOf(false) }
     var isClearHistoryDialogVisible by remember { mutableStateOf(false) }
 
+    var isDropdownMenuOpen by remember { mutableStateOf(false) }
+
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = state.snackbarHostState) }
     ) { _ ->
@@ -72,13 +74,90 @@ fun ProfileScreen(navController: NavController) {
                     .statusBarsPadding()
             ) {
 
-                IconButton(
-                    onClick = {navController.navigate(HomeScreen)}
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Return to home screen",
-                    )
+                if (state.isAnonymousUser) {
+                    Row {
+                        IconButton(
+                            onClick = { navController.navigate(HomeScreen) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Return to home screen",
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Column {
+                            IconButton(
+                                onClick = {
+                                    isDropdownMenuOpen = true
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = "Open link account dropdown menu",
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.End)
+                                    .padding(end = 4.dp)
+                            ) {
+                                DropdownMenu(
+                                    expanded = isDropdownMenuOpen,
+                                    onDismissRequest = {
+                                        isDropdownMenuOpen = !isDropdownMenuOpen
+                                    },
+                                    shape = RoundedCornerShape(16.dp),
+                                    containerColor = Color.Black
+                                ) {
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                text = "Link Account With Google",
+                                                fontFamily = poppinsFamily,
+                                                color = Color.White
+                                            )
+                                        },
+                                        onClick = {},
+                                        leadingIcon = {
+                                            Icon(
+                                                modifier = Modifier
+                                                    .size(24.dp)
+                                                    .align(Alignment.CenterHorizontally),
+                                                painter = painterResource(R.drawable.google_logo),
+                                                contentDescription = "Google logo",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    )
+
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                text = "Link Account With Email",
+                                                fontFamily = poppinsFamily,
+                                                color = Color.White
+                                            )
+                                        },
+                                        onClick = { onEvent(ProfileEvents.OpenLinkAccountWithEmailModalBottomSheet) },
+                                        leadingIcon = {
+                                            Icon(
+                                                modifier = Modifier
+                                                    .size(24.dp)
+                                                    .align(Alignment.CenterHorizontally),
+                                                imageVector = Icons.Default.Email,
+                                                contentDescription = "Google logo",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                        }
+
+                    }
                 }
 
                 AsyncImage(
@@ -92,56 +171,6 @@ fun ProfileScreen(navController: NavController) {
                     placeholder = painterResource(R.drawable.profile_avatar_placeholder),
                     error = painterResource(R.drawable.profile_avatar_placeholder)
                 )
-
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    Text(
-                        text = "0\nQuizzes",
-                        textAlign = TextAlign.Center,
-                        fontFamily = poppinsFamily,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Light
-                    )
-
-                    VerticalDivider(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .height(30.dp)
-                            .padding(horizontal = 16.dp)
-                            .clip(RoundedCornerShape(20)),
-                        thickness = 1.dp,
-                        color = Color.Gray.copy(alpha = 0.5f)
-                    )
-
-                    Text(
-                        text = "0\nCorrect Answers",
-                        textAlign = TextAlign.Center,
-                        fontFamily = poppinsFamily,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Light
-                    )
-
-                    VerticalDivider(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .height(30.dp)
-                            .padding(horizontal = 16.dp)
-                            .clip(RoundedCornerShape(20)),
-                        thickness = 1.dp,
-                        color = Color.Gray.copy(alpha = 0.5f)
-                    )
-
-                    Text(
-                        text = "0\nRank",
-                        textAlign = TextAlign.Center,
-                        fontFamily = poppinsFamily,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Light
-                    )
-
-                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
