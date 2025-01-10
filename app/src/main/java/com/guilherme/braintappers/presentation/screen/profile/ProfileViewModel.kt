@@ -134,7 +134,9 @@ class ProfileViewModel(
                     it.copy(
                         profileModalBottomSheetState = ProfileModalBottomSheetState.INACTIVE,
                         emailTextField = "",
+                        confirmEmailTextField = "",
                         passwordTextField = "",
+                        confirmPasswordTextField = "",
                         errorSupportingText = "",
                         isReauthenticateWithEmailAndPasswordError = false
                     )

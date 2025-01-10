@@ -37,7 +37,7 @@ import com.guilherme.braintappers.util.poppinsFamily
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ReauthenticateModalBottomSheet(
+fun ProfileModalBottomSheet(
     state: ProfileState,
     onEvent: (ProfileEvents) -> Unit,
     navController: NavController

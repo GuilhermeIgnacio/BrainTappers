@@ -74,16 +74,17 @@ fun ProfileScreen(navController: NavController) {
                     .statusBarsPadding()
             ) {
 
-                if (state.isAnonymousUser) {
-                    Row {
-                        IconButton(
-                            onClick = { navController.navigate(HomeScreen) }
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Return to home screen",
-                            )
-                        }
+                Row {
+                    IconButton(
+                        onClick = { navController.navigate(HomeScreen) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Return to home screen",
+                        )
+                    }
+
+                    if (state.isAnonymousUser) {
 
                         Spacer(modifier = Modifier.weight(1f))
 
@@ -222,7 +223,7 @@ fun ProfileScreen(navController: NavController) {
             }
         }
 
-        ReauthenticateModalBottomSheet(state, onEvent, navController)
+        ProfileModalBottomSheet(state, onEvent, navController)
 
     }
 
