@@ -99,13 +99,26 @@ fun QuestionDisplay(
                 // Check if the current answer is selected by the user
                 val isSelected = state.userAnswers[questionIndex] == it.parseHtml()
 
+                val isCorrect =
+                    state.userAnswers[questionIndex] == state.questions[questionIndex].correctAnswer
+
+                val isFinished = state.isTriviaFinished
+
+
+                val notFinishedTriviaColors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = if (isSelected) Color.White else Color.Black,
+                    containerColor = if (isSelected) primaryColor else Color.Transparent
+                )
+
+                val finishedTriviaColors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = if (isCorrect && isSelected) Color.White else if (!isCorrect && isSelected) Color.White else Color.Black,
+                    containerColor = if (isCorrect && isSelected) primaryColor else if (!isCorrect && isSelected) Color.Red else Color.Transparent
+                )
+
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(10f),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = if (isSelected) Color.White else Color.Black,
-                        containerColor = if (isSelected) primaryColor else Color.Transparent
-                    ),
+                    colors = if (isFinished) finishedTriviaColors else notFinishedTriviaColors,
                     border = ButtonDefaults.outlinedButtonBorder(enabled = !isSelected),
                     onClick = {
                         if (!state.isTriviaFinished) {
