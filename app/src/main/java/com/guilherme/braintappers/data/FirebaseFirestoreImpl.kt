@@ -78,8 +78,6 @@ class FirebaseFirestoreImpl : FirebaseFirestoreRepository {
 
             documentsIds.forEach { documentPath.document(it).delete().await() }
 
-            Firebase.firestore.clearPersistence().await()
-
             Result.Success(Unit)
 
         } catch (e: FirebaseNetworkException) {
