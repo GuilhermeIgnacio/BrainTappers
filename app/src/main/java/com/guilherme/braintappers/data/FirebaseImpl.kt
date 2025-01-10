@@ -255,7 +255,15 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
 
     override suspend fun signOut() {
         try {
+
+            val user = Firebase.auth.currentUser
+
+            if (user?.isAnonymous == true) {
+                user.delete().await()
+            }
+
             Firebase.auth.signOut()
+
         } catch (e: Exception) {
             e.printStackTrace()
             println("Sign Out: $e")
