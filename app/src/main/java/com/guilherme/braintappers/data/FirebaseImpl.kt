@@ -2,23 +2,22 @@ package com.guilherme.braintappers.data
 
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.os.DeadObjectException
 import android.util.Log
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
-import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseNetworkException
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
@@ -31,6 +30,7 @@ import com.guilherme.braintappers.domain.FirebaseReauthenticate
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.FirebaseSignInWithEmailAndPasswordError
 import com.guilherme.braintappers.domain.GetCredential
+import com.guilherme.braintappers.domain.LinkAccountWithEmailError
 import com.guilherme.braintappers.domain.ResetPasswordError
 import com.guilherme.braintappers.domain.Result
 import kotlinx.coroutines.tasks.await
@@ -133,11 +133,54 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
 
     }
 
-    override suspend fun linkAccountWithEmail(email: String, password: String) {
+    override suspend fun linkAccountWithEmail(
+        email: String,
+        password: String
+    ): Result<Unit, LinkAccountWithEmailError> {
 
-        val credential = EmailAuthProvider.getCredential(email,password)
+        val credential = EmailAuthProvider.getCredential(email, password)
 
-        Firebase.auth.currentUser?.linkWithCredential(credential)
+        return try {
+
+            Firebase.auth.currentUser?.linkWithCredential(credential)?.await()
+            Result.Success(Unit)
+
+        } catch (e: FirebaseAuthWeakPasswordException) {
+
+            e.printStackTrace()
+            Result.Error(LinkAccountWithEmailError.FIREBASE_AUTH_WEAK_PASSWORD)
+
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+
+            e.printStackTrace()
+            Result.Error(LinkAccountWithEmailError.FIREBASE_AUTH_INVALID_CREDENTIALS)
+
+        } catch (e: FirebaseAuthUserCollisionException) {
+
+            e.printStackTrace()
+            Result.Error(LinkAccountWithEmailError.FIREBASE_AUTH_USER_COLLISION)
+
+        } catch (e: FirebaseAuthInvalidUserException) {
+
+            e.printStackTrace()
+            Result.Error(LinkAccountWithEmailError.FIREBASE_AUTH_INVALID_USER)
+
+        } catch (e: FirebaseAuthException) {
+
+            e.printStackTrace()
+            Result.Error(LinkAccountWithEmailError.FIREBASE_AUTH)
+
+        } catch (e: FirebaseNetworkException) {
+
+            e.printStackTrace()
+            Result.Error(LinkAccountWithEmailError.FIREBASE_NETWORK)
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+            Result.Error(LinkAccountWithEmailError.UNKNOWN)
+
+        }
     }
 
     override suspend fun signOut() {

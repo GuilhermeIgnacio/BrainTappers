@@ -12,6 +12,7 @@ import com.guilherme.braintappers.domain.FirebaseFirestoreDeleteError
 import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
 import com.guilherme.braintappers.domain.FirebaseReauthenticate
 import com.guilherme.braintappers.domain.FirebaseRepository
+import com.guilherme.braintappers.domain.LinkAccountWithEmailError
 import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.navigation.WelcomeScreen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ data class ProfileState(
     val user: FirebaseUser? = null,
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
     val profileModalBottomSheetState: ProfileModalBottomSheetState = ProfileModalBottomSheetState.INACTIVE,
+    val profileModalBottomSheetErrorMessage: String = "",
     val emailTextField: String = "",
     val confirmEmailTextField: String = "",
     val passwordTextField: String = "",
@@ -46,6 +48,7 @@ sealed interface ProfileEvents {
     data class ReauthenticateWithEmailAndPassword(val value: NavController) : ProfileEvents
 
     data object OpenLinkAccountWithEmailModalBottomSheet : ProfileEvents
+    data object LinkAccount : ProfileEvents
 }
 
 class ProfileViewModel(
@@ -260,6 +263,86 @@ class ProfileViewModel(
             ProfileEvents.OpenLinkAccountWithEmailModalBottomSheet -> {
                 _state.update { it.copy(profileModalBottomSheetState = ProfileModalBottomSheetState.LINK_ANONYMOUS_USER_WITH_EMAIL) }
             }
+
+            ProfileEvents.LinkAccount -> {
+                val email = _state.value.emailTextField
+                val password = _state.value.passwordTextField
+
+                viewModelScope.launch {
+                    when (val result = firebase.linkAccountWithEmail(email, password)) {
+                        is Result.Success -> {
+                            _state.update { it.copy(
+                                profileModalBottomSheetState = ProfileModalBottomSheetState.SUCCESS,
+                                isAnonymousUser = false,
+                            ) }
+                        }
+
+                        is Result.Error -> {
+
+                            _state.update { it.copy(profileModalBottomSheetState = ProfileModalBottomSheetState.ERROR) }
+
+                            when (result.error) {
+                                LinkAccountWithEmailError.FIREBASE_AUTH_WEAK_PASSWORD -> {
+                                    _state.update {
+                                        it.copy(
+                                            profileModalBottomSheetErrorMessage = "Password is not strong enough."
+                                        )
+                                    }
+                                }
+
+                                LinkAccountWithEmailError.FIREBASE_AUTH_INVALID_CREDENTIALS -> {
+                                    _state.update {
+                                        it.copy(
+                                            profileModalBottomSheetErrorMessage = "The credential is malformed or expired."
+                                        )
+                                    }
+                                }
+
+                                LinkAccountWithEmailError.FIREBASE_AUTH_USER_COLLISION -> {
+                                    _state.update {
+                                        it.copy(
+                                            profileModalBottomSheetErrorMessage = "The email address you entered is already associated with an account. Please try use a different email address."
+                                        )
+                                    }
+                                }
+
+                                LinkAccountWithEmailError.FIREBASE_AUTH_INVALID_USER -> {
+                                    _state.update {
+                                        it.copy(
+                                            profileModalBottomSheetErrorMessage = "The user credentials are no longer valid, please try using a different account."
+                                        )
+                                    }
+                                }
+
+                                LinkAccountWithEmailError.FIREBASE_AUTH -> {
+                                    _state.update {
+                                        it.copy(
+                                            profileModalBottomSheetErrorMessage = "This provider is already linked to this credentials."
+                                        )
+                                    }
+                                }
+
+                                LinkAccountWithEmailError.FIREBASE_NETWORK -> {
+                                    _state.update {
+                                        it.copy(
+                                            profileModalBottomSheetErrorMessage = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
+                                        )
+                                    }
+                                }
+
+                                LinkAccountWithEmailError.UNKNOWN -> {
+                                    _state.update {
+                                        it.copy(
+                                            profileModalBottomSheetErrorMessage = "Unknown error, please restart the app or try later."
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
         }
     }
 
@@ -357,5 +440,7 @@ class ProfileViewModel(
 enum class ProfileModalBottomSheetState {
     INACTIVE,
     AUTHENTICATE_WITH_EMAIL,
-    LINK_ANONYMOUS_USER_WITH_EMAIL
+    LINK_ANONYMOUS_USER_WITH_EMAIL,
+    SUCCESS,
+    ERROR
 }
