@@ -371,7 +371,6 @@ class ProfileViewModel(
                         is Result.Error -> {
 
                             _state.update { it.copy(isLoading = false) }
-                            val snackbar = _state.value.snackbarHostState
 
                             when (result.error) {
                                 LinkAccountWithGoogleError.FIREBASE_AUTH_WEAK_PASSWORD -> {
