@@ -31,6 +31,7 @@ import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.FirebaseSignInWithEmailAndPasswordError
 import com.guilherme.braintappers.domain.GetCredential
 import com.guilherme.braintappers.domain.LinkAccountWithEmailError
+import com.guilherme.braintappers.domain.LinkAccountWithGoogleError
 import com.guilherme.braintappers.domain.ResetPasswordError
 import com.guilherme.braintappers.domain.Result
 import kotlinx.coroutines.tasks.await
@@ -181,6 +182,75 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
             Result.Error(LinkAccountWithEmailError.UNKNOWN)
 
         }
+    }
+
+    override suspend fun linkAccountWithGoogle(): Result<Unit, LinkAccountWithGoogleError> {
+
+        when (val result = authenticateWithGoogle()) {
+            is Result.Success -> {
+
+                return try {
+                    val googleIdTokenCredential =
+                        GoogleIdTokenCredential.createFrom(result.data.data)
+
+                    val credential =
+                        GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
+
+                    Firebase.auth.currentUser?.linkWithCredential(credential)?.await()
+
+                    Result.Success(Unit)
+                } catch (e: FirebaseAuthWeakPasswordException) {
+
+                    e.printStackTrace()
+                    Result.Error(LinkAccountWithGoogleError.FIREBASE_AUTH_WEAK_PASSWORD)
+
+                } catch (e: FirebaseAuthInvalidCredentialsException) {
+
+                    e.printStackTrace()
+                    Result.Error(LinkAccountWithGoogleError.FIREBASE_AUTH_INVALID_CREDENTIALS)
+
+                } catch (e: FirebaseAuthUserCollisionException) {
+
+                    e.printStackTrace()
+                    Result.Error(LinkAccountWithGoogleError.FIREBASE_AUTH_USER_COLLISION)
+
+                } catch (e: FirebaseAuthInvalidUserException) {
+
+                    e.printStackTrace()
+                    Result.Error(LinkAccountWithGoogleError.FIREBASE_AUTH_INVALID_USER)
+
+                } catch (e: FirebaseAuthException) {
+
+                    e.printStackTrace()
+                    Result.Error(LinkAccountWithGoogleError.FIREBASE_AUTH)
+
+                } catch (e: FirebaseNetworkException) {
+
+                    e.printStackTrace()
+                    Result.Error(LinkAccountWithGoogleError.FIREBASE_NETWORK)
+
+                } catch (e: Exception) {
+
+                    e.printStackTrace()
+                    Result.Error(LinkAccountWithGoogleError.UNKNOWN)
+
+                }
+            }
+
+            is Result.Error -> {
+                return when(result.error) {
+                    GetCredential.GET_CREDENTIAL -> {
+                        Result.Error(LinkAccountWithGoogleError.GET_CREDENTIAL)
+                    }
+
+                    GetCredential.UNKNOWN -> {
+                        Result.Error(LinkAccountWithGoogleError.UNKNOWN)
+
+                    }
+                }
+            }
+        }
+
     }
 
     override suspend fun signOut() {

@@ -121,7 +121,7 @@ fun ProfileScreen(navController: NavController) {
                                                 color = Color.White
                                             )
                                         },
-                                        onClick = {},
+                                        onClick = { onEvent(ProfileEvents.LinkAccountWithGoogle) },
                                         leadingIcon = {
                                             Icon(
                                                 modifier = Modifier

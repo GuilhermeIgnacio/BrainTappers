@@ -11,6 +11,7 @@ interface FirebaseRepository {
     suspend fun signUpWithGoogle(idToken: String): Result<Unit, FirebaseGoogleAuthError>
     suspend fun signInWithEmail(email: String, password: String): Result<Unit, FirebaseSignInWithEmailAndPasswordError>
     suspend fun linkAccountWithEmail(email: String, password: String): Result<Unit, LinkAccountWithEmailError>
+    suspend fun linkAccountWithGoogle(): Result<Unit, LinkAccountWithGoogleError>
     suspend fun signOut()
     suspend fun deleteAccount(): Result<Unit, FirebaseAccountDeletion>
     suspend fun getCurrentUserProviderId(): Result<FirebaseProviderId, FirebaseCurrentUser>

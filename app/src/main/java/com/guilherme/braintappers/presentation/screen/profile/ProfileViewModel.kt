@@ -13,6 +13,7 @@ import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
 import com.guilherme.braintappers.domain.FirebaseReauthenticate
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.LinkAccountWithEmailError
+import com.guilherme.braintappers.domain.LinkAccountWithGoogleError
 import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.navigation.WelcomeScreen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,6 +50,7 @@ sealed interface ProfileEvents {
 
     data object OpenLinkAccountWithEmailModalBottomSheet : ProfileEvents
     data object LinkAccount : ProfileEvents
+    data object LinkAccountWithGoogle : ProfileEvents
 }
 
 class ProfileViewModel(
@@ -273,10 +275,12 @@ class ProfileViewModel(
                 viewModelScope.launch {
                     when (val result = firebase.linkAccountWithEmail(email, password)) {
                         is Result.Success -> {
-                            _state.update { it.copy(
-                                profileModalBottomSheetState = ProfileModalBottomSheetState.SUCCESS,
-                                isAnonymousUser = false,
-                            ) }
+                            _state.update {
+                                it.copy(
+                                    profileModalBottomSheetState = ProfileModalBottomSheetState.SUCCESS,
+                                    isAnonymousUser = false,
+                                )
+                            }
                         }
 
                         is Result.Error -> {
@@ -344,6 +348,80 @@ class ProfileViewModel(
                     }
                 }
 
+            }
+
+            ProfileEvents.LinkAccountWithGoogle -> {
+
+                viewModelScope.launch {
+
+                    _state.update { it.copy(isLoading = true) }
+
+                    val snackbar = _state.value.snackbarHostState
+                    when (val result = firebase.linkAccountWithGoogle()) {
+
+                        is Result.Success -> {
+
+                            _state.update { it.copy(isAnonymousUser = false, isLoading = false) }
+                            snackbar.showSnackbar(
+                                message = "User Successfully Linked To Google Account."
+                            )
+
+                        }
+
+                        is Result.Error -> {
+
+                            _state.update { it.copy(isLoading = false) }
+                            val snackbar = _state.value.snackbarHostState
+
+                            when (result.error) {
+                                LinkAccountWithGoogleError.FIREBASE_AUTH_WEAK_PASSWORD -> {
+                                    snackbar.showSnackbar(
+                                        message = "Password is not strong enough."
+                                    )
+                                }
+
+                                LinkAccountWithGoogleError.FIREBASE_AUTH_INVALID_CREDENTIALS -> {
+                                    snackbar.showSnackbar(
+                                        message = "The credential is malformed or expired."
+                                    )
+                                }
+
+                                LinkAccountWithGoogleError.FIREBASE_AUTH_USER_COLLISION -> {
+                                    snackbar.showSnackbar(
+                                        message = "The selected Google account is already in use. Please try using a different one."
+                                    )
+                                }
+
+                                LinkAccountWithGoogleError.FIREBASE_AUTH_INVALID_USER -> {
+                                    snackbar.showSnackbar(
+                                        message = "Invalid User Error: The current user's account has been disabled, deleted, or its credentials are no longer valid."
+                                    )
+                                }
+
+                                LinkAccountWithGoogleError.FIREBASE_AUTH -> {
+                                    snackbar.showSnackbar(
+                                        message = "This provider is already linked to this credentials."
+                                    )
+                                }
+                                LinkAccountWithGoogleError.FIREBASE_NETWORK -> {
+                                    snackbar.showSnackbar(
+                                        message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
+                                    )
+                                }
+                                LinkAccountWithGoogleError.GET_CREDENTIAL -> {
+                                    snackbar.showSnackbar(
+                                        message = "Unknown error, please restart the app or try later."
+                                    )
+                                }
+                                LinkAccountWithGoogleError.UNKNOWN -> {
+                                    snackbar.showSnackbar(
+                                        message = "Unknown error, please restart the app or try later."
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
