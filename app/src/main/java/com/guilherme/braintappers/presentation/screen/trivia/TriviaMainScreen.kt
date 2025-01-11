@@ -236,15 +236,10 @@ fun TriviaMainScreen(
         }
     )
 
+    CustomCircularProgressIndicator(state.isLoading)
+
 }
 
 fun String.parseHtml(): String {
     return Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY).toString()
 }
-
-data class UserTrivia(
-    val question: String,
-    val correctAnswer: String,
-    val selectedAnswer: String
-)
-

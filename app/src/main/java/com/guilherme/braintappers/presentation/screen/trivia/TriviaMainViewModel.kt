@@ -54,6 +54,8 @@ class TriviaMainViewModel(
         type: String
     ) {
 
+        _state.update { it.copy(isLoading = true) }
+
         val trivia = trivia.fetchTriviaByCategory(
             numberOfQuestions = numberOfQuestions,
             categoryId = categoryId,
@@ -61,11 +63,7 @@ class TriviaMainViewModel(
             type = type,
         )
 
-        _state.update {
-            it.copy(
-                result = trivia
-            )
-        }
+        _state.update { it.copy(result = trivia) }
 
         when (trivia) {
             is Result.Success -> {
@@ -79,13 +77,15 @@ class TriviaMainViewModel(
                         answers = answers,
                         userAnswers = MutableList(answers.size) { "" },
                         questions = trivia.data.results,
-                        categoryId = categoryId.toInt()
+                        categoryId = categoryId.toInt(),
+                        isLoading = false
                     )
                 }
             }
 
             is Result.Error -> {
                 println("ERROR FETCHING DATA:" + trivia.error)
+                _state.update { it.copy(isLoading = false) }
             }
         }
 
