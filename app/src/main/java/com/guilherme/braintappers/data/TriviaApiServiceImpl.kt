@@ -1,8 +1,9 @@
 package com.guilherme.braintappers.data
 
+import android.accounts.NetworkErrorException
 import android.content.ContentValues.TAG
+import android.net.http.NetworkException
 import android.util.Log
-import com.google.android.gms.common.api.Response
 import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.Result
 import com.guilherme.braintappers.domain.TriviaApiService
@@ -14,6 +15,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.network.UnresolvedAddressException
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.json.Json
 
@@ -55,24 +57,41 @@ class TriviaApiServiceImpl : TriviaApiService {
 
                 HttpStatusCode.NotFound -> {
                     Log.e(TAG, "Error 404")
-                    Result.Error(DataError.UNKNOWN)
+                    Result.Error(DataError.NOT_FOUND)
                 }
 
-                else -> Result.Error(DataError.UNKNOWN)
+                HttpStatusCode.ServiceUnavailable -> {
+                    Result.Error(DataError.SERVICE_UNAVAILABLE)
+                }
+
+                HttpStatusCode.BadGateway -> {
+                    Result.Error(DataError.BAD_GATEWAY)
+                }
+
+                HttpStatusCode.Forbidden -> {
+                    Result.Error(DataError.FORBIDDEN)
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    Result.Error(DataError.UNAUTHORIZED)
+                }
+
+                else -> {
+                    Result.Error(DataError.UNKNOWN)
+                }
 
             }
 
 
-        } catch (e: Exception) {
-
-            Log.e(TAG, "Failed Request")
-            e.stackTrace
-            Result.Error(DataError.UNKNOWN)
-
-        } catch (e: IOException) { // Internet Exceptions
+        } catch (e: UnresolvedAddressException) { // Internet Exceptions
 
             Log.e(TAG, "IOException", e)
+            Result.Error(DataError.NO_INTERNET)
+        } catch (e: Exception) {
+
+            e.printStackTrace()
             Result.Error(DataError.UNKNOWN)
+
         }
     }
 }

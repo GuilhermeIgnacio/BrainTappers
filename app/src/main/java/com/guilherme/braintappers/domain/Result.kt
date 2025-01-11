@@ -59,6 +59,12 @@ fun <D, E : RootError> Result<D, E>.DisplayResult(
 }
 
 enum class DataError: Error {
+    NOT_FOUND,
+    SERVICE_UNAVAILABLE,
+    BAD_GATEWAY,
+    FORBIDDEN,
+    UNAUTHORIZED,
+    NO_INTERNET,
     UNKNOWN
 }
 
