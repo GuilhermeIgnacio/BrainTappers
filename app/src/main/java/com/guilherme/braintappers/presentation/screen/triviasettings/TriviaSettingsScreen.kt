@@ -84,16 +84,6 @@ fun TriviaSettingsScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        TriviaSettingsDropdownMenu(
-            text = state.typeValue?.text?.asString() ?: stringResource(id = R.string.select_type),
-            onClick = { onEvent(TriviaSettingsEvents.OpenTypeMenu) },
-            isDropdownMenuOpen = state.isTypeMenuOpen,
-            dropdownItems = viewModel.type,
-            dismissDropdownMenu = { onEvent(TriviaSettingsEvents.DismissDropdownMenu) }
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
         Button(
             modifier = Modifier
                 .fillMaxWidth()
