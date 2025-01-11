@@ -26,9 +26,17 @@ class FirebaseFirestoreImpl : FirebaseFirestoreRepository {
 
             db.document("users/$currentUserUid/quizzesPlayed/${quizUid}").set(data).await()
             Result.Success(Unit)
+
+        } catch (e: FirebaseNetworkException) {
+
+            e.printStackTrace()
+            Result.Error(FirestoreError.FIREBASE_NETWORK)
+
         } catch (e: Exception) {
+
             e.printStackTrace()
             Result.Error(FirestoreError.UNKNOWN)
+
         }
 
     }

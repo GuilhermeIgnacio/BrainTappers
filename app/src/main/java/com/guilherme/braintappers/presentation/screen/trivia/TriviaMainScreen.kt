@@ -15,6 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,69 +63,72 @@ fun TriviaMainScreen(
 
     state.result?.DisplayResult(
         onSuccess = {
+            Scaffold(
+                snackbarHost = { SnackbarHost(hostState = state.snackbarHostState) }
+            ) { _ ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding(),
+                ) {
+                    // Close Trivia Button
+                    IconButton(onClick = {
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding(),
-            ) {
-                // Close Trivia Button
-                IconButton(onClick = {
+                        if (!state.isTriviaFinished) {
+                            isDialogOpen = !isDialogOpen
+                        } else {
+                            navController.navigate(HomeScreen)
+                        }
 
-                    if (!state.isTriviaFinished) {
-                        isDialogOpen = !isDialogOpen
-                    } else {
-                        navController.navigate(HomeScreen)
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
                     }
 
-                }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = ""
+                    val questions = state.questions
+                    val questionIndex = state.questionIndex
+                    val answers = state.answers
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    /**
+                     * Displays a row of numbered buttons for navigating between questions
+                     */
+                    NumberedNavigationButtons(
+                        questions = questions,
+                        state = state,
+                        questionIndex = questionIndex,
+                        onEvent = onEvent
                     )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    /**
+                     * Displays a trivia question and its answer options, with animated transitions between questions.
+                     */
+                    QuestionDisplay(
+                        questionIndex = questionIndex,
+                        questions = questions,
+                        answers = answers,
+                        state = state,
+                        onEvent = onEvent
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    /**
+                     * Displays a "Finish" button that becomes visible when the user reaches the last question of the trivia.
+                     */
+                    FinishTriviaButton(
+                        questions = questions,
+                        questionIndex = questionIndex,
+                        isFinished = state.isTriviaFinished,
+                        onEvent = onEvent
+                    )
+
                 }
-
-                val questions = state.questions
-                val questionIndex = state.questionIndex
-                val answers = state.answers
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                /**
-                 * Displays a row of numbered buttons for navigating between questions
-                 */
-                NumberedNavigationButtons(
-                    questions = questions,
-                    state = state,
-                    questionIndex = questionIndex,
-                    onEvent = onEvent
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                /**
-                 * Displays a trivia question and its answer options, with animated transitions between questions.
-                 */
-                QuestionDisplay(
-                    questionIndex = questionIndex,
-                    questions = questions,
-                    answers = answers,
-                    state = state,
-                    onEvent = onEvent
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                /**
-                 * Displays a "Finish" button that becomes visible when the user reaches the last question of the trivia.
-                 */
-                FinishTriviaButton(
-                    questions = questions,
-                    questionIndex = questionIndex,
-                    isFinished = state.isTriviaFinished,
-                    onEvent = onEvent
-                )
-
             }
 
             /**

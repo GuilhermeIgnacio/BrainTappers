@@ -1,5 +1,6 @@
 package com.guilherme.braintappers.presentation.screen.trivia
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
@@ -26,7 +27,8 @@ data class TriviaMainState(
     val userAnswers: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val isTriviaFinished: Boolean = false,
-    val categoryId: Int = 0
+    val categoryId: Int = 0,
+    val snackbarHostState: SnackbarHostState = SnackbarHostState()
 )
 
 sealed interface TriviaMainEvents {
@@ -165,10 +167,19 @@ class TriviaMainViewModel(
 
                         is Result.Error -> {
                             _state.update { it.copy(isLoading = false) }
+                            val snackbar = _state.value.snackbarHostState
 
-                            when(result.error) {
+                            when (result.error) {
+                                FirestoreError.FIREBASE_NETWORK -> {
+                                    snackbar.showSnackbar(
+                                        message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
+                                    )
+                                }
+
                                 FirestoreError.UNKNOWN -> {
-                                    //TODO()
+                                    snackbar.showSnackbar(
+                                        message = "Unknown error, please restart the app or try later."
+                                    )
                                 }
                             }
 

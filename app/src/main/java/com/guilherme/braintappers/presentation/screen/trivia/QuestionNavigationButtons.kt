@@ -39,10 +39,7 @@ fun QuestionNavigationButtons(
     questionIndex: Int,
     questionsListSize: Int,
 ) {
-    /**
-     * Todo: Finish Trivia Button
-     * Todo: Hide Previous/Next button according to question index
-     */
+
     Crossfade(
         targetState = questionIndex,
         label = ""

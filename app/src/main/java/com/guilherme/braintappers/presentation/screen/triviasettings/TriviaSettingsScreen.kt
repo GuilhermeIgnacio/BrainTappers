@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.navigation.HomeScreen
 import com.guilherme.braintappers.presentation.component.TriviaSettingsDropdownMenu
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
@@ -55,7 +56,7 @@ fun TriviaSettingsScreen(
             .statusBarsPadding()
     ) {
 
-        IconButton(onClick = { navController.navigateUp() }) {
+        IconButton(onClick = { navController.navigate(HomeScreen) }) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(id = R.string.content_description) // Return to Previous Screen
