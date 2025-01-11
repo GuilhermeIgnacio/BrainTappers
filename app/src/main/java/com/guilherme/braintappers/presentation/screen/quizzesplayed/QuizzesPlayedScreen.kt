@@ -50,17 +50,108 @@ fun QuizzesPlayedScreen(navController: NavController) {
 
     val quizResults = state.quizResults
 
-    if (quizResults.isNotEmpty()) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .navigationBarsPadding(),
+    if (quizResults != null) {
+        if (quizResults.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .navigationBarsPadding(),
 
+                ) {
+
+                item {
+                    IconButton(
+                        onClick = { navController.navigate(ProfileScreen) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Return to Quizzes Played Screen"
+                        )
+                    }
+                }
+
+                items(quizResults) {
+
+                    val instant = Instant.ofEpochSecond(it.createdAt?.seconds ?: 0)
+
+                    val formatter =
+                        DateTimeFormatter.ofPattern("MM/dd/yyyy").withZone(ZoneId.systemDefault())
+
+                    val formattedDate = formatter.format(instant)
+
+                    val correctAnswers =
+                        it.userAnswers.zip(it.correctAnswers).filter { (a, b) -> a == b }
+                            .map { (a, _) -> a }
+
+                    Surface(
+                        modifier = Modifier.padding(8.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        shadowElevation = 16.dp,
+                        onClick = {
+                            navController.navigate(
+                                QuizPlayedDetailScreen(
+                                    questions = it.questions,
+                                    userAnswers = it.userAnswers,
+                                    correctAnswers = it.correctAnswers
+                                )
+                            )
+                        },
+                        color = primaryColor
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            Column {
+
+                                Text(
+                                    text = "Quiz Played on $formattedDate",
+                                    fontFamily = poppinsFamily,
+                                    fontStyle = FontStyle.Italic
+                                )
+
+                                Text(
+                                    text = it.category ?: "",
+                                    fontFamily = poppinsFamily,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+
+                            }
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Column(
+
+                            ) {
+                                Text(
+                                    text = "Answers",
+                                    fontFamily = poppinsFamily,
+                                )
+
+                                Text(
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    text = correctAnswers.size.toString() + "/" + it.questions.size,
+                                    fontFamily = poppinsFamily,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+
+                        }
+                    }
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .navigationBarsPadding(),
             ) {
 
-            item {
                 IconButton(
+                    modifier = Modifier.align(Alignment.TopStart),
                     onClick = { navController.navigate(ProfileScreen) }
                 ) {
                     Icon(
@@ -68,103 +159,14 @@ fun QuizzesPlayedScreen(navController: NavController) {
                         contentDescription = "Return to Quizzes Played Screen"
                     )
                 }
-            }
 
-            items(state.quizResults) {
-
-                val instant = Instant.ofEpochSecond(it.createdAt?.seconds ?: 0)
-
-                val formatter =
-                    DateTimeFormatter.ofPattern("MM/dd/yyyy").withZone(ZoneId.systemDefault())
-
-                val formattedDate = formatter.format(instant)
-
-                val correctAnswers =
-                    it.userAnswers.zip(it.correctAnswers).filter { (a, b) -> a == b }
-                        .map { (a, _) -> a }
-
-                Surface(
-                    modifier = Modifier.padding(8.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    shadowElevation = 16.dp,
-                    onClick = {
-                        navController.navigate(
-                            QuizPlayedDetailScreen(
-                                questions = it.questions,
-                                userAnswers = it.userAnswers,
-                                correctAnswers = it.correctAnswers
-                            )
-                        )
-                    },
-                    color = primaryColor
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        Column {
-
-                            Text(
-                                text = "Quiz Played on $formattedDate",
-                                fontFamily = poppinsFamily,
-                                fontStyle = FontStyle.Italic
-                            )
-
-                            Text(
-                                text = it.category ?: "",
-                                fontFamily = poppinsFamily,
-                                fontWeight = FontWeight.SemiBold
-                            )
-
-                        }
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Column(
-
-                        ) {
-                            Text(
-                                text = "Answers",
-                                fontFamily = poppinsFamily,
-                            )
-
-                            Text(
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                text = correctAnswers.size.toString() + "/" + it.questions.size,
-                                fontFamily = poppinsFamily,
-                                fontWeight = FontWeight.Bold,
-                            )
-                        }
-
-                    }
-                }
-            }
-        }
-    } else {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding(),
-        ) {
-
-            IconButton(
-                modifier = Modifier.align(Alignment.TopStart),
-                onClick = { navController.navigate(ProfileScreen) }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Return to Quizzes Played Screen"
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "No quizzes played yet! Start exploring and put your knowledge to the test!",
+                    fontFamily = poppinsFamily,
+                    textAlign = TextAlign.Center
                 )
             }
-
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = "No quizzes played yet! Start exploring and put your knowledge to the test!",
-                fontFamily = poppinsFamily,
-                textAlign = TextAlign.Center
-            )
         }
     }
 

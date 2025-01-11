@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class QuizzesPlayedState(
-    val quizResults: List<QuizResults> = emptyList()
+    val quizResults: List<QuizResults>? = null
 )
 
 class QuizzesPlayedViewModel(
