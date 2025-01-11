@@ -1,15 +1,18 @@
 package com.guilherme.braintappers.presentation.screen.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
@@ -18,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,47 +62,51 @@ fun HomeScreen(navController: NavController) {
             fontFamily = poppinsFamily
         )
 
-        HorizontalMultiBrowseCarousel(
-            state = viewModel.carouselState,
+        LazyVerticalGrid(
             modifier = Modifier
-                .width(412.dp)
-                .height(221.dp),
-            preferredItemWidth = 186.dp,
-            itemSpacing = 8.dp,
-            contentPadding = PaddingValues(horizontal = 16.dp)
-        ) { i ->
-            val item = items[i]
+                .fillMaxWidth()
+                .navigationBarsPadding(),
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(items) { item ->
+                Card(
+                    modifier = Modifier.fillMaxSize(),
+                    onClick = { navController.navigate(TriviaSettingsScreen(categoryId = item.categoryId.toString())) }
+                ) {
+                    Box(modifier = Modifier.fillMaxSize()) {
 
-            Card(
-                modifier = Modifier.fillMaxSize(),
-                onClick = { navController.navigate(TriviaSettingsScreen(categoryId = item.categoryId.toString())) }
-            ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Image(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .maskClip(MaterialTheme.shapes.extraLarge),
-                        painter = painterResource(id = item.imageResId),
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomStart)
-                            .padding(start = 16.dp, bottom = 8.dp),
-                        text = item.contentDescription,
-                        fontFamily = poppinsFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            shadow = Shadow(color = Color.Black.copy(alpha = 1f), blurRadius = 3f)
+                        Image(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            painter = painterResource(id = item.imageResId),
+                            contentDescription = "${item.contentDescription} Image",
+                            contentScale = ContentScale.Fit
                         )
-                    )
+
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomStart)
+                                .padding(start = 16.dp, bottom = 8.dp),
+                            text = item.contentDescription,
+                            fontFamily = poppinsFamily,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                shadow = Shadow(
+                                    color = Color.Black.copy(alpha = 1f),
+                                    blurRadius = 3f
+                                )
+                            )
+                        )
+
+                    }
+
                 }
-
             }
-
         }
 
     }
