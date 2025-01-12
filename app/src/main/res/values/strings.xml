@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BrainTappers</string>
+    <string name="app_name">Brain Tappers</string>
 
     <!--  Web Client Id  -->
     <string name="web_client_id">418507637286-2fqd0er79suk6vosbk0ijnf277ruvgjn.apps.googleusercontent.com</string>
