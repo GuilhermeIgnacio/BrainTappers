@@ -43,8 +43,6 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(navController: NavController) {
 
-    val viewModel = koinViewModel<HomeViewModel>()
-
     Column(
         modifier = Modifier
             .fillMaxWidth()

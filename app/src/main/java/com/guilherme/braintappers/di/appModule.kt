@@ -8,7 +8,6 @@ import com.guilherme.braintappers.data.TriviaApiServiceImpl
 import com.guilherme.braintappers.domain.FirebaseFirestoreRepository
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.TriviaApiService
-import com.guilherme.braintappers.presentation.screen.home.HomeViewModel
 import com.guilherme.braintappers.presentation.screen.profile.ProfileViewModel
 import com.guilherme.braintappers.presentation.screen.quizzesplayed.QuizzesPlayedViewModel
 import com.guilherme.braintappers.presentation.screen.signin.SignInViewModel
@@ -34,7 +33,6 @@ fun koinConfiguration(context: Context) = koinApplication {
         viewModel { SignUpViewModel(get()) }
         viewModel { SignUpWithEmailViewModel(get()) }
         viewModel { SignInWithEmailViewModel(get()) }
-        viewModel { HomeViewModel() }
         viewModel { TriviaSettingsViewModel() }
         viewModel { TriviaMainViewModel(get(), get()) }
         viewModel { WelcomeScreenViewModel(get()) }
