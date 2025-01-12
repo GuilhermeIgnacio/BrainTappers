@@ -21,7 +21,7 @@ data class SignUpState(
 )
 
 sealed interface SignUpEvents {
-    data class OnSignUpWithGoogleClick(val value: Credential, val navigator: NavHostController) : SignUpEvents
+    data class OnSignUpWithGoogleClick(val navigator: NavHostController) : SignUpEvents
 }
 
 class SignUpViewModel(
@@ -36,10 +36,8 @@ class SignUpViewModel(
             is SignUpEvents.OnSignUpWithGoogleClick -> {
                 viewModelScope.launch {
                     _state.update { it.copy(isLoading = true) }
-                    val credential = event.value
 
-                    val googleIdToken = GoogleIdTokenCredential.createFrom(credential.data)
-                    when (val result = firebase.signUpWithGoogle(googleIdToken.idToken)) {
+                    when (val result = firebase.signUpWithGoogle()) {
                         is Result.Success -> {
                             event.navigator.navigate(HomeScreen)
                             _state.update { it.copy(isLoading = true) }
@@ -67,11 +65,25 @@ class SignUpViewModel(
                                     )
                                 }
 
+                                //Todo: Improve this message
+                                FirebaseGoogleAuthError.GET_CREDENTIAL -> {
+                                    snackBar.showSnackbar(
+                                        message = "Get Credential Error"
+                                    )
+                                }
+
+                                FirebaseGoogleAuthError.FIREBASE_NETWORK -> {
+                                    snackBar.showSnackbar(
+                                        message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred."
+                                    )
+                                }
+
                                 FirebaseGoogleAuthError.UNKNOWN -> {
                                     snackBar.showSnackbar(
                                         message = "Unknown error, please restart the app or try later."
                                     )
                                 }
+
                             }
                         }
                     }

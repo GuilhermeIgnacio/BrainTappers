@@ -21,10 +21,7 @@ data class SignInState(
 )
 
 sealed interface SignInEvents {
-    data class OnSignInWithGoogleClick(
-        val credential: Credential,
-        val navController: NavHostController
-    ) : SignInEvents
+    data class OnSignInWithGoogleClick(val navController: NavHostController) : SignInEvents
 }
 
 class SignInViewModel(private val firebase: FirebaseRepository) : ViewModel() {
@@ -37,9 +34,8 @@ class SignInViewModel(private val firebase: FirebaseRepository) : ViewModel() {
             is SignInEvents.OnSignInWithGoogleClick -> {
                 viewModelScope.launch {
                     _state.update { it.copy(isLoading = true) }
-                    val googleIdToken = GoogleIdTokenCredential.createFrom(event.credential.data)
 
-                    when (val result = firebase.signUpWithGoogle(googleIdToken.idToken)) {
+                    when (val result = firebase.signUpWithGoogle()) {
 
                         is Result.Success -> {
 
@@ -73,11 +69,24 @@ class SignInViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                                     )
                                 }
 
+                                FirebaseGoogleAuthError.FIREBASE_NETWORK -> {
+                                    snackBar.showSnackbar(
+                                        message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred."
+                                    )
+                                }
+
+                                FirebaseGoogleAuthError.GET_CREDENTIAL -> {
+                                    snackBar.showSnackbar(
+                                        message = "Get Credential Error"
+                                    )
+                                }
+
                                 FirebaseGoogleAuthError.UNKNOWN -> {
                                     snackBar.showSnackbar(
                                         message = "Unknown error, please restart the app or try later."
                                     )
                                 }
+
 
                             }
                         }

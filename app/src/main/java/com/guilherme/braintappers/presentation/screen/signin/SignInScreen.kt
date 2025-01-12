@@ -28,13 +28,8 @@ fun SignInScreen(
         Auth(
             title = stringResource(id = R.string.sign_in_title),
             onContinueWithEmailClick = { navController.navigate(SignInWithEmailScreen) },
-            onContinueWithGoogleClick = { credential ->
-                onEvent(
-                    SignInEvents.OnSignInWithGoogleClick(
-                        credential = credential,
-                        navController = navController
-                    )
-                )
+            onContinueWithGoogleClick = {
+                onEvent(SignInEvents.OnSignInWithGoogleClick(navController = navController))
             },
             labelText = stringResource(R.string.sign_in_label),
             actionText = stringResource(R.string.sign_in_action_text),

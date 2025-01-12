@@ -79,6 +79,8 @@ enum class FirebaseGoogleAuthError: Error {
     FIREBASE_AUTH_INVALID_USER,
     FIREBASE_AUTH_INVALID_CREDENTIALS,
     FIREBASE_AUTH_USER_COLLISION,
+    GET_CREDENTIAL,
+    FIREBASE_NETWORK,
 }
 
 enum class FirebaseSignInWithEmailAndPasswordError: Error {

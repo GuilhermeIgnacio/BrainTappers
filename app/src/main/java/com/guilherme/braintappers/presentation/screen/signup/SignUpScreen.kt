@@ -33,8 +33,8 @@ fun SignUpScreen(
         Auth(
             title = stringResource(id = R.string.sign_up_title),
             onContinueWithEmailClick = { navController.navigate(SignUpWithEmailScreen) },
-            onContinueWithGoogleClick = { credential ->
-                onEvent(SignUpEvents.OnSignUpWithGoogleClick(credential, navController))
+            onContinueWithGoogleClick = {
+                onEvent(SignUpEvents.OnSignUpWithGoogleClick(navController))
             },
             labelText = stringResource(id = R.string.sign_up_label),
             actionText = stringResource(id = R.string.sign_up_action_text),

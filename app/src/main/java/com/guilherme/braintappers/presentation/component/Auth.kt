@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 fun Auth(
     title: String,
     onContinueWithEmailClick: () -> Unit,
-    onContinueWithGoogleClick: (Credential) -> Unit,
+    onContinueWithGoogleClick: () -> Unit,
     labelText: String,
     actionText: String,
     onTextClick: () -> Unit,
@@ -93,33 +93,7 @@ fun Auth(
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp)
                 .height(40.dp),
-            onClick = {
-
-                val credentialManager = CredentialManager.create(context)
-
-                val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
-                    .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(context.getString(R.string.web_client_id))
-                    .setAutoSelectEnabled(true)
-                    .build()
-
-                val request = GetCredentialRequest.Builder()
-                    .addCredentialOption(googleIdOption)
-                    .build()
-
-                coroutineScope.launch {
-                    try {
-                        val result = credentialManager.getCredential(
-                            request = request,
-                            context = context,
-                        )
-                        onContinueWithGoogleClick(result.credential)
-                    } catch (e: GetCredentialException) {
-                        e.stackTrace
-                    }
-                }
-
-            },
+            onClick = { onContinueWithGoogleClick() },
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Color.Black,
             ),

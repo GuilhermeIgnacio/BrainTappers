@@ -74,35 +74,66 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
 
     }
 
-    override suspend fun signUpWithGoogle(idToken: String): Result<Unit, FirebaseGoogleAuthError> {
-        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+    override suspend fun signUpWithGoogle(): Result<Unit, FirebaseGoogleAuthError> {
 
-        return try {
 
-            Firebase.auth.signInWithCredential(firebaseCredential).await()
-            Result.Success(Unit)
+        return when (val result = authenticateWithGoogle()) {
 
-        } catch (e: FirebaseAuthInvalidUserException) {
+            is Result.Success -> {
 
-            Log.e(TAG, e.message.toString())
-            Result.Error(FirebaseGoogleAuthError.FIREBASE_AUTH_INVALID_USER)
+                try {
 
-        } catch (e: FirebaseAuthInvalidCredentialsException) {
+                    val credential = GoogleIdTokenCredential.createFrom(result.data.data).idToken
 
-            Log.e(TAG, e.message.toString())
-            Result.Error(FirebaseGoogleAuthError.FIREBASE_AUTH_INVALID_CREDENTIALS)
+                    val firebaseCredential = GoogleAuthProvider.getCredential(credential, null)
 
-        } catch (e: FirebaseAuthUserCollisionException) {
+                    Firebase.auth.signInWithCredential(firebaseCredential).await()
+                    Result.Success(Unit)
 
-            Log.e(TAG, e.message.toString())
-            Result.Error(FirebaseGoogleAuthError.FIREBASE_AUTH_USER_COLLISION)
+                } catch (e: FirebaseAuthInvalidUserException) {
 
-        } catch (e: Exception) {
+                    Log.e(TAG, e.message.toString())
+                    Result.Error(FirebaseGoogleAuthError.FIREBASE_AUTH_INVALID_USER)
 
-            Log.e(TAG, e.message.toString())
-            Result.Error(FirebaseGoogleAuthError.UNKNOWN)
+                } catch (e: FirebaseAuthInvalidCredentialsException) {
 
+                    Log.e(TAG, e.message.toString())
+                    Result.Error(FirebaseGoogleAuthError.FIREBASE_AUTH_INVALID_CREDENTIALS)
+
+                } catch (e: FirebaseAuthUserCollisionException) {
+
+                    Log.e(TAG, e.message.toString())
+                    Result.Error(FirebaseGoogleAuthError.FIREBASE_AUTH_USER_COLLISION)
+
+                } catch (e: FirebaseNetworkException) {
+
+                    e.printStackTrace()
+                    Result.Error(FirebaseGoogleAuthError.FIREBASE_NETWORK)
+
+                } catch (e: Exception) {
+
+                    Log.e(TAG, e.message.toString())
+                    e.printStackTrace()
+                    println(e.localizedMessage)
+                    Result.Error(FirebaseGoogleAuthError.UNKNOWN)
+
+                }
+
+            }
+
+            is Result.Error -> {
+                when(result.error) {
+                    GetCredential.GET_CREDENTIAL -> {
+                        Result.Error(FirebaseGoogleAuthError.GET_CREDENTIAL)
+
+                    }
+                    GetCredential.UNKNOWN -> {
+                        Result.Error(FirebaseGoogleAuthError.UNKNOWN)
+                    }
+                }
+            }
         }
+
 
     }
 
@@ -238,7 +269,7 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
             }
 
             is Result.Error -> {
-                return when(result.error) {
+                return when (result.error) {
                     GetCredential.GET_CREDENTIAL -> {
                         Result.Error(LinkAccountWithGoogleError.GET_CREDENTIAL)
                     }
