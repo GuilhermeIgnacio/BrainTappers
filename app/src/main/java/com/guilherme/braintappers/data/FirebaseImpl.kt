@@ -35,6 +35,8 @@ import com.guilherme.braintappers.domain.LinkAccountWithGoogleError
 import com.guilherme.braintappers.domain.ResetPasswordError
 import com.guilherme.braintappers.domain.Result
 import kotlinx.coroutines.tasks.await
+import java.security.MessageDigest
+import java.util.UUID
 
 class FirebaseImpl(private val context: Context) : FirebaseRepository {
 
@@ -452,6 +454,17 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
 
     }
 
+    private fun createNonce(): String {
+        val rawNonce = UUID.randomUUID().toString()
+        val bytes = rawNonce.toByteArray()
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+
+        return digest.fold("") {str, it ->
+            str + "%02x".format(it)
+        }
+    }
+
     private suspend fun authenticateWithGoogle(): Result<Credential, GetCredential> {
         //Todo: Set Nonce
 
@@ -461,6 +474,7 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
             .setFilterByAuthorizedAccounts(true)
             .setServerClientId(context.getString(R.string.web_client_id))
             .setAutoSelectEnabled(true)
+            .setNonce(createNonce())
             .build()
 
         val request: GetCredentialRequest = GetCredentialRequest.Builder()
