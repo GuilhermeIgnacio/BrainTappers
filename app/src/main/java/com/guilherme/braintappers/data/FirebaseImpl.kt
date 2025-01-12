@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import com.google.firebase.auth.userProfileChangeRequest
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.domain.FirebaseAccountDeletion
 import com.guilherme.braintappers.domain.FirebaseCurrentUser
@@ -237,6 +238,10 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
                         GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
 
                     Firebase.auth.currentUser?.linkWithCredential(credential)?.await()
+
+                    Firebase.auth.currentUser?.updateProfile( userProfileChangeRequest {
+                        photoUri = googleIdTokenCredential.profilePictureUri
+                    })?.await()
 
                     Result.Success(Unit)
                 } catch (e: FirebaseAuthWeakPasswordException) {
