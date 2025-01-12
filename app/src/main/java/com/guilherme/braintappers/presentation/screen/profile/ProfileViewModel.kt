@@ -258,6 +258,18 @@ class ProfileViewModel(
                                     }
 
                                 }
+
+                                FirebaseReauthenticate.GET_CREDENTIAL -> {
+                                    _state.update { it.copy(
+                                        errorSupportingText = "Get Credential Error."
+                                    ) }
+                                }
+
+                                FirebaseReauthenticate.GET_CREDENTIAL_CANCELLATION -> {
+                                    _state.update { it.copy(
+                                        errorSupportingText = "Operation cancelled by user."
+                                    ) }
+                                }
                             }
                         }
                     }
@@ -412,11 +424,19 @@ class ProfileViewModel(
                                         message = "Unknown error, please restart the app or try later."
                                     )
                                 }
+
+                                LinkAccountWithGoogleError.GET_CREDENTIAL_CANCELLATION -> {
+                                    snackbar.showSnackbar(
+                                        message = "Operation cancelled by user."
+                                    )
+                                }
+
                                 LinkAccountWithGoogleError.UNKNOWN -> {
                                     snackbar.showSnackbar(
                                         message = "Unknown error, please restart the app or try later."
                                     )
                                 }
+
                             }
                         }
                     }
@@ -478,6 +498,18 @@ class ProfileViewModel(
                                     FirebaseReauthenticate.UNKNOWN -> {
                                         snackbar.showSnackbar(
                                             message = "Unknown error, please restart the app or try later."
+                                        )
+                                    }
+
+                                    FirebaseReauthenticate.GET_CREDENTIAL -> {
+                                        snackbar.showSnackbar(
+                                            message = "Get Credential Error."
+                                        )
+                                    }
+
+                                    FirebaseReauthenticate.GET_CREDENTIAL_CANCELLATION -> {
+                                        snackbar.showSnackbar(
+                                            message = "Operation cancelled by user."
                                         )
                                     }
                                 }

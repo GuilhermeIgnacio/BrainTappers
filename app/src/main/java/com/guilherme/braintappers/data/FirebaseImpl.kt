@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -124,14 +125,20 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
             }
 
             is Result.Error -> {
-                when(result.error) {
+                when (result.error) {
                     GetCredential.GET_CREDENTIAL -> {
                         Result.Error(FirebaseGoogleAuthError.GET_CREDENTIAL)
 
                     }
+
+                    GetCredential.GET_CREDENTIAL_CANCELLATION -> {
+                        Result.Error(FirebaseGoogleAuthError.GET_CREDENTIAL_CANCELLATION)
+                    }
+
                     GetCredential.UNKNOWN -> {
                         Result.Error(FirebaseGoogleAuthError.UNKNOWN)
                     }
+
                 }
             }
         }
@@ -276,10 +283,15 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
                         Result.Error(LinkAccountWithGoogleError.GET_CREDENTIAL)
                     }
 
+                    GetCredential.GET_CREDENTIAL_CANCELLATION -> {
+                        Result.Error(LinkAccountWithGoogleError.GET_CREDENTIAL_CANCELLATION)
+                    }
+
                     GetCredential.UNKNOWN -> {
                         Result.Error(LinkAccountWithGoogleError.UNKNOWN)
 
                     }
+
                 }
             }
         }
@@ -426,12 +438,17 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
             is Result.Error -> {
                 return when (result.error) {
                     GetCredential.GET_CREDENTIAL -> {
-                        Result.Error(FirebaseReauthenticate.UNKNOWN)
+                        Result.Error(FirebaseReauthenticate.GET_CREDENTIAL)
+                    }
+
+                    GetCredential.GET_CREDENTIAL_CANCELLATION -> {
+                        Result.Error(FirebaseReauthenticate.GET_CREDENTIAL_CANCELLATION)
                     }
 
                     GetCredential.UNKNOWN -> {
                         Result.Error(FirebaseReauthenticate.UNKNOWN)
                     }
+
                 }
             }
         }
@@ -460,13 +477,12 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(bytes)
 
-        return digest.fold("") {str, it ->
+        return digest.fold("") { str, it ->
             str + "%02x".format(it)
         }
     }
 
     private suspend fun authenticateWithGoogle(): Result<Credential, GetCredential> {
-        //Todo: Set Nonce
 
         val credentialManager = CredentialManager.create(context)
 
@@ -488,6 +504,11 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
             )
 
             Result.Success(result.credential)
+
+        } catch (e: GetCredentialCancellationException) {
+
+            e.printStackTrace()
+            Result.Error(GetCredential.GET_CREDENTIAL_CANCELLATION)
 
         } catch (e: GetCredentialException) {
 

@@ -75,12 +75,13 @@ enum class FirebaseEmailAndPasswordAuthError : Error {
 }
 
 enum class FirebaseGoogleAuthError: Error {
-    UNKNOWN,
     FIREBASE_AUTH_INVALID_USER,
     FIREBASE_AUTH_INVALID_CREDENTIALS,
     FIREBASE_AUTH_USER_COLLISION,
     GET_CREDENTIAL,
     FIREBASE_NETWORK,
+    GET_CREDENTIAL_CANCELLATION,
+    UNKNOWN,
 }
 
 enum class FirebaseSignInWithEmailAndPasswordError: Error {
@@ -106,10 +107,13 @@ enum class FirebaseReauthenticate: Error {
     FIREBASE_AUTH_INVALID_USER,
     FIREBASE_AUTH_INVALID_CREDENTIALS,
     FIREBASE_NETWORK,
+    GET_CREDENTIAL_CANCELLATION,
+    GET_CREDENTIAL,
     UNKNOWN
 }
 
 enum class GetCredential: Error {
+    GET_CREDENTIAL_CANCELLATION,
     GET_CREDENTIAL,
     UNKNOWN
 }
@@ -151,5 +155,6 @@ enum class LinkAccountWithGoogleError:Error {
     FIREBASE_AUTH,
     FIREBASE_NETWORK,
     GET_CREDENTIAL,
+    GET_CREDENTIAL_CANCELLATION,
     UNKNOWN,
 }

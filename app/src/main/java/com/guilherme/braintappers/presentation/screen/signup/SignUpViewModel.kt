@@ -65,7 +65,6 @@ class SignUpViewModel(
                                     )
                                 }
 
-                                //Todo: Improve this message
                                 FirebaseGoogleAuthError.GET_CREDENTIAL -> {
                                     snackBar.showSnackbar(
                                         message = "Get Credential Error"
@@ -75,6 +74,12 @@ class SignUpViewModel(
                                 FirebaseGoogleAuthError.FIREBASE_NETWORK -> {
                                     snackBar.showSnackbar(
                                         message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred."
+                                    )
+                                }
+
+                                FirebaseGoogleAuthError.GET_CREDENTIAL_CANCELLATION -> {
+                                    snackBar.showSnackbar(
+                                        message = "Operation cancelled by user."
                                     )
                                 }
 

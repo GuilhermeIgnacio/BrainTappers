@@ -81,12 +81,17 @@ class SignInViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                                     )
                                 }
 
+                                FirebaseGoogleAuthError.GET_CREDENTIAL_CANCELLATION -> {
+                                    snackBar.showSnackbar(
+                                        message = "Operation cancelled by user."
+                                    )
+                                }
+
                                 FirebaseGoogleAuthError.UNKNOWN -> {
                                     snackBar.showSnackbar(
                                         message = "Unknown error, please restart the app or try later."
                                     )
                                 }
-
 
                             }
                         }
