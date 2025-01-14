@@ -87,6 +87,12 @@ class SignInViewModel(private val firebase: FirebaseRepository) : ViewModel() {
                                     )
                                 }
 
+                                FirebaseGoogleAuthError.NO_CREDENTIAL -> {
+                                    snackBar.showSnackbar(
+                                        message = "No Google accounts found on this device. Please add a Google account to proceed."
+                                    )
+                                }
+
                                 FirebaseGoogleAuthError.UNKNOWN -> {
                                     snackBar.showSnackbar(
                                         message = "Unknown error, please restart the app or try later."

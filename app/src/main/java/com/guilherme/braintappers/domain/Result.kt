@@ -81,6 +81,7 @@ enum class FirebaseGoogleAuthError: Error {
     GET_CREDENTIAL,
     FIREBASE_NETWORK,
     GET_CREDENTIAL_CANCELLATION,
+    NO_CREDENTIAL,
     UNKNOWN,
 }
 
@@ -109,12 +110,14 @@ enum class FirebaseReauthenticate: Error {
     FIREBASE_NETWORK,
     GET_CREDENTIAL_CANCELLATION,
     GET_CREDENTIAL,
+    NO_CREDENTIAL,
     UNKNOWN
 }
 
 enum class GetCredential: Error {
     GET_CREDENTIAL_CANCELLATION,
     GET_CREDENTIAL,
+    NO_CREDENTIAL,
     UNKNOWN
 }
 
@@ -156,5 +159,6 @@ enum class LinkAccountWithGoogleError:Error {
     FIREBASE_NETWORK,
     GET_CREDENTIAL,
     GET_CREDENTIAL_CANCELLATION,
+    NO_CREDENTIAL,
     UNKNOWN,
 }

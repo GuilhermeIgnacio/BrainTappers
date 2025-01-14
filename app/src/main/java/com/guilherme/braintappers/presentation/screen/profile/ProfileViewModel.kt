@@ -265,6 +265,12 @@ class ProfileViewModel(
                                     ) }
                                 }
 
+                                FirebaseReauthenticate.NO_CREDENTIAL -> {
+                                    _state.update { it.copy(
+                                        errorSupportingText = "No Google accounts found on this device. Please add a Google account to proceed."
+                                    ) }
+                                }
+
                                 FirebaseReauthenticate.GET_CREDENTIAL_CANCELLATION -> {
                                     _state.update { it.copy(
                                         errorSupportingText = "Operation cancelled by user."
@@ -431,6 +437,12 @@ class ProfileViewModel(
                                     )
                                 }
 
+                                LinkAccountWithGoogleError.NO_CREDENTIAL -> {
+                                    snackbar.showSnackbar(
+                                        message = "No Google accounts found on this device. Please add a Google account to proceed."
+                                    )
+                                }
+
                                 LinkAccountWithGoogleError.UNKNOWN -> {
                                     snackbar.showSnackbar(
                                         message = "Unknown error, please restart the app or try later."
@@ -507,11 +519,18 @@ class ProfileViewModel(
                                         )
                                     }
 
+                                    FirebaseReauthenticate.NO_CREDENTIAL -> {
+                                        snackbar.showSnackbar(
+                                            message = "No Google accounts found on this device. Please add a Google account to proceed."
+                                        )
+                                    }
+
                                     FirebaseReauthenticate.GET_CREDENTIAL_CANCELLATION -> {
                                         snackbar.showSnackbar(
                                             message = "Operation cancelled by user."
                                         )
                                     }
+
                                 }
                             }
                         }
