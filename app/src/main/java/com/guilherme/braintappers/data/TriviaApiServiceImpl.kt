@@ -1,8 +1,6 @@
 package com.guilherme.braintappers.data
 
-import android.accounts.NetworkErrorException
 import android.content.ContentValues.TAG
-import android.net.http.NetworkException
 import android.util.Log
 import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.Result
@@ -16,14 +14,9 @@ import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.network.UnresolvedAddressException
-import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.json.Json
 
 class TriviaApiServiceImpl : TriviaApiService {
-
-    companion object {
-        const val ENDPOINT = "https://opentdb.com/api.php?"
-    }
 
     private val httpClient = HttpClient {
         install(ContentNegotiation) {
@@ -87,6 +80,7 @@ class TriviaApiServiceImpl : TriviaApiService {
 
             Log.e(TAG, "IOException", e)
             Result.Error(DataError.NO_INTERNET)
+
         } catch (e: Exception) {
 
             e.printStackTrace()

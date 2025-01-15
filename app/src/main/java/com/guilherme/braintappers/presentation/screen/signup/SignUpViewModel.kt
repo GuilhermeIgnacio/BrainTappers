@@ -1,11 +1,9 @@
 package com.guilherme.braintappers.presentation.screen.signup
 
 import androidx.compose.material3.SnackbarHostState
-import androidx.credentials.Credential
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.guilherme.braintappers.domain.FirebaseGoogleAuthError
 import com.guilherme.braintappers.domain.FirebaseRepository
 import com.guilherme.braintappers.domain.Result

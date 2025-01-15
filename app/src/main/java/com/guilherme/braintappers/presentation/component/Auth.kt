@@ -29,15 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.credentials.Credential
-import androidx.credentials.CredentialManager
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.exceptions.GetCredentialException
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
-import kotlinx.coroutines.launch
 
 @Composable
 fun Auth(

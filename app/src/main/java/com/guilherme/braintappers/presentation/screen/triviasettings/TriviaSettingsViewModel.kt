@@ -2,7 +2,6 @@ package com.guilherme.braintappers.presentation.screen.triviasettings
 
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.domain.model.DropdownItem
 import com.guilherme.braintappers.navigation.TriviaScreen

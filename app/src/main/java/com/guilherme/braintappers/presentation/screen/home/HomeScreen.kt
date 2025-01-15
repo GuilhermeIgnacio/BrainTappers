@@ -37,9 +37,7 @@ import com.guilherme.braintappers.items
 import com.guilherme.braintappers.navigation.ProfileScreen
 import com.guilherme.braintappers.navigation.TriviaSettingsScreen
 import com.guilherme.braintappers.util.poppinsFamily
-import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
 

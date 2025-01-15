@@ -549,8 +549,6 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
 
 sealed interface ProviderId
 
-typealias Provider = ProviderId
-
 enum class FirebaseProviderId : ProviderId {
     PASSWORD,
     GOOGLE,

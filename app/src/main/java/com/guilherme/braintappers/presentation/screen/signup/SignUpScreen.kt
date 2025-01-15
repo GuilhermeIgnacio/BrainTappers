@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.navigation.SignInScreen

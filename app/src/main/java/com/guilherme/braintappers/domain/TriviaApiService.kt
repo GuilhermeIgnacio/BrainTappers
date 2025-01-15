@@ -1,7 +1,6 @@
 package com.guilherme.braintappers.domain
 
 import com.guilherme.braintappers.domain.model.ApiResponse
-import kotlin.Result
 
 interface TriviaApiService {
 
