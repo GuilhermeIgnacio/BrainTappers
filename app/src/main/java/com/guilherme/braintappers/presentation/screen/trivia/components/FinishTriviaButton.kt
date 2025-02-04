@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen.trivia
+package com.guilherme.braintappers.presentation.screen.trivia.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.guilherme.braintappers.domain.model.Question
+import com.guilherme.braintappers.presentation.screen.trivia.TriviaMainEvents
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 

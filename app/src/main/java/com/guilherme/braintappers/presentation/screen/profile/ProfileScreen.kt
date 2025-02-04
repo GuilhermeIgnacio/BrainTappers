@@ -44,6 +44,9 @@ import com.guilherme.braintappers.R
 import com.guilherme.braintappers.navigation.HomeScreen
 import com.guilherme.braintappers.navigation.QuizzesPlayedScreen
 import com.guilherme.braintappers.presentation.component.CustomCircularProgressIndicator
+import com.guilherme.braintappers.presentation.screen.profile.components.CustomSurface
+import com.guilherme.braintappers.presentation.screen.profile.components.ProfileCustomDialog
+import com.guilherme.braintappers.presentation.screen.profile.components.ProfileModalBottomSheet
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel

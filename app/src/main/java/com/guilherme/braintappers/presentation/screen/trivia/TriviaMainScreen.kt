@@ -43,6 +43,10 @@ import com.guilherme.braintappers.domain.DataError
 import com.guilherme.braintappers.domain.DisplayResult
 import com.guilherme.braintappers.navigation.HomeScreen
 import com.guilherme.braintappers.presentation.component.CustomCircularProgressIndicator
+import com.guilherme.braintappers.presentation.screen.trivia.components.CloseTriviaDialog
+import com.guilherme.braintappers.presentation.screen.trivia.components.FinishTriviaButton
+import com.guilherme.braintappers.presentation.screen.trivia.components.NumberedNavigationButtons
+import com.guilherme.braintappers.presentation.screen.trivia.components.QuestionDisplay
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
 

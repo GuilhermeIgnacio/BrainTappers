@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen.trivia
+package com.guilherme.braintappers.presentation.screen.trivia.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog

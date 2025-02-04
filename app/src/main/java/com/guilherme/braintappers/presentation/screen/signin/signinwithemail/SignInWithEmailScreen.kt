@@ -22,6 +22,7 @@ import com.guilherme.braintappers.presentation.component.CustomCircularProgressI
 import com.guilherme.braintappers.presentation.component.CustomTopAppBar
 import com.guilherme.braintappers.presentation.component.EmailOutlinedTextField
 import com.guilherme.braintappers.presentation.component.PasswordOutlinedTextField
+import com.guilherme.braintappers.presentation.screen.signin.components.ResetPasswordModalBottomSheet
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel

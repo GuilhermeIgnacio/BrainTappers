@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen.profile
+package com.guilherme.braintappers.presentation.screen.profile.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row

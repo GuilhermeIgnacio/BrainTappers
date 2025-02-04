@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen.trivia
+package com.guilherme.braintappers.presentation.screen.trivia.components
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
@@ -34,6 +34,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.domain.model.Question
+import com.guilherme.braintappers.presentation.screen.trivia.TriviaMainEvents
+import com.guilherme.braintappers.presentation.screen.trivia.TriviaMainState
+import com.guilherme.braintappers.presentation.screen.trivia.parseHtml
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 

@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen.profile
+package com.guilherme.braintappers.presentation.screen.profile.components
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon

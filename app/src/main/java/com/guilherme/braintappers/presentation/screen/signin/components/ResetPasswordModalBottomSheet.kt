@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen.signin.signinwithemail
+package com.guilherme.braintappers.presentation.screen.signin.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
@@ -23,6 +23,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.guilherme.braintappers.presentation.component.EmailOutlinedTextField
+import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.ResetPasswordState
+import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.SignInWithEmailEvents
+import com.guilherme.braintappers.presentation.screen.signin.signinwithemail.SignInWithEmailState
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 

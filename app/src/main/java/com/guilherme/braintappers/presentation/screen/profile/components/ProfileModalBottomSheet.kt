@@ -1,4 +1,4 @@
-package com.guilherme.braintappers.presentation.screen.profile
+package com.guilherme.braintappers.presentation.screen.profile.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
@@ -30,6 +30,9 @@ import androidx.navigation.NavController
 import com.guilherme.braintappers.R
 import com.guilherme.braintappers.presentation.component.EmailOutlinedTextField
 import com.guilherme.braintappers.presentation.component.PasswordOutlinedTextField
+import com.guilherme.braintappers.presentation.screen.profile.ProfileEvents
+import com.guilherme.braintappers.presentation.screen.profile.ProfileModalBottomSheetState
+import com.guilherme.braintappers.presentation.screen.profile.ProfileState
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.isValidEmail
 import com.guilherme.braintappers.util.isValidPassword
