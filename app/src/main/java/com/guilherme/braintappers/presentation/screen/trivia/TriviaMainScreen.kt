@@ -143,6 +143,15 @@ fun TriviaMainScreen(
                         onEvent = onEvent
                     )
 
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterHorizontally).navigationBarsPadding(),
+                        text = "Questions Provided by Open Trivia DB API",
+                        fontFamily = poppinsFamily,
+                        fontWeight = FontWeight.Light
+                    )
+
                 }
             }
 
