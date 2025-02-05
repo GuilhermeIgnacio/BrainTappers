@@ -245,6 +245,7 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
 
                     Firebase.auth.currentUser?.updateProfile(userProfileChangeRequest {
                         photoUri = googleIdTokenCredential.profilePictureUri
+                        displayName = googleIdTokenCredential.displayName
                     })?.await()
 
                     Result.Success(Unit)
