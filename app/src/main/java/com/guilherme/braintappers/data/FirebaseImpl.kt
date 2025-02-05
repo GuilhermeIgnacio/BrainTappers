@@ -503,7 +503,7 @@ class FirebaseImpl(private val context: Context) : FirebaseRepository {
         val credentialManager = CredentialManager.create(context)
 
         val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(true)
+            .setFilterByAuthorizedAccounts(false)
             .setServerClientId(context.getString(R.string.web_client_id))
             .setAutoSelectEnabled(true)
             .setNonce(createNonce())
