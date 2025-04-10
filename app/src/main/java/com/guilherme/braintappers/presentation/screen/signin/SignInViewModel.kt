@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 data class SignInState(
     val isLoading: Boolean = false,
-    val snackbarHostState: SnackbarHostState = SnackbarHostState()
+    val snackBarMessage: String? = null
 )
 
 sealed interface SignInEvents {
@@ -44,65 +44,40 @@ class SignInViewModel(private val firebase: FirebaseRepository) : ViewModel() {
 
                         is Result.Error -> {
 
-                            val snackBar = _state.value.snackbarHostState
+
                             _state.update { it.copy(isLoading = false) }
 
-                            when (result.error) {
+                            val errorMessage = when (result.error) {
 
-                                FirebaseGoogleAuthError.FIREBASE_AUTH_INVALID_USER -> {
-                                    snackBar.showSnackbar(
-                                        message = "Error: Invalid User"
-                                    )
-                                }
+                                FirebaseGoogleAuthError.FIREBASE_AUTH_INVALID_USER -> "Error: Invalid User"
 
-                                FirebaseGoogleAuthError.FIREBASE_AUTH_INVALID_CREDENTIALS -> {
-                                    snackBar.showSnackbar(
-                                        message = "Error: Invalid Credentials"
-                                    )
-                                }
+                                FirebaseGoogleAuthError.FIREBASE_AUTH_INVALID_CREDENTIALS -> "Error: Invalid Credentials"
 
-                                FirebaseGoogleAuthError.FIREBASE_AUTH_USER_COLLISION -> {
-                                    snackBar.showSnackbar(
-                                        message = "Error: there already exists an account with the email address asserted by the credential."
-                                    )
-                                }
+                                FirebaseGoogleAuthError.FIREBASE_AUTH_USER_COLLISION -> "Error: there already exists an account with the email address asserted by the credential."
 
-                                FirebaseGoogleAuthError.FIREBASE_NETWORK -> {
-                                    snackBar.showSnackbar(
-                                        message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred."
-                                    )
-                                }
+                                FirebaseGoogleAuthError.FIREBASE_NETWORK -> "A network error (such as timeout, interrupted connection or unreachable host) has occurred."
 
-                                FirebaseGoogleAuthError.GET_CREDENTIAL -> {
-                                    snackBar.showSnackbar(
-                                        message = "Get Credential Error"
-                                    )
-                                }
+                                FirebaseGoogleAuthError.GET_CREDENTIAL -> "Get Credential Error"
 
-                                FirebaseGoogleAuthError.GET_CREDENTIAL_CANCELLATION -> {
-                                    snackBar.showSnackbar(
-                                        message = "Operation cancelled by user."
-                                    )
-                                }
+                                FirebaseGoogleAuthError.GET_CREDENTIAL_CANCELLATION -> "Operation cancelled by user."
 
-                                FirebaseGoogleAuthError.NO_CREDENTIAL -> {
-                                    snackBar.showSnackbar(
-                                        message = "No Google accounts found on this device. Please add a Google account to proceed."
-                                    )
-                                }
+                                FirebaseGoogleAuthError.NO_CREDENTIAL -> "No Google accounts found on this device. Please add a Google account to proceed."
 
-                                FirebaseGoogleAuthError.UNKNOWN -> {
-                                    snackBar.showSnackbar(
-                                        message = "Unknown error, please restart the app or try later."
-                                    )
-                                }
+                                FirebaseGoogleAuthError.UNKNOWN -> "Unknown error, please restart the app or try later."
 
                             }
+
+                            _state.update { it.copy(snackBarMessage = errorMessage) }
+
                         }
 
                     }
                 }
             }
         }
+    }
+
+    fun clearSnackBar() {
+        _state.update { it.copy(snackBarMessage = null) }
     }
 }
