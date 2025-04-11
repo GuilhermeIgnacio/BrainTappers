@@ -11,9 +11,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -38,11 +42,27 @@ fun SignUpWithEmailScreen(navController: NavHostController) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
 
+    val snackBarHostState = remember { SnackbarHostState() }
+
     val modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+
+    LaunchedEffect(state.snackBarMessage) {
+
+        state.snackBarMessage?.let {
+            val snackBar = snackBarHostState.showSnackbar(message = it)
+            when(snackBar) {
+                SnackbarResult.Dismissed -> {
+                    viewModel.clearSnackBar()
+                }
+                SnackbarResult.ActionPerformed -> {}
+            }
+        }
+
+    }
 
     Scaffold(
         snackbarHost = {
-            SnackbarHost(hostState = state.snackbarHostState)
+            SnackbarHost(hostState = snackBarHostState)
         }
     ) {_ ->
         Column(

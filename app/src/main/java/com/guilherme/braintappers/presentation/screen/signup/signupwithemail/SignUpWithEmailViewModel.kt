@@ -20,7 +20,7 @@ data class SignUpWithEmailState(
     val passwordTextField: String = "",
     val confirmPasswordTextField: String = "",
     val isLoading: Boolean = false,
-    val snackbarHostState: SnackbarHostState = SnackbarHostState()
+    val snackBarMessage: String? = null
 )
 
 sealed interface SignUpWithEmailEvents {
@@ -102,34 +102,16 @@ class SignUpWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
 
                         is Result.Error -> {
 
-                            _state.update {
-                                it.copy(
-                                    isLoading = false
-                                )
+                            val errorMessage = when (result.error) {
+
+                                FirebaseEmailAndPasswordAuthError.UNKNOWN -> "Unknown error, please restart the app or try later."
+
+                                FirebaseEmailAndPasswordAuthError.FIREBASE_AUTH_USER_COLLISION -> "The email address is already in use by another account."
+
+                                FirebaseEmailAndPasswordAuthError.FIREBASE_NETWORK -> "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
                             }
 
-                            val snackBar = _state.value.snackbarHostState
-
-                            when (result.error) {
-
-                                FirebaseEmailAndPasswordAuthError.UNKNOWN -> {
-                                    snackBar.showSnackbar(
-                                        message = "Unknown error, please restart the app or try later.",
-                                    )
-                                }
-
-                                FirebaseEmailAndPasswordAuthError.FIREBASE_AUTH_USER_COLLISION -> {
-                                    snackBar.showSnackbar(
-                                        message = "The email address is already in use by another account.",
-                                    )
-                                }
-
-                                FirebaseEmailAndPasswordAuthError.FIREBASE_NETWORK -> {
-                                    snackBar.showSnackbar(
-                                        message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
-                                    )
-                                }
-                            }
+                            _state.update { it.copy(isLoading = false, snackBarMessage = errorMessage) }
 
                         }
                     }
@@ -138,6 +120,10 @@ class SignUpWithEmailViewModel(private val firebase: FirebaseRepository) : ViewM
                 }
             }
         }
+    }
+
+    fun clearSnackBar(){
+        _state.update { it.copy(snackBarMessage = null) }
     }
 
 }
