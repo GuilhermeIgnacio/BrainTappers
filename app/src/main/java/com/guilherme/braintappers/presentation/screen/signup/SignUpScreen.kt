@@ -4,8 +4,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,8 +30,22 @@ fun SignUpScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
 
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.snackBarMessage) {
+        state.snackBarMessage?.let {
+            val result = snackBarHostState.showSnackbar(message = it)
+            when (result) {
+                SnackbarResult.Dismissed -> {
+                    viewModel.clearSnackBar()
+                }
+                SnackbarResult.ActionPerformed -> {}
+            }
+        }
+    }
+
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = state.snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) { _ ->
         Auth(
             title = stringResource(id = R.string.sign_up_title),
