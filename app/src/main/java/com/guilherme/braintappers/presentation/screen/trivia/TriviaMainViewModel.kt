@@ -28,7 +28,7 @@ data class TriviaMainState(
     val isLoading: Boolean = false,
     val isTriviaFinished: Boolean = false,
     val categoryId: Int = 0,
-    val snackbarHostState: SnackbarHostState = SnackbarHostState()
+    val snackBarMessage: String? = null
 )
 
 sealed interface TriviaMainEvents {
@@ -162,26 +162,17 @@ class TriviaMainViewModel(
                     when (val result = firestore.write(quizUid = uuid, data = data)) {
                         is Result.Success -> {
                             _state.update { it.copy(isLoading = false, isTriviaFinished = true) }
-
                         }
 
                         is Result.Error -> {
-                            _state.update { it.copy(isLoading = false) }
-                            val snackbar = _state.value.snackbarHostState
 
-                            when (result.error) {
-                                FirestoreError.FIREBASE_NETWORK -> {
-                                    snackbar.showSnackbar(
-                                        message = "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
-                                    )
-                                }
+                            val errorMessage = when (result.error) {
+                                FirestoreError.FIREBASE_NETWORK -> "A network error (such as timeout, interrupted connection or unreachable host) has occurred"
 
-                                FirestoreError.UNKNOWN -> {
-                                    snackbar.showSnackbar(
-                                        message = "Unknown error, please restart the app or try later."
-                                    )
-                                }
+                                FirestoreError.UNKNOWN -> "Unknown error, please restart the app or try later."
                             }
+
+                            _state.update { it.copy(isLoading = false, snackBarMessage = errorMessage) }
 
                         }
                     }
@@ -190,6 +181,10 @@ class TriviaMainViewModel(
                 }
             }
         }
+    }
+
+    fun clearSnackBar() {
+        _state.update { it.copy(snackBarMessage = null) }
     }
 
 }
