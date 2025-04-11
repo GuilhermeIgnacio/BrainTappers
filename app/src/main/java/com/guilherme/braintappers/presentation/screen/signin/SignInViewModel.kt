@@ -44,9 +44,6 @@ class SignInViewModel(private val firebase: FirebaseRepository) : ViewModel() {
 
                         is Result.Error -> {
 
-
-                            _state.update { it.copy(isLoading = false) }
-
                             val errorMessage = when (result.error) {
 
                                 FirebaseGoogleAuthError.FIREBASE_AUTH_INVALID_USER -> "Error: Invalid User"
@@ -67,7 +64,7 @@ class SignInViewModel(private val firebase: FirebaseRepository) : ViewModel() {
 
                             }
 
-                            _state.update { it.copy(snackBarMessage = errorMessage) }
+                            _state.update { it.copy(isLoading = false, snackBarMessage = errorMessage) }
 
                         }
 
