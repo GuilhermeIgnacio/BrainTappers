@@ -271,7 +271,7 @@ fun QuizzesPlayedScreen(navController: NavController) {
                                 LinearProgressIndicator(
                                     modifier = Modifier.width(100.dp),
                                     progress = { correctAnswers.size.toFloat() / it.questions.size.toFloat() },
-                                    color = primaryColor,
+                                    color = colors,
                                     gapSize = 0.dp,
                                     drawStopIndicator = {}
                                 )
