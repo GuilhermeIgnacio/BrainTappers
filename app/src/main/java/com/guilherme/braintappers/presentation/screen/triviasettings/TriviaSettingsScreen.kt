@@ -1,22 +1,34 @@
 package com.guilherme.braintappers.presentation.screen.triviasettings
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -24,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.guilherme.braintappers.R
+import com.guilherme.braintappers.domain.model.DropdownItem
 import com.guilherme.braintappers.navigation.HomeScreen
-import com.guilherme.braintappers.presentation.component.TriviaSettingsDropdownMenu
 import com.guilherme.braintappers.ui.theme.primaryColor
 import com.guilherme.braintappers.util.poppinsFamily
 import org.koin.androidx.compose.koinViewModel
@@ -39,7 +51,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun TriviaSettingsScreen(
     navController: NavController,
-    categoryId: String
+    categoryId: String,
 ) {
 
     val viewModel = koinViewModel<TriviaSettingsViewModel>()
@@ -54,6 +66,7 @@ fun TriviaSettingsScreen(
         modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
 
         IconButton(onClick = { navController.navigate(HomeScreen) }) {
@@ -63,32 +76,108 @@ fun TriviaSettingsScreen(
             )
         }
 
-        TriviaSettingsDropdownMenu(
-            text = state.numberOfQuestionsValue?.text?.asString()
-                ?: stringResource(id = R.string.number_of_questions),
-            onClick = { onEvent(TriviaSettingsEvents.OpenNumberOfQuestionsDropdownMenu) },
-            isDropdownMenuOpen = state.isNumberOfQuestionsMenuOpen,
-            dropdownItems = viewModel.numberOfQuestions,
-            dismissDropdownMenu = { onEvent(TriviaSettingsEvents.DismissDropdownMenu) }
+        Text(
+            modifier = Modifier.padding(horizontal = 12.dp),
+            text = "Number of Questions",
+            fontFamily = poppinsFamily
         )
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .border(2.dp, color = Color.LightGray)
+                .clickable { onEvent(TriviaSettingsEvents.OpenNumberOfQuestionsDropdownMenu) }
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp, horizontal = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = state.numberOfQuestionsValue?.text?.asString() ?: "10 Questions",
+                    fontFamily = poppinsFamily
+                )
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = ""
+                )
+
+            }
+            DropdownMenu(
+                modifier = Modifier.fillMaxWidth(),
+                expanded = state.isNumberOfQuestionsMenuOpen,
+                onDismissRequest = { onEvent(TriviaSettingsEvents.DismissDropdownMenu) }
+            ) {
+                viewModel.numberOfQuestions.forEach {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = it.text.asString(),
+                                fontFamily = poppinsFamily
+                            )
+                        },
+                        onClick = { it.onClick(it) }
+                    )
+                }
+            }
+
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        TriviaSettingsDropdownMenu(
-            text = state.difficultyValue?.text?.asString()
-                ?: stringResource(id = R.string.difficulty),
-            onClick = { onEvent(TriviaSettingsEvents.OpenDifficultyMenu) },
-            isDropdownMenuOpen = state.isDifficultyMenuOpen,
-            dropdownItems = viewModel.difficulty,
-            dismissDropdownMenu = { onEvent(TriviaSettingsEvents.DismissDropdownMenu) }
+        /**
+         * Difficulty level button row
+         */
+        SelectableButtonRow(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            header = "Difficulty",
+            selectedItemValue = state.difficultyValue,
+            items = viewModel.difficulty
         )
 
+        /**
+         * Mixed Difficulties button
+         */
+        val isSelected = state.difficultyValue == viewModel.difficulty[0]
+
+        val selectedColors = ButtonDefaults.outlinedButtonColors(
+            contentColor = if (isSelected) primaryColor else Color.DarkGray,
+            containerColor = if (isSelected) Color(0x1A00BF7D) else Color.Transparent
+        )
+
+        OutlinedButton(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            shape = RoundedCornerShape(5f),
+            onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected(viewModel.difficulty[0])) },
+            border = BorderStroke(
+                ButtonDefaults.outlinedButtonBorder().width,
+                color = if (isSelected) primaryColor else Color.Gray
+            ),
+            colors = selectedColors
+        ) {
+            Text(text = "Mixed", fontFamily = poppinsFamily)
+        }
+
         Spacer(modifier = Modifier.height(32.dp))
+
+        /**
+         * Question Types button row
+         */
+        SelectableButtonRow(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            header = "Question Types",
+            selectedItemValue = state.typeValue,
+            items = viewModel.type
+        )
+
+//        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
+                .padding(horizontal = 8.dp),
             onClick = { onEvent(TriviaSettingsEvents.OnStartButtonClicked(navController)) },
             shape = RoundedCornerShape(20),
             colors = ButtonDefaults.buttonColors(
@@ -98,10 +187,58 @@ fun TriviaSettingsScreen(
         ) {
             Text(
                 text = stringResource(id = R.string.start),
+                color = Color.White,
                 fontFamily = poppinsFamily
             )
         }
 
     }
 
+}
+
+@Composable
+private fun SelectableButtonRow(
+    modifier: Modifier = Modifier,
+    header: String,
+    selectedItemValue: DropdownItem?,
+    items: List<DropdownItem>,
+) {
+    Text(
+        modifier = modifier,
+        text = header,
+        fontFamily = poppinsFamily
+    )
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+
+
+        items.forEach {
+            val isSelected = selectedItemValue == it
+
+            val selectedColors = ButtonDefaults.outlinedButtonColors(
+                contentColor = if (isSelected) primaryColor else Color.DarkGray,
+                containerColor = if (isSelected) Color(0x1A00BF7D) else Color.Transparent
+            )
+
+            if (it.text.asString().isNotBlank()) {
+                OutlinedButton(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(5f),
+                    onClick = { it.onClick(it) },
+                    border = BorderStroke(
+                        ButtonDefaults.outlinedButtonBorder().width,
+                        color = if (isSelected) primaryColor else Color.Gray
+                    ),
+                    colors = selectedColors
+                ) {
+
+                    Text(text = it.text.asString(), fontFamily = poppinsFamily)
+
+                }
+            }
+        }
+    }
 }

@@ -50,7 +50,7 @@
     <string name="difficulty">Difficulty</string>
     <string name="difficulty_value">Difficulty: %s</string>
     <string name="select_type">Select Type</string>
-    <string name="start">Start</string>
+    <string name="start">Start Quiz</string>
     <!--  Trivia Settings Screen  -->
 
     <!--  Trivia Settings ViewModel -->
@@ -58,13 +58,13 @@
     <string name="question">%s Question</string>
     <string name="questions">%s Questions</string>
 
-    <string name="any_difficulty">Any Difficulty</string>
+    <string name="any_difficulty"></string>
     <string name="easy">Easy</string>
     <string name="medium">Medium</string>
     <string name="hard">Hard</string>
     
-    <string name="any_type">Any Type</string>
-    <string name="multiple_choice">Multiple Choice</string>
+    <string name="any_type">Mixed</string>
+    <string name="multiple_choice">Choices</string>
     <string name="true_false">True/False</string>
 
     <!--  Number Of Questions List  -->
