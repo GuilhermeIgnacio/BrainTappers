@@ -1,11 +1,16 @@
 package com.guilherme.braintappers.presentation.screen.triviasettings
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,6 +66,8 @@ fun TriviaSettingsScreen(
 
     LaunchedEffect(Unit) {
         viewModel.setCategoryId(categoryId = categoryId)
+        onEvent(TriviaSettingsEvents.OnDifficultySelected(viewModel.difficulty[0]))
+        onEvent(TriviaSettingsEvents.OnTypeSelected(viewModel.type[1]))
     }
 
     Column(
@@ -98,7 +106,11 @@ fun TriviaSettingsScreen(
                     text = state.numberOfQuestionsValue?.text?.asString() ?: "10 Questions",
                     fontFamily = poppinsFamily
                 )
+
+                val icon by animateFloatAsState(targetValue = if (state.isNumberOfQuestionsMenuOpen) 180f else 0f)
+
                 Icon(
+                    modifier = Modifier.graphicsLayer(rotationZ = icon),
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = ""
                 )
@@ -142,12 +154,14 @@ fun TriviaSettingsScreen(
         val isSelected = state.difficultyValue == viewModel.difficulty[0]
 
         val selectedColors = ButtonDefaults.outlinedButtonColors(
-            contentColor = if (isSelected) primaryColor else Color.DarkGray,
-            containerColor = if (isSelected) Color(0x1A00BF7D) else Color.Transparent
+            contentColor = if (isSelected) Color.White else Color.DarkGray,
+            containerColor = if (isSelected) primaryColor else Color.Transparent
         )
 
         OutlinedButton(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
             shape = RoundedCornerShape(5f),
             onClick = { onEvent(TriviaSettingsEvents.OnDifficultySelected(viewModel.difficulty[0])) },
             border = BorderStroke(
@@ -171,7 +185,6 @@ fun TriviaSettingsScreen(
             items = viewModel.type
         )
 
-//        Spacer(modifier = Modifier.height(32.dp))
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
@@ -218,21 +231,32 @@ private fun SelectableButtonRow(
         items.forEach {
             val isSelected = selectedItemValue == it
 
+            val contentColor by animateColorAsState(
+                targetValue = if (isSelected) Color.White else Color.DarkGray,
+                animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+            )
+            val containerColor by animateColorAsState(
+                targetValue = if (isSelected) primaryColor else Color.Transparent,
+                animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+            )
+
             val selectedColors = ButtonDefaults.outlinedButtonColors(
-                contentColor = if (isSelected) primaryColor else Color.DarkGray,
-                containerColor = if (isSelected) Color(0x1A00BF7D) else Color.Transparent
+                contentColor = contentColor,
+                containerColor = containerColor
             )
 
             if (it.text.asString().isNotBlank()) {
+
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(5f),
+                    shape = RoundedCornerShape(7f),
                     onClick = { it.onClick(it) },
                     border = BorderStroke(
                         ButtonDefaults.outlinedButtonBorder().width,
                         color = if (isSelected) primaryColor else Color.Gray
                     ),
-                    colors = selectedColors
+                    colors = selectedColors,
+                    contentPadding = PaddingValues(0.dp)
                 ) {
 
                     Text(text = it.text.asString(), fontFamily = poppinsFamily)

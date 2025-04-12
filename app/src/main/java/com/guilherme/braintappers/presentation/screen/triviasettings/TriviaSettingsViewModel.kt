@@ -81,13 +81,13 @@ class TriviaSettingsViewModel : ViewModel() {
 
     val type = listOf(
         DropdownItem(
-            apiParameter = "",
-            text = UiText.StringResource(resId = R.string.any_type),
+            apiParameter = "&type=multiple",
+            text = UiText.StringResource(resId = R.string.multiple_choice),
             onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected(it)) }
         ),
         DropdownItem(
-            apiParameter = "&type=multiple",
-            text = UiText.StringResource(resId = R.string.multiple_choice),
+            apiParameter = "",
+            text = UiText.StringResource(resId = R.string.any_type),
             onClick = { onEvent(TriviaSettingsEvents.OnTypeSelected(it)) }
         ),
         DropdownItem(
