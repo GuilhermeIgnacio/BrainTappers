@@ -216,7 +216,7 @@ fun QuizzesPlayedScreen(navController: NavController) {
                     (correctAnswers.size.toFloat() / it.questions.size.toFloat()) * 100
 
                 val colors =
-                    if (answersRating.toInt() >= 70) primaryColor else if (answersRating.toInt() in 40..69) Color.Yellow else Color.Red
+                    if (answersRating.toInt() >= 70) primaryColor else if (answersRating.toInt() in 40..69) Color(0xFFEAB308) else Color.Red
 
                 Surface(
                     modifier = Modifier
@@ -276,7 +276,7 @@ fun QuizzesPlayedScreen(navController: NavController) {
                                     drawStopIndicator = {}
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
-                                Text(text = correctAnswers.size.toString() + "/" + it.questions.size)
+                                Text(text = correctAnswers.size.toString() + "/" + it.questions.size, fontFamily = poppinsFamily)
                             }
 
                         }
